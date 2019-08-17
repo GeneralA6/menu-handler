@@ -14,7 +14,6 @@
     <li>prevent body scroll when a menu is open</li>
     <li>prevent body swipe when a menu is open</li>
     <li>accessiblity</li>
-    <li>callbacks</li>
   </ul>
   <p>for more functionality and information see Options section</p>
 </section>

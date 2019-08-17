@@ -83,8 +83,7 @@
   <h3>submenu</h3>
   
   <p>
-    it enables handling of submenu lists for toggle open and close when clicking on the menu submenu toggle button.<br>
-    button element should have data attribute <strong>data-mh-submenu-toggle</strong> and it's value a unique identifier for the submenu.
+    submenu toggle button element should have data attribute <strong>data-mh-submenu-toggle</strong> and it's value a unique identifier for the submenu.
   </p>
   
   <strong>[example]</strong> :

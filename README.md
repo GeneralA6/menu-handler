@@ -73,7 +73,7 @@
   <h3>menu</h3> 
   <div>
     <p>
-      <strong>menu should have the following structure:<br></strong>
+      <strong>the following menu structure is required:<br></strong>
       <strong>container</strong> element that holds nothing, but the inner container.<br>
       <strong>inner container</strong> element that holds all the elements.<br>
       <strong>[note]</strong> : inner container should have class <strong>mh-hidden</strong>.

@@ -1,7 +1,7 @@
 # menu-handler
 
 <section>
-  <h2>Description 1123</h2>
+  <h2>Description</h2>
   
   <h3>a library to handle the dirty work of developing menus, dropdowns, popups for you</h3>
   
@@ -36,7 +36,7 @@
                     <button class="button" title="some title" data-mh-submenu-toggle="menu-a">
                       <span>submenu trigger button</span>
                       <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
-                    </button> 
+                    </button>
 
                     <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-a">
 

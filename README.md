@@ -105,6 +105,15 @@
   
 </section>
 
+<section>
+  <h2>CSS</h2>
+  
+  <p>add the following css line to your css code:</p>
+  
+      .mh-hidden {display: none !important;}
+      
+  <small>it's quite redandent to add a css file to the project, just for one line of code.</small>
+</section>
 
 <section>
   <h2>Init Example</h2>

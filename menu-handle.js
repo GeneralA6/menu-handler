@@ -12,10 +12,6 @@ const menuHandler = {
          return;
       }
 
-      const style = document.createElement('style');
-      style.innerHTML = `.mh-hidden {display: none !important;}`;
-      document.head.appendChild(style);
-
       passedMenus.forEach(function(menu) {
          const createMenu = {
             open: null,

@@ -73,10 +73,10 @@
   <h3>menu</h3> 
   <div>
     <p>
-    menu should have the following structure:<br>
-    <strong>container</strong> element that holds nothing, but the inner container.<br>
-    <strong>inner container</strong> element that holds all the elements.<br>
-    <strong>[note]</strong> : inner container should have class <strong>mh-hidden</strong>.
+      <strong>menu should have the following structure:<br></strong>
+      <strong>container</strong> element that holds nothing, but the inner container.<br>
+      <strong>inner container</strong> element that holds all the elements.<br>
+      <strong>[note]</strong> : inner container should have class <strong>mh-hidden</strong>.
     </p>
   </div>
   
@@ -84,7 +84,7 @@
   
   <p>
     it enables handling of submenu lists for toggle open and close when clicking on the menu submenu toggle button.<br>
-    button element should have data attribute data-mh-submenu-toggle and it's value a unique identifier for the submenu.<br>
+    button element should have data attribute strong>data-mh-submenu-toggle</strong> and it's value a unique identifier for the submenu.<br>
   </p>
   
   <strong>[example]</strong> :

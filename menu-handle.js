@@ -328,6 +328,8 @@ const menuHandler = {
    toggleMenu(menu, e) {
       const self = this;
 
+      if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button
+
       if ( self.actions.indexOf(menu.name) !== -1 ) return;
 
       self.actions.push(menu.name);
@@ -360,6 +362,8 @@ const menuHandler = {
          console.trace();
          return;
       };
+
+      if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button
 
       toggle.classList.toggle('mh-open');
 

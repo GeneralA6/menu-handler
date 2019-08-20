@@ -180,7 +180,7 @@ const menuHandler = {
 
    closeMenusOnBlur(menu, e) { // On Blur close menus.
       if ( e.target && menu.isOpen && e.target != menu.activeOpen && !menu.activeOpen.contains(e.target) && !menu.container.contains(e.target) ){
-         if ( menu.loop && e.type !== 'click' && menu.enterFocus ) {
+         if ( menu.loop && e.type !== 'click' && e.type !== 'mouseenter' && menu.enterFocus ) { // loop inside menu
             menu.enterFocus.focus();
             
          } else {

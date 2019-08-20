@@ -1,30 +1,29 @@
 # menu-handler
 
-<section>
-  <h2>Description</h2>
+  ## Description
   
-  <h3>a library to handle the dirty work of developing menus, dropdowns, popups for you</h3>
+  Menu Handler is a library to handle the dirty javascript work of developing menus, dropdowns, popups. <br>
+  All you have to care about is HTML and CSS.
   
-  <p> library functionality: </p>
-  <ul>
-    <li>open</li>
-    <li>close</li>
-    <li>close on esc press</li>
-    <li>close on blur</li>
-    <li>prevent body scroll when a menu is open</li>
-    <li>prevent body swipe when a menu is open</li>
-    <li>accessiblity</li>
-  </ul>
-  <p>for more functionality and information see Options section</p>
-</section>
+  library functionality:
+  
+ - open
+ - close
+ - close on esc press
+ - close on blur
+ - prevent body scroll when a menu is open
+ - prevent body swipe when a menu is open
+ - accessiblity
+    
+for more functionality and information see Options section
 
 
-<section>
-  <h2>HTML Structure</h2>
-  
-  <p>Example of a menu</p>
 
-  <div>
+ ## HTML Structure
+  
+ Example of a menu
+
+ ```html
   
       <div class="menu-wrap" id="menu-wrap"> 
          <div class="menu-inner-wrap mh-hidden" id="menu-inner-wrap">
@@ -68,110 +67,87 @@
          </div>
       </div>
   
-  </div>
+  ```
   
-  <h3>menu</h3> 
-  <div>
-    <p>
-      <strong>the following menu structure is required:<br></strong>
-      <strong>container</strong> element that holds nothing, but the inner container.<br>
-      <strong>inner container</strong> element that holds all the elements.<br>
-      <strong>[note]</strong> : inner container should have class <strong>mh-hidden</strong>.
-    </p>
-  </div>
+  ### menu
   
-  <h3>submenu</h3>
+  **the following menu structure is required:**  
+  **container** element that holds nothing, but the inner container.  
+  **inner container** element that holds all the elements.  
+  **[note]** : inner container should have class **mh-hidden**.  
+   
+
   
-  <p>
-    submenu toggle button element should have data attribute <strong>data-mh-submenu-toggle</strong> and it's value a unique identifier for the submenu.
-  </p>
+  ### submenu
   
-  <strong>[example]</strong> :
+  submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value a unique identifier for the submenu.  
   
-      <button data-mh-submenu-toggle="catalog">
-        ...
-      </button>
+**[example]** :
+  
+```html
+  <button data-mh-submenu-toggle="catalog">
+    ...
+  </button>
+```
       
-  <p>
-    submenu list element should have data attribue <strong>data-mh-submenu-list</strong> and it's value the same submenu identifier as the submenu toggle button.<br>
-    <strong>[note]</strong> : submenu list element should have class <strong>mh-hidden</strong>.
-  </p>
   
-  <strong>[example]</strong> : 
+submenu list element should have data attribue **data-mh-submenu-list** and it's value the same submenu identifier as the submenu toggle button.  
+**[note]** : submenu list element should have class **mh-hidden**.
+ 
+  
+**[example]** : 
 
-      <ul class="mh-hidden" data-mh-submenu-list="catalog">
-        ...
-      </ul>
+```html
+  <ul class="mh-hidden" data-mh-submenu-list="catalog">
+    ...
+  </ul>
+```
   
-</section>
 
-<section>
-  <h2>CSS</h2>
+## CSS
   
-  <p>add the following css line to your css code:</p>
-  
-      .mh-hidden {display: none !important;}
+add the following css line to your css code:  
+
+```css
+  .mh-hidden {display: none !important;}
+```
       
-  <small>it's quite redandent to add a css file to the project, just for one line of code.</small>
-</section>
+#### it's quite redandent to add a css file to the project, just for one line of code.
 
-<section>
-  <h2>Init Example</h2>
-  
-      const menus = [
-        {
-           elements: {
-              open:           '#menu-open',
-              close:          '#menu-close',
-              enterFocus:     '#menu-focus-enter',
-              container:      '#menu-wrap',
-              innerContainer: '#menu-inner-wrap',
-           },
-           openOnHover: true,
-           loop: true,
-           submenu: {
-              isEnabled: true,
-              openOnHover: true,
-              on: {
-                    beforeOpen: function(menu) {
-                       console.log('before open', menu);
-                    },
-                    afterOpen: function(menu) {
-                       console.log('after open', menu);
-                    },
-                    beforeClose: function(menu) {
-                       console.log('before close', menu);
-                    },
-                    afterClose: function(menu) {
-                       console.log('after close', menu);
-                    },
-              }
-           },
-           on: {
-              beforeInit: function(menu) {
-                    console.log('before init', menu);
-              },
-              afterInit: function(menu) {
-                    console.log('after init', menu);
-              },
-              beforeOpen: function(menu) {
-                    console.log('before open', menu);
-              },
-              afterOpen: function(menu) {
-                    console.log('after open', menu);
-              },
-              beforeClose: function(menu) {
-                    console.log('before close', menu);
-              },
-              afterClose: function(menu) {
-                    console.log('after close', menu);
-              },
-           },
-        },
-      ];
-      menuHandler.init(menus);
+## Init Example
 
-</section>
+```javascript
+
+  const menus = [
+    {
+       elements: {
+          open:           '#menu-open',
+          close:          '#menu-close',
+          enterFocus:     '#menu-focus-enter',
+          container:      '#menu-wrap',
+          innerContainer: '#menu-inner-wrap',
+       },
+       openOnHover: true,
+       loop: true,
+       submenu: {
+          isEnabled: true,
+          openOnHover: true,
+          on: {
+                afterOpen: function(menu) {
+                   console.log('after open', menu);
+                },
+          }
+       },
+       on: {
+          afterInit: function(menu) {
+                console.log('after init', menu);
+          },
+       },
+    },
+  ];
+  menuHandler.init(menus);
+
+```
       
 <section>
   
@@ -352,6 +328,6 @@
       </ul>
     </li>
   </ul>
-</section>
+
 
 

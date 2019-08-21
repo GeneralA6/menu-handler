@@ -45,7 +45,7 @@ for more functionality and information see Options section
                           <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
                         </button>
 
-                        <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-b>
+                        <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-b">
 
                           <li>
                             <a class="sub-link" href="#" title="some title">link</a>

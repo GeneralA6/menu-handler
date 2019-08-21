@@ -19,8 +19,6 @@
 
 ## Init
 
-
-
 ```javascript
 
 const menus = [
@@ -96,7 +94,7 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 </ul>
 ```
   
-### Menu example
+### HTML Example
 
 ```html
   
@@ -133,13 +131,19 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
   
 ```  
       
-<section>
+
   
-  <h2>Options</h2>
+  ## (#Options)
+  
+  ### Reference
+  
+  - [name](#name)
+  - elements
+  -
   
   <ul>
     <li>
-      <strong>name</strong> - (String) <strong>[optional]</strong> a name that will be used for the menu.<br>
+      <strong>(#name)</strong> - (String) <strong>[optional]</strong> a name that will be used for the menu.<br>
       &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : randomly generated name.
     </li>
     <br>

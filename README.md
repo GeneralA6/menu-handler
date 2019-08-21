@@ -32,6 +32,7 @@ for more functionality and information see Options section
                <ul class="menu">
 
                   <li>
+
                     <button class="button" title="some title" data-mh-submenu-toggle="menu-a">
                       <span>submenu trigger button</span>
                       <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
@@ -40,6 +41,7 @@ for more functionality and information see Options section
                     <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-a">
 
                       <li>
+
                         <button class="button sub-link" title="some title" data-mh-submenu-toggle="menu-b">
                           submenu trigger button
                           <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
@@ -82,7 +84,7 @@ for more functionality and information see Options section
   
   submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value a unique identifier for the submenu.  
   
-**[example]** :
+#### example :
   
 ```html
   <button data-mh-submenu-toggle="catalog">
@@ -95,7 +97,7 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 **[note]** : submenu list element should have class **mh-hidden**.
  
   
-**[example]** : 
+#### example : 
 
 ```html
   <ul class="mh-hidden" data-mh-submenu-list="catalog">

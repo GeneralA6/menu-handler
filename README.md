@@ -402,7 +402,7 @@ arguments:
   
 ## API
 
-### menu important parameters
+*menu important parameters accessed via menu object*
 
 #### activeOpen
         

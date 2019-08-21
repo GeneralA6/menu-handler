@@ -133,7 +133,7 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
       
 
   
-  ## (#Options)
+  ## Options
   
   ### Reference
   
@@ -141,9 +141,10 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
   - elements
   -
   
-  <ul>
-    <li>
-      <strong>(#name)</strong> - (String) <strong>[optional]</strong> a name that will be used for the menu.<br>
+ ### name
+ 
+ 
+ - (String) <strong>[optional]</strong> a name that will be used for the menu.<br>
       &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : randomly generated name.
     </li>
     <br>

@@ -56,10 +56,12 @@ menuHandler.init(menus);
 
 ## CSS
   
-add the following css line to your css code:  
+add the following css:  
 
 ```css
-  .mh-hidden {display: none !important;}
+  .mh-hidden {
+    display: none !important;
+  }
 ``` 
 
 ## HTML Structure
@@ -98,47 +100,30 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 
 ```html
   
-<div class="menu-wrap" id="menu-wrap"> 
-   <div class="menu-inner-wrap mh-hidden" id="menu-inner-wrap">
-      <nav class="nav" id="menu-focus-enter">
-
+<div id="menu-wrap"> 
+   <div class="mh-hidden" id="menu-inner-wrap">
+      <nav id="menu-focus-enter">
          <ul class="menu">
-
             <li>
-
-              <button class="button" title="some title" data-mh-submenu-toggle="menu-a">
+              <button data-mh-submenu-toggle="menu-a">
                 submenu trigger button
-                <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
+                <svg><use xlink:href="#svg-plus"></use></svg>
               </button>
 
-              <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-a">
-
+              <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
                 <li>
+                  <button data-mh-submenu-toggle="menu-b">...</button>
 
-                  <button class="button sub-link" title="some title" data-mh-submenu-toggle="menu-b">
-                    submenu trigger button
-                    <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
-                  </button>
-
-                  <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-b"> 
-
-                    <li>
-                      <a class="sub-link" href="#" title="some title">link</a>
-                    </li>
-
+                  <ul class="mh-hidden" data-mh-submenu-list="submenu-b"> 
+                    ...
                   </ul>
                 </li>
-
               </ul>
             </li>
-
          </ul>
-
       </nav>
 
-      <button class="button menu-close" id="menu-close" title="some title">
-         <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-close"></use></svg>
-      </button>
+      <button id="menu-close">...</button>
    </div>
 </div>
   

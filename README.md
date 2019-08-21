@@ -15,96 +15,44 @@
  - prevent body swipe when a menu is open
  - accessiblity
     
-for more functionality and information see Options section
+*for more functionality and information see Options section*
+
+## Init
 
 
 
- ## HTML Structure
-  
- Example of a menu
+```javascript
 
- ```html
-  
-      <div class="menu-wrap" id="menu-wrap"> 
-         <div class="menu-inner-wrap mh-hidden" id="menu-inner-wrap">
-            <nav class="nav" id="menu-focus-enter">
+const menus = [
+  {
+     elements: {
+        open:           '#menu-open',
+        close:          '#menu-close',
+        enterFocus:     '#menu-focus-enter',
+        container:      '#menu-wrap',
+        innerContainer: '#menu-inner-wrap',
+     },
+     openOnHover: true,
+     loop: true,
+     submenu: {
+        isEnabled: true,
+        openOnHover: true,
+        on: {
+              afterOpen: function(menu) {
+                 console.log('after open', menu);
+              },
+        }
+     },
+     on: {
+        afterInit: function(menu) {
+              console.log('after init', menu);
+        },
+     },
+  },
+];
+menuHandler.init(menus);
 
-               <ul class="menu">
-
-                  <li>
-
-                    <button class="button" title="some title" data-mh-submenu-toggle="menu-a">
-                      <span>submenu trigger button</span>
-                      <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
-                    </button>
-
-                    <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-a">
-
-                      <li>
-
-                        <button class="button sub-link" title="some title" data-mh-submenu-toggle="menu-b">
-                          submenu trigger button
-                          <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
-                        </button>
-
-                        <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-b"> 
-
-                          <li>
-                            <a class="sub-link" href="#" title="some title">link</a>
-                          </li>
-
-                        </ul>
-                      </li>
-
-                    </ul>
-                  </li>
-
-               </ul>
-
-            </nav>
-
-            <button class="button menu-close" id="menu-close" title="some title">
-               <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-close"></use></svg>
-            </button>
-         </div>
-      </div>
-  
-  ```
-  
-  ### menu
-  
-  **the following menu structure is required:**  
-  **container** element that holds nothing, but the inner container.  
-  **inner container** element that holds all the elements.  
-  **[note]** : inner container should have class **mh-hidden**.  
-   
-
-  
-  ### submenu
-  
-  submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value a unique identifier for the submenu.  
-  
-#### example :
-  
-```html
-  <button data-mh-submenu-toggle="catalog">
-    ...
-  </button>
 ```
-      
-  
-submenu list element should have data attribue **data-mh-submenu-list** and it's value the same submenu identifier as the submenu toggle button.  
-**[note]** : submenu list element should have class **mh-hidden**.
- 
-  
-#### example : 
-
-```html
-  <ul class="mh-hidden" data-mh-submenu-list="catalog">
-    ...
-  </ul>
-```
-  
 
 ## CSS
   
@@ -112,44 +60,89 @@ add the following css line to your css code:
 
 ```css
   .mh-hidden {display: none !important;}
+``` 
+
+## HTML Structure
+  
+### Menu
+  
+The following menu structure is required:
+
+1. **container** element that holds nothing, but the inner container.  
+2. **inner container** element that holds all the elements.  
+   **[note]** : inner container should have class **mh-hidden**.  
+
+
+
+### Submenu
+
+submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value a unique identifier for the submenu.  
+
+```html
+<button data-mh-submenu-toggle="catalog">
+  ...
+</button>
 ```
       
-#### it's quite redandent to add a css file to the project, just for one line of code.
+  
+submenu list element should have data attribue **data-mh-submenu-list** and it's value the same submenu identifier as the submenu toggle button.  
+**note** : submenu list element should have class **mh-hidden**.
 
-## Init Example
-
-```javascript
-
-  const menus = [
-    {
-       elements: {
-          open:           '#menu-open',
-          close:          '#menu-close',
-          enterFocus:     '#menu-focus-enter',
-          container:      '#menu-wrap',
-          innerContainer: '#menu-inner-wrap',
-       },
-       openOnHover: true,
-       loop: true,
-       submenu: {
-          isEnabled: true,
-          openOnHover: true,
-          on: {
-                afterOpen: function(menu) {
-                   console.log('after open', menu);
-                },
-          }
-       },
-       on: {
-          afterInit: function(menu) {
-                console.log('after init', menu);
-          },
-       },
-    },
-  ];
-  menuHandler.init(menus);
-
+```html
+<ul class="mh-hidden" data-mh-submenu-list="catalog">
+  ...
+</ul>
 ```
+  
+### Menu example
+
+```html
+  
+<div class="menu-wrap" id="menu-wrap"> 
+   <div class="menu-inner-wrap mh-hidden" id="menu-inner-wrap">
+      <nav class="nav" id="menu-focus-enter">
+
+         <ul class="menu">
+
+            <li>
+
+              <button class="button" title="some title" data-mh-submenu-toggle="menu-a">
+                submenu trigger button
+                <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
+              </button>
+
+              <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-a">
+
+                <li>
+
+                  <button class="button sub-link" title="some title" data-mh-submenu-toggle="menu-b">
+                    submenu trigger button
+                    <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
+                  </button>
+
+                  <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-b"> 
+
+                    <li>
+                      <a class="sub-link" href="#" title="some title">link</a>
+                    </li>
+
+                  </ul>
+                </li>
+
+              </ul>
+            </li>
+
+         </ul>
+
+      </nav>
+
+      <button class="button menu-close" id="menu-close" title="some title">
+         <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-close"></use></svg>
+      </button>
+   </div>
+</div>
+  
+```  
       
 <section>
   

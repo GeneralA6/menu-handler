@@ -103,24 +103,28 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 <div id="menu-wrap"> 
    <div class="mh-hidden" id="menu-inner-wrap">
       <nav id="menu-focus-enter">
+        
          <ul class="menu">
             <li>
-              <button data-mh-submenu-toggle="menu-a">
-                submenu trigger button
-                <svg><use xlink:href="#svg-plus"></use></svg>
+              <button data-mh-submenu-toggle="submenu-a">
+                submenu-a trigger button
               </button>
 
               <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
                 <li>
-                  <button data-mh-submenu-toggle="menu-b">...</button>
+                  <button data-mh-submenu-toggle="submenu-b">
+                    submenu-b trigger button
+                  </button>
 
                   <ul class="mh-hidden" data-mh-submenu-list="submenu-b"> 
                     ...
                   </ul>
                 </li>
               </ul>
+              
             </li>
          </ul>
+        
       </nav>
 
       <button id="menu-close">...</button>

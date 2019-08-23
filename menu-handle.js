@@ -224,57 +224,40 @@ const menuHandler = {
       return isRunning;
    },
 
-   menuFunc(menu, e) {
-      if (e) e.preventDefault();
+   menuFunc(menu) {
 
       if ( menu.isOpen ) {
-         setTimeout(() => {
-            if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu);
 
-            menu.container.setAttribute('aria-expanded', true);
-            menu.container.setAttribute('aria-hidden', false);
-            menu.innerContainer.classList.remove('mh-hidden');
-            menu.enterFocus.focus();
+         menu.container.setAttribute('aria-expanded', true);
+         menu.container.setAttribute('aria-hidden', false);
+         menu.innerContainer.classList.remove('mh-hidden');
+         menu.enterFocus.focus();
 
-            if ( menu.on.afterOpen ) menu.on.afterOpen(menu);
-         }, menu.openDelay);
       } else {
 
-         setTimeout(() => {
-            if ( menu.on.beforeClose ) menu.on.beforeClose(menu);
+         menu.container.setAttribute('aria-expanded', false);
+         menu.container.setAttribute('aria-hidden', true);
+         menu.innerContainer.classList.add('mh-hidden');
 
-            menu.container.setAttribute('aria-expanded', false);
-            menu.container.setAttribute('aria-hidden', true);
-            menu.innerContainer.classList.add('mh-hidden');
-
-            if ( menu.on.afterClose ) menu.on.afterClose(menu);
-         }, menu.closeDelay);
       }
    },
 
-   submenuFunc(menu, submenu, toggle, e) {
-
-      if (e) e.preventDefault;
+   submenuFunc(menu, submenu, toggle) {
 
       if ( toggle.classList.contains('mh-open') ) {
-         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle);
 
          submenu.classList.add('mh-open');
          submenu.classList.remove('mh-hidden');
          submenu.setAttribute('aria-expanded', true);
          submenu.setAttribute('aria-hidden', false);
-
-         if ( menu.submenu.on.afterOpen ) menu.submenu.on.afterOpen(menu, submenu, toggle);
          
       } else {
-         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle);
 
          submenu.classList.add('mh-hidden');
          submenu.classList.remove('mh-open');
          submenu.setAttribute('aria-expanded', false);
          submenu.setAttribute('aria-hidden', true);
 
-         if ( menu.submenu.on.afterClose ) menu.submenu.on.afterClose(menu, submenu, toggle);
       }
    },
 
@@ -334,6 +317,8 @@ const menuHandler = {
    toggleMenu(menu, e) {
       const self = this;
 
+      if (e) e.preventDefault(e);
+
       if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button
 
       if ( self.actions.indexOf(menu.name) !== -1 ) return;
@@ -341,7 +326,6 @@ const menuHandler = {
       self.actions.push(menu.name);
 
       setTimeout(() => {
-         e.preventDefault(e);
          
          if ( !menu.container.classList.contains('mh-open') ) {
             self.loopMenus(self.closeMenusOnBlur, e);
@@ -351,7 +335,24 @@ const menuHandler = {
          menu.container.classList.toggle('mh-open');
          menu.isOpen = menu.container.classList.contains('mh-open');
 
-         menu.menuFunc(menu, e);
+         if ( menu.isOpen ) {
+            setTimeout(() => {
+               if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu);
+               
+               menu.menuFunc(menu);
+
+               if ( menu.on.afterOpen ) menu.on.afterOpen(menu);
+            }, menu.openDelay);
+
+         } else {
+            setTimeout(() => {
+               if ( menu.on.beforeClose ) menu.on.beforeClose(menu);
+               
+               menu.menuFunc(menu, e);
+
+               if ( menu.on.afterClose ) menu.on.afterClose(menu);
+            }, menu.closeDelay);
+         }
 
          self.actions.splice(self.actions.indexOf(menu.name), 1);
          self.preventBodyScroll();
@@ -376,8 +377,21 @@ const menuHandler = {
       if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button
 
       toggle.classList.toggle('mh-open');
+      
+      if ( toggle.classList.contains('mh-open') ) {
+         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e);
 
-      menu.submenu.menuFunc(menu, submenu, toggle, e);
+         menu.submenu.menuFunc(menu, submenu, toggle, e);
+
+         if ( menu.submenu.on.afterOpen ) menu.submenu.on.afterOpen(menu, submenu, toggle, e);
+
+      } else {
+         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e);
+
+         menu.submenu.menuFunc(menu, submenu, toggle, e);
+
+         if ( menu.submenu.on.afterClose ) menu.submenu.on.afterClose(menu, submenu, toggle,);
+      }
    },
 
    initMenus() {

@@ -1,8 +1,8 @@
 const menuHandler = {
    menus: [],
    actions: [], // a temporary storage for keys of occuring actions. 
-             // it is to make sure only one action is occuring at a time and only for one menu.
-             // several menus can't be active at a time.
+                // it is to make sure only one action is occuring at a time and only for one menu.
+                // several menus can't be active at a time.
    init(passedMenus) {
       const self = this;
       
@@ -10,7 +10,7 @@ const menuHandler = {
          console.error('[menuHandler] [general] Initialization requires an array of menus to be passed as an argument. see documentation');
          console.trace();
          return;
-      }
+      } 
 
       passedMenus.forEach(function(menu) {
          const createMenu = {
@@ -24,9 +24,10 @@ const menuHandler = {
             exitFocus: null,
             container: null,
             innerContainer: null,
-            loop: false, // TODO: only ,if close is not empty
+            loop: false,
             isOpen: false,
             isMobile: false,
+            openDelay: 0,
             closeDelay: 0,
             openOnHover: false,
             submenu: {
@@ -35,9 +36,9 @@ const menuHandler = {
                openOnHover: false,
                on: {
                   beforeOpen: null,
-                  afterOpen: null,
+                  afterOpen: null, // TODO: check for transition and apply delay as setTimeout
                   beforeClose: null,
-                  afterClose: null,
+                  afterClose: null, // TODO: check for transition and apply delay as setTimeout
                }
             },
             menuFunc: self.menuFunc,
@@ -46,9 +47,9 @@ const menuHandler = {
                beforeInit: null,
                afterInit: null,
                beforeOpen: null,
-               afterOpen: null,
+               afterOpen: null, // TODO: check for transition and apply delay as setTimeout
                beforeClose: null,
-               afterClose: null,
+               afterClose: null, // TODO: check for transition and apply delay as setTimeout
             },
          };
 
@@ -161,8 +162,8 @@ const menuHandler = {
          }
       });
 
-       // other edge cases
-       if ( menu.loop === true && !menu.elements.close ) {
+      // other edge cases
+      if ( menu.loop === true && !menu.close ) {
          console.error(`[menuHandler] [menu:${menu.name}] Error: in order to use loop option elements.close is required`);
          console.trace();
          status = false; 
@@ -187,7 +188,7 @@ const menuHandler = {
 
    closeMenusOnBlur(menu, e) { // On Blur close menus.
       if ( e.target && menu.isOpen && e.target != menu.activeOpen && !menu.activeOpen.contains(e.target) && !menu.container.contains(e.target) ){
-         if ( menu.loop && e.type !== 'click' && e.type !== 'mouseenter' && menu.enterFocus ) { // loop inside menu
+         if ( menu.loop === true && e.type !== 'click' && e.type !== 'mouseenter' && menu.enterFocus ) { // loop inside menu
             menu.enterFocus.focus();
             
          } else {
@@ -226,19 +227,17 @@ const menuHandler = {
    menuFunc(menu, e) {
       if (e) e.preventDefault();
 
-      document.body.classList.toggle(`mh-${menu.name}-open`);
-      menu.container.classList.toggle('mh-open');
-      menu.isOpen = menu.container.classList.contains('mh-open');
-
       if ( menu.isOpen ) {
-         if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu);
+         setTimeout(() => {
+            if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu);
 
-         menu.container.setAttribute('aria-expanded', true);
-         menu.container.setAttribute('aria-hidden', false);
-         menu.innerContainer.classList.remove('mh-hidden');
-         menu.enterFocus.focus();
+            menu.container.setAttribute('aria-expanded', true);
+            menu.container.setAttribute('aria-hidden', false);
+            menu.innerContainer.classList.remove('mh-hidden');
+            menu.enterFocus.focus();
 
-         if ( menu.on.afterOpen ) menu.on.afterOpen(menu);
+            if ( menu.on.afterOpen ) menu.on.afterOpen(menu);
+         }, menu.openDelay);
       } else {
 
          setTimeout(() => {
@@ -347,6 +346,10 @@ const menuHandler = {
          if ( !menu.container.classList.contains('mh-open') ) {
             self.loopMenus(self.closeMenusOnBlur, e);
          }
+
+         document.body.classList.toggle(`mh-${menu.name}-open`);
+         menu.container.classList.toggle('mh-open');
+         menu.isOpen = menu.container.classList.contains('mh-open');
 
          menu.menuFunc(menu, e);
 

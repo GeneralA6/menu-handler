@@ -5,6 +5,8 @@
   Menu Handler is a library to handle the dirty javascript work of developing menus, dropdowns, popups. <br>
   All you have to care about is HTML and CSS.
   
+  // TODO: not dependencies, vanilla javascript, explorer not supported.
+
   library functionality:
   
  - open
@@ -97,38 +99,37 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 ### HTML Example
 
 ```html
-  
 <div id="menu-wrap"> 
-   <div class="mh-hidden" id="menu-inner-wrap">
-      <nav id="menu-focus-enter">
+  <div class="mh-hidden" id="menu-inner-wrap">
+    <nav id="menu-focus-enter">
         
-         <ul class="menu">
-            <li>
-              <button data-mh-submenu-toggle="submenu-a">
-                submenu-a trigger button
-              </button>
+        <ul class="menu">
+          <li>
+            <button data-mh-submenu-toggle="submenu-a">
+              submenu-a trigger button
+            </button>
 
               <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
                 <li>
-                  <button data-mh-submenu-toggle="submenu-b">
-                    submenu-b trigger button
+                  <button data-mh-submenu-toggle="submenu-a-1">
+                    submenu-a-1 trigger button
                   </button>
 
-                  <ul class="mh-hidden" data-mh-submenu-list="submenu-b"> 
+                  <ul class="mh-hidden" data-mh-submenu-list="submenu-a-1"> 
                     ...
                   </ul>
                 </li>
               </ul>
-              
             </li>
-         </ul>
+        </ul>
         
       </nav>
 
-      <button id="menu-close">...</button>
+      <button id="menu-close">
+        menu toggle button
+      </button>
    </div>
 </div>
-  
 ```  
       
 
@@ -144,10 +145,11 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 - [innerContainer](#innerContainer) - element that holds all menu elements
 - [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable
 - [exitFocus](#exitFocus) - element to focus after menu closes  
-- [mobileOpen](#mobileOpen) - **TODO**
-- [mobileClose](#mobileClose) - **TODO**
+- [mobileOpen](#mobileOpen) - **TODO: description**
+- [mobileClose](#mobileClose) - **TODO: description**
 - [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to to switch open/close toggles
 - [loop](#loop) - loop all elements inside the innerContainer using Tab key
+- [openDelay](#openDelay) - **TODO: description**
 - [closeDelay](#closeDelay) - sets delay in miliseconds before innerContainer is hidden
 - [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu
@@ -255,9 +257,16 @@ type: `boolean`
 default: `false`  
 note: if [loop](#loop) is `true`, elements.close has is required, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer
 
+#### openDelay
+        
+sets delay in miliseconds before menu starts opening
+  
+type: `integer`  
+default: `0` 
+
 #### closeDelay
         
-sets delay in miliseconds before innerContainer is hidden
+sets delay in miliseconds before menu starts closing
   
 type: `integer`  
 default: `0` 

@@ -161,6 +161,13 @@ const menuHandler = {
          }
       });
 
+       // other edge cases
+       if ( menu.loop === true && !menu.elements.close ) {
+         console.error(`[menuHandler] [menu:${menu.name}] Error: in order to use loop option elements.close is required`);
+         console.trace();
+         status = false; 
+      }
+
       return status;
    },
 

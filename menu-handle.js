@@ -199,7 +199,7 @@ const menuHandler = {
       if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu);
 
       const submenuToggles = menu.innerContainer.querySelectorAll('[data-mh-submenu-toggle]'); 
-      const submenuLists = menu.innerContainer.querySelectorAll(`[data-mh-submenu-list]`);
+      const submenuLists = menu.innerContainer.querySelectorAll('[data-mh-submenu-list]');
 
       if ( !submenuToggles.length ) {
          self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`, 1);
@@ -231,13 +231,13 @@ const menuHandler = {
    toggleMenu(menu, e) {
       const self = this;
 
-      if (e) e.preventDefault(e);
-
+      if ( e ) e.preventDefault(e);
       if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button
-
-      if ( self.actions.indexOf(menu.name) !== -1 ) return;
+      if ( self.actions.indexOf(menu.name) !== -1 ) return; // don't allow, another action of this menu is running
 
       self.actions.push(menu.name);
+
+      const menuTransition = self.calcTransition(menu.container);
 
       setTimeout(() => {
          
@@ -251,20 +251,24 @@ const menuHandler = {
 
          if ( menu.isOpen ) {
             setTimeout(() => {
-               if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu, e);
+               if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu, e); // before open
                
                menu.menuFunc(menu, e);
 
-               if ( menu.on.afterOpen ) menu.on.afterOpen(menu, e);
+               if ( menu.on.afterOpen ) {  // after open
+                  setTimeout(() => menu.on.afterOpen(menu, e), menuTransition); // fire after menu's container transition ends
+               }
             }, menu.openDelay);
 
          } else {
             setTimeout(() => {
-               if ( menu.on.beforeClose ) menu.on.beforeClose(menu, e);
+               if ( menu.on.beforeClose ) menu.on.beforeClose(menu, e); // before close
                
                menu.menuFunc(menu, e);
 
-               if ( menu.on.afterClose ) menu.on.afterClose(menu, e);
+               if ( menu.on.afterClose ) {  // after close
+                  setTimeout(() => menu.on.afterClose(menu, e), menuTransition); // fire after menu's container transition ends
+               }
             }, menu.closeDelay);
          }
 
@@ -289,25 +293,26 @@ const menuHandler = {
 
       if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button
 
+      const submenuTransition = self.calcTransition(submenu);
+
       toggle.classList.toggle('mh-open');
 
       if ( toggle.classList.contains('mh-open') ) {
-         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e);
+         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e); // before open
 
          menu.submenu.menuFunc(menu, submenu, toggle, e);
 
-         if ( menu.submenu.on.afterOpen ) {
-
-            menu.submenu.on.afterOpen(menu, submenu, toggle, e);
+         if ( menu.submenu.on.afterOpen ) { // after open
+            setTimeout(() => menu.submenu.on.afterOpen(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends
          }
 
       } else {
-         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e);
+         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e); // before close
 
          menu.submenu.menuFunc(menu, submenu, toggle, e);
 
-         if ( menu.submenu.on.afterClose ) {
-            menu.submenu.on.afterClose(menu, submenu, toggle, e);
+         if ( menu.submenu.on.afterClose ) { // after close
+            setTimeout(() => menu.submenu.on.afterClose(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends
          }
       }
    },
@@ -487,6 +492,17 @@ const menuHandler = {
             menu.activeClose = menu.mobileClose;
          }
       }
+   },
+
+   calcTransition(el) { // calc el transition duration
+      if (!el) return;
+
+      const transitionDelay = getComputedStyle(el).transitionDelay;
+      const transitionDuration = getComputedStyle(el).transitionDuration;
+      const combined = parseFloat(transitionDelay) + parseFloat(transitionDuration); // combined time in seconds
+      const menuTransition = combined * 1000; // convert to miliseconds
+
+      return menuTransition;
    },
 
    menuError(message, die) {

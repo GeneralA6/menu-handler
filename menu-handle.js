@@ -34,9 +34,9 @@ const menuHandler = {
                openOnHover: false,
                on: {
                   beforeOpen: null,
-                  afterOpen: null, // TODO: check for transition and apply delay as setTimeout
+                  afterOpen: null,
                   beforeClose: null,
-                  afterClose: null, // TODO: check for transition and apply delay as setTimeout
+                  afterClose: null,
                }
             },
             menuFunc: self.menuFunc,
@@ -45,9 +45,9 @@ const menuHandler = {
                beforeInit: null,
                afterInit: null,
                beforeOpen: null,
-               afterOpen: null, // TODO: check for transition and apply delay as setTimeout
+               afterOpen: null,
                beforeClose: null,
-               afterClose: null, // TODO: check for transition and apply delay as setTimeout
+               afterClose: null,
             },
          };
 
@@ -188,7 +188,7 @@ const menuHandler = {
       document.addEventListener('keydown', e => self.onInteraction(e));
       document.addEventListener('click', e => self.onInteraction(e));
 
-      window.addEventListener('scroll', self.debounce(() => { // preventBodyScroll listener
+      window.addEventListener('scroll', self.debounce(() => { // preventBodyScroll listener.
          document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
       }), 20);
    },
@@ -232,8 +232,8 @@ const menuHandler = {
       const self = this;
 
       if ( e ) e.preventDefault(e);
-      if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button
-      if ( self.actions.indexOf(menu.name) !== -1 ) return; // don't allow, another action of this menu is running
+      if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button.
+      if ( self.actions.indexOf(menu.name) !== -1 ) return; // don't allow, another action of this menu is running.
 
       self.actions.push(menu.name);
 
@@ -279,9 +279,12 @@ const menuHandler = {
 
    toggleSubmenu(menu, submenuLists, e) {
       const self = this;
-      let toggle = e.target;
 
-      if ( !toggle.dataset.mhSubmenuToggle ) {
+      let toggle = e.target;
+      let submenuWrap = null;
+      let submenuTransition = 0;
+
+      if ( !toggle.dataset.mhSubmenuToggle ) { // if event was bubbled up from inside the toggle.
          toggle = toggle.closest('[data-mh-submenu-toggle]');
       }
 
@@ -291,28 +294,38 @@ const menuHandler = {
          self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu, ${toggle.dataset.mhSubmenuToggle} not found`, 1);
       };
 
-      if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button
+      if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button.
 
-      const submenuTransition = self.calcTransition(submenu);
+      submenuWrap = submenu.parentElement;
+      if ( !submenuWrap.dataset.mhSubmenuWrap || submenuWrap.dataset.mhSubmenuWrap !== submenu.dataset.mhSubmenuList ) {  // make sure it's a submenu wrap.
+         submenuWrap = null;
+      }
 
+      if ( submenuWrap ) { // if submenu has a wrap ,then take it's transition duration.
+         submenuTransition = self.calcTransition(submenuWrap);
+      } else {
+         submenuTransition = self.calcTransition(submenu);
+      }
+
+      if ( submenuWrap ) submenuWrap.classList.toggle('mh-open');
       toggle.classList.toggle('mh-open');
 
       if ( toggle.classList.contains('mh-open') ) {
-         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e); // before open
+         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e); // before open.
 
          menu.submenu.menuFunc(menu, submenu, toggle, e);
 
-         if ( menu.submenu.on.afterOpen ) { // after open
-            setTimeout(() => menu.submenu.on.afterOpen(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends
+         if ( menu.submenu.on.afterOpen ) { // after open.
+            setTimeout(() => menu.submenu.on.afterOpen(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends.
          }
 
       } else {
-         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e); // before close
+         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e); // before close.
 
          menu.submenu.menuFunc(menu, submenu, toggle, e);
 
-         if ( menu.submenu.on.afterClose ) { // after close
-            setTimeout(() => menu.submenu.on.afterClose(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends
+         if ( menu.submenu.on.afterClose ) { // after close.
+            setTimeout(() => menu.submenu.on.afterClose(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends.
          }
       }
    },
@@ -456,8 +469,7 @@ const menuHandler = {
       }
    },
 
-   // closes menu on click / tab / escape
-   onInteraction(e) {
+   onInteraction(e) { // closes menu on click / tab / escape.
       const self = this;
       const isBusy = self.checkIsBusy();
      
@@ -494,13 +506,13 @@ const menuHandler = {
       }
    },
 
-   calcTransition(el) { // calc el transition duration
+   calcTransition(el) { // calc el transition duration.
       if (!el) return;
 
       const transitionDelay = getComputedStyle(el).transitionDelay;
       const transitionDuration = getComputedStyle(el).transitionDuration;
-      const combined = parseFloat(transitionDelay) + parseFloat(transitionDuration); // combined time in seconds
-      const menuTransition = combined * 1000; // convert to miliseconds
+      const combined = parseFloat(transitionDelay) + parseFloat(transitionDuration); // combined time in seconds.
+      const menuTransition = combined * 1000; // convert to miliseconds.
 
       return menuTransition;
    },

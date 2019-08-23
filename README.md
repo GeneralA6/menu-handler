@@ -339,7 +339,8 @@ triggered before the specific menu is opened
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
+  `menu` type: `object`  
+  `e` type: `event`
   
 #### afterOpen
         
@@ -348,6 +349,7 @@ triggered after the specific menu opened
 type: `function`  
 arguments:   
   `menu` type: `object` 
+  `e` type: `event`
   
 #### beforeClose
         
@@ -356,6 +358,7 @@ triggered before the specific menu is closed
 type: `function`  
 arguments:   
   `menu` type: `object` 
+  `e` type: `event`
   
 #### afterClose
         
@@ -364,6 +367,7 @@ triggered after the specific menu closed
 type: `function`  
 arguments:   
   `menu` type: `object` 
+  `e` type: `event`
 
 
 ### Submenu Events
@@ -377,6 +381,7 @@ arguments:
   `menu` type: `object` 
   `submenu` type: `HTML Element` 
   `toggle` type: `HTML Element` 
+  `e` type: `event`
   
 #### afterOpen
         
@@ -387,6 +392,7 @@ arguments:
   `menu` type: `object` 
   `submenu` type: `HTML Element` 
   `toggle` type: `HTML Element` 
+  `e` type: `event`
 
 #### beforeClose
         
@@ -397,6 +403,7 @@ arguments:
   `menu` type: `object` 
   `submenu` type: `HTML Element` 
   `toggle` type: `HTML Element` 
+  `e` type: `event`
    
 #### afterClose
         
@@ -406,7 +413,8 @@ type: `function`
 arguments:   
   `menu` type: `object` 
   `submenu` type: `HTML Element` 
-  `toggle` type: `HTML Element`       
+  `toggle` type: `HTML Element`  
+  `e` type: `event`   
         
   
 ## API

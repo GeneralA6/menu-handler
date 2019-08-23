@@ -7,9 +7,7 @@ const menuHandler = {
       const self = this;
       
       if ( !Array.isArray(passedMenus) || !passedMenus.length ) {
-         console.error('[menuHandler] [general] Initialization requires an array of menus to be passed as an argument. see documentation');
-         console.trace();
-         return;
+         self.menuError('[menuHandler] [general] Initialization requires an array of menus to be passed as an argument. see documentation', 1);
       } 
 
       passedMenus.forEach(function(menu) {
@@ -54,9 +52,7 @@ const menuHandler = {
          };
 
          if ( !menu.elements ) {
-            console.error(`[menuHandler] [menu:${menu.name}] Error: menu elements object is missing`);
-            console.trace();
-            return;
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: menu elements object is missing`, 1);
          }
          
          self.initMenuElements(createMenu, menu.elements);
@@ -68,9 +64,7 @@ const menuHandler = {
       });
 
       if ( !self.menus.length ) {
-         console.error(`[menuHandler] [general] Error: no menus initialized`);
-         console.trace();
-         return;
+         self.menuError(`[menuHandler] [general] Error: no menus initialized`, 1);
       }
 
       self.initMenus();
@@ -149,251 +143,6 @@ const menuHandler = {
       }, 20));
    },
 
-   checkRequiredElement(menu) {
-      const self = this;
-      const requiredElements = ['open', 'container', 'innerContainer'];
-      let status = true;
-
-      requiredElements.forEach(el => {
-         if ( !menu[el] ) {
-            console.error(`[menuHandler] [menu:${menu.name}] Error: required ${el} element is missing`);
-            console.trace();
-            status = false;
-         }
-      });
-
-      // other edge cases
-      if ( menu.loop === true && !menu.close ) {
-         console.error(`[menuHandler] [menu:${menu.name}] Error: in order to use loop option elements.close is required`);
-         console.trace();
-         status = false; 
-      }
-
-      return status;
-   },
-
-   loopMenus(func, e) {
-      const self = this;
-
-      self.menus.forEach(function(menu) {
-         func(menu, e);
-      });
-   },
-
-   closeMenusOnEscPress(menu, e) { // On ESC press close menus.
-      if ( menu.isOpen ) {
-         menuHandler.closeMenuContainer(menu); // note: there are situations where we get to this function from other functions, so the "this" changes to window. that's why we specify explicitly the direction to the function.
-      }
-   },
-
-   closeMenusOnBlur(menu, e) { // On Blur close menus.
-      if ( e.target && menu.isOpen && e.target != menu.activeOpen && !menu.activeOpen.contains(e.target) && !menu.container.contains(e.target) ){
-         if ( menu.loop === true && e.type !== 'click' && e.type !== 'mouseenter' && menu.enterFocus ) { // loop inside menu
-            menu.enterFocus.focus();
-            
-         } else {
-            menuHandler.closeMenuContainer(menu); // there are situations where we get to this function from other functions, so the "this" changes to window. that's why we specify explicitly the direction to the function.
-         }
-      }
-   },
-
-   closeMenuContainer(menu) { // Close Menu.
-      const self = this;
-
-      if ( !menu.activeClose ) {
-         menu.menuFunc(menu);
-
-      } else {
-         menu.activeClose.click();
-         menu.exitFocus.focus();
-      }
-   },
-
-   checkIsBusy() { // checks for menu name, if any present, than a menu is open and has action related to it running. prevents conflicts of several actions running at the same time.
-      const self = this;
-      let isRunning = false;
-
-      self.actions.forEach(action => {
-         self.menus.forEach(menu => {
-            if ( menu.name === action ) {
-               isRunning = true;
-            }
-         });
-      });
-
-      return isRunning;
-   },
-
-   menuFunc(menu) {
-
-      if ( menu.isOpen ) {
-
-         menu.container.setAttribute('aria-expanded', true);
-         menu.container.setAttribute('aria-hidden', false);
-         menu.innerContainer.classList.remove('mh-hidden');
-         menu.enterFocus.focus();
-
-      } else {
-
-         menu.container.setAttribute('aria-expanded', false);
-         menu.container.setAttribute('aria-hidden', true);
-         menu.innerContainer.classList.add('mh-hidden');
-
-      }
-   },
-
-   submenuFunc(menu, submenu, toggle) {
-
-      if ( toggle.classList.contains('mh-open') ) {
-
-         submenu.classList.add('mh-open');
-         submenu.classList.remove('mh-hidden');
-         submenu.setAttribute('aria-expanded', true);
-         submenu.setAttribute('aria-hidden', false);
-         
-      } else {
-
-         submenu.classList.add('mh-hidden');
-         submenu.classList.remove('mh-open');
-         submenu.setAttribute('aria-expanded', false);
-         submenu.setAttribute('aria-hidden', true);
-
-      }
-   },
-
-   preventBodyScroll() {
-      const body = document.body;
-      const self = this;
-      let isOpen = false;
-
-      self.menus.forEach(menu => {
-         if ( menu.isOpen ) isOpen = true;
-      });
-
-      if ( isOpen && !body.classList.contains('prevent-body-scroll') ) {
-
-         const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
-         body.style.left = '0';
-         body.style.right = '0';
-         body.style.width = '100%';
-         body.style.position = 'fixed'; 
-         body.style.top = `-${scrollY}`;
-         body.classList.add('prevent-body-scroll');
-
-      } else if ( body.classList.contains('prevent-body-scroll') ) {
-
-         const scrollY = body.style.top;
-         body.style.top = '';
-         body.style.position = '';
-         window.scrollTo(0, parseInt(scrollY || '0') * -1);
-         body.classList.remove('prevent-body-scroll');
-      }
-   },
-
-   // closes menu on click / tab / escape
-   onInteraction(e) {
-      const self = this;
-      const isBusy = self.checkIsBusy();
-     
-      if ( (e.type === 'click' || e.type === 'keydown' && e.keyCode == 9) && self.actions.indexOf('clicktab') === -1 && !isBusy ) {
-         
-         self.actions.push('clicktab');
-         setTimeout(() => {
-            self.loopMenus(self.closeMenusOnBlur, e);
-            self.actions.splice(self.actions.indexOf('clicktab'), 1);
-         });
-
-      } else if ( e.type === 'keydown' && e.keyCode == 27 && self.actions.indexOf('escape') === -1 && !isBusy ) {
-         
-         self.actions.push('escape');
-
-         setTimeout(() => {
-            self.loopMenus(self.closeMenusOnEscPress, e);
-            self.actions.splice(self.actions.indexOf('escape'), 1);
-         });
-      }
-   },
-
-   toggleMenu(menu, e) {
-      const self = this;
-
-      if (e) e.preventDefault(e);
-
-      if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button
-
-      if ( self.actions.indexOf(menu.name) !== -1 ) return;
-
-      self.actions.push(menu.name);
-
-      setTimeout(() => {
-         
-         if ( !menu.container.classList.contains('mh-open') ) {
-            self.loopMenus(self.closeMenusOnBlur, e);
-         }
-
-         document.body.classList.toggle(`mh-${menu.name}-open`);
-         menu.container.classList.toggle('mh-open');
-         menu.isOpen = menu.container.classList.contains('mh-open');
-
-         if ( menu.isOpen ) {
-            setTimeout(() => {
-               if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu);
-               
-               menu.menuFunc(menu);
-
-               if ( menu.on.afterOpen ) menu.on.afterOpen(menu);
-            }, menu.openDelay);
-
-         } else {
-            setTimeout(() => {
-               if ( menu.on.beforeClose ) menu.on.beforeClose(menu);
-               
-               menu.menuFunc(menu, e);
-
-               if ( menu.on.afterClose ) menu.on.afterClose(menu);
-            }, menu.closeDelay);
-         }
-
-         self.actions.splice(self.actions.indexOf(menu.name), 1);
-         self.preventBodyScroll();
-      });
-   },
-
-   toggleSubmenu(menu, submenuLists, e) {
-      let toggle = e.target;
-
-      if ( !toggle.dataset.mhSubmenuToggle ) {
-         toggle = toggle.closest('[data-mh-submenu-toggle]');
-      }
-
-      const submenu = [...submenuLists].filter(list => list.dataset.mhSubmenuList === toggle.dataset.mhSubmenuToggle)[0];
-
-      if ( !submenu ) {
-         console.error(`[menuHandler] [menu:${menu.name}] Error: submenu, ${toggle.dataset.mhSubmenuToggle} not found`);
-         console.trace();
-         return;
-      };
-
-      if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button
-
-      toggle.classList.toggle('mh-open');
-      
-      if ( toggle.classList.contains('mh-open') ) {
-         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e);
-
-         menu.submenu.menuFunc(menu, submenu, toggle, e);
-
-         if ( menu.submenu.on.afterOpen ) menu.submenu.on.afterOpen(menu, submenu, toggle, e);
-
-      } else {
-         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e);
-
-         menu.submenu.menuFunc(menu, submenu, toggle, e);
-
-         if ( menu.submenu.on.afterClose ) menu.submenu.on.afterClose(menu, submenu, toggle,);
-      }
-   },
-
    initMenus() {
       const self = this;
 
@@ -453,15 +202,11 @@ const menuHandler = {
       const submenuLists = menu.innerContainer.querySelectorAll(`[data-mh-submenu-list]`);
 
       if ( !submenuToggles.length ) {
-         console.error(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`);
-         console.trace();
-         return;
+         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`, 1);
       }
 
       if ( !submenuLists.length ) {
-         console.error(`[menuHandler] [menu:${menu.name}] Error: submenu lists not found, consider disabling submenu, if submenu functionality is not being used`);
-         console.trace();
-         return;
+         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu lists not found, consider disabling submenu, if submenu functionality is not being used`, 1);
       }
 
       submenuToggles.forEach(btn => {
@@ -483,6 +228,253 @@ const menuHandler = {
       });
    },
 
+   toggleMenu(menu, e) {
+      const self = this;
+
+      if (e) e.preventDefault(e);
+
+      if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button
+
+      if ( self.actions.indexOf(menu.name) !== -1 ) return;
+
+      self.actions.push(menu.name);
+
+      setTimeout(() => {
+         
+         if ( !menu.container.classList.contains('mh-open') ) {
+            self.loopMenus(self.closeMenusOnBlur, e);
+         }
+
+         document.body.classList.toggle(`mh-${menu.name}-open`);
+         menu.container.classList.toggle('mh-open');
+         menu.isOpen = menu.container.classList.contains('mh-open');
+
+         if ( menu.isOpen ) {
+            setTimeout(() => {
+               if ( menu.on.beforeOpen ) menu.on.beforeOpen(menu, e);
+               
+               menu.menuFunc(menu, e);
+
+               if ( menu.on.afterOpen ) menu.on.afterOpen(menu, e);
+            }, menu.openDelay);
+
+         } else {
+            setTimeout(() => {
+               if ( menu.on.beforeClose ) menu.on.beforeClose(menu, e);
+               
+               menu.menuFunc(menu, e);
+
+               if ( menu.on.afterClose ) menu.on.afterClose(menu, e);
+            }, menu.closeDelay);
+         }
+
+         self.actions.splice(self.actions.indexOf(menu.name), 1);
+         self.preventBodyScroll();
+      });
+   },
+
+   toggleSubmenu(menu, submenuLists, e) {
+      const self = this;
+      let toggle = e.target;
+
+      if ( !toggle.dataset.mhSubmenuToggle ) {
+         toggle = toggle.closest('[data-mh-submenu-toggle]');
+      }
+
+      const submenu = [...submenuLists].filter(list => list.dataset.mhSubmenuList === toggle.dataset.mhSubmenuToggle)[0];
+
+      if ( !submenu ) {
+         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu, ${toggle.dataset.mhSubmenuToggle} not found`, 1);
+      };
+
+      if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button
+
+      toggle.classList.toggle('mh-open');
+
+      if ( toggle.classList.contains('mh-open') ) {
+         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e);
+
+         menu.submenu.menuFunc(menu, submenu, toggle, e);
+
+         if ( menu.submenu.on.afterOpen ) {
+
+            menu.submenu.on.afterOpen(menu, submenu, toggle, e);
+         }
+
+      } else {
+         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e);
+
+         menu.submenu.menuFunc(menu, submenu, toggle, e);
+
+         if ( menu.submenu.on.afterClose ) {
+            menu.submenu.on.afterClose(menu, submenu, toggle, e);
+         }
+      }
+   },
+
+   menuFunc(menu, e) {
+
+      if ( menu.isOpen ) {
+
+         menu.container.setAttribute('aria-expanded', true);
+         menu.container.setAttribute('aria-hidden', false);
+         menu.innerContainer.classList.remove('mh-hidden');
+         menu.enterFocus.focus();
+
+      } else {
+
+         menu.container.setAttribute('aria-expanded', false);
+         menu.container.setAttribute('aria-hidden', true);
+         menu.innerContainer.classList.add('mh-hidden');
+
+      }
+   },
+
+   submenuFunc(menu, submenu, toggle, e) {
+
+      if ( toggle.classList.contains('mh-open') ) {
+
+         submenu.classList.add('mh-open');
+         submenu.classList.remove('mh-hidden');
+         submenu.setAttribute('aria-expanded', true);
+         submenu.setAttribute('aria-hidden', false);
+         
+      } else {
+
+         submenu.classList.add('mh-hidden');
+         submenu.classList.remove('mh-open');
+         submenu.setAttribute('aria-expanded', false);
+         submenu.setAttribute('aria-hidden', true);
+
+      }
+   },
+
+   checkRequiredElement(menu) {
+      const self = this;
+      const requiredElements = ['open', 'container', 'innerContainer'];
+      let status = true;
+
+      requiredElements.forEach(el => {
+         if ( !menu[el] ) {
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: required ${el} element is missing`);
+            status = false;
+         }
+      });
+
+      // other edge cases
+      if ( menu.loop === true && !menu.close ) {
+         self.menuError(`[menuHandler] [menu:${menu.name}] Error: in order to use loop option elements.close is required`);
+         status = false; 
+      }
+
+      return status;
+   },
+
+   loopMenus(func, e) {
+      const self = this;
+
+      self.menus.forEach(function(menu) {
+         func(menu, e);
+      });
+   },
+
+   closeMenusOnEscPress(menu, e) { // On ESC press close menus.
+      if ( menu.isOpen ) {
+         menuHandler.closeMenuContainer(menu); // note: there are situations where we get to this function from other functions, so the "this" changes to window. that's why we specify explicitly the direction to the function.
+      }
+   },
+
+   closeMenusOnBlur(menu, e) { // On Blur close menus.
+      if ( e.target && menu.isOpen && e.target != menu.activeOpen && !menu.activeOpen.contains(e.target) && !menu.container.contains(e.target) ){
+         if ( menu.loop === true && e.type !== 'click' && e.type !== 'mouseenter' && menu.enterFocus ) { // loop inside menu
+            menu.enterFocus.focus();
+            
+         } else {
+            menuHandler.closeMenuContainer(menu); // there are situations where we get to this function from other functions, so the "this" changes to window. that's why we specify explicitly the direction to the function.
+         }
+      }
+   },
+
+   closeMenuContainer(menu) { // Close Menu.
+      const self = this;
+
+      if ( !menu.activeClose ) {
+         menu.menuFunc(menu);
+
+      } else {
+         menu.activeClose.click();
+         menu.exitFocus.focus();
+      }
+   },
+
+   checkIsBusy() { // checks for menu name, if any present, than a menu is open and has action related to it running. prevents conflicts of several actions running at the same time.
+      const self = this;
+      let isRunning = false;
+
+      self.actions.forEach(action => {
+         self.menus.forEach(menu => {
+            if ( menu.name === action ) {
+               isRunning = true;
+            }
+         });
+      });
+
+      return isRunning;
+   },
+
+   preventBodyScroll() {
+      const body = document.body;
+      const self = this;
+      let isOpen = false;
+
+      self.menus.forEach(menu => {
+         if ( menu.isOpen ) isOpen = true;
+      });
+
+      if ( isOpen && !body.classList.contains('prevent-body-scroll') ) {
+
+         const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
+         body.style.left = '0';
+         body.style.right = '0';
+         body.style.width = '100%';
+         body.style.position = 'fixed'; 
+         body.style.top = `-${scrollY}`;
+         body.classList.add('prevent-body-scroll');
+
+      } else if ( body.classList.contains('prevent-body-scroll') ) {
+
+         const scrollY = body.style.top;
+         body.style.top = '';
+         body.style.position = '';
+         window.scrollTo(0, parseInt(scrollY || '0') * -1);
+         body.classList.remove('prevent-body-scroll');
+      }
+   },
+
+   // closes menu on click / tab / escape
+   onInteraction(e) {
+      const self = this;
+      const isBusy = self.checkIsBusy();
+     
+      if ( (e.type === 'click' || e.type === 'keydown' && e.keyCode == 9) && self.actions.indexOf('clicktab') === -1 && !isBusy ) {
+         
+         self.actions.push('clicktab');
+         setTimeout(() => {
+            self.loopMenus(self.closeMenusOnBlur, e);
+            self.actions.splice(self.actions.indexOf('clicktab'), 1);
+         });
+
+      } else if ( e.type === 'keydown' && e.keyCode == 27 && self.actions.indexOf('escape') === -1 && !isBusy ) {
+         
+         self.actions.push('escape');
+
+         setTimeout(() => {
+            self.loopMenus(self.closeMenusOnEscPress, e);
+            self.actions.splice(self.actions.indexOf('escape'), 1);
+         });
+      }
+   },
+
    setActiveTriggers(menu) { 
       menu.activeOpen = menu.open;
       menu.activeClose = menu.close;
@@ -495,6 +487,12 @@ const menuHandler = {
             menu.activeClose = menu.mobileClose;
          }
       }
+   },
+
+   menuError(message, die) {
+      console.error(message);
+      console.trace();
+      if (die) return;
    },
    
    debounce(func, wait, immediate) {

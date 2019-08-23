@@ -15,321 +15,418 @@
  - prevent body swipe when a menu is open
  - accessiblity
     
-for more functionality and information see Options section
+*for more functionality and information see Options section*
 
+## Init
 
+```javascript
 
- ## HTML Structure
+const menus = [
+  {
+     elements: {
+        open:           '#menu-open',
+        close:          '#menu-close',
+        enterFocus:     '#menu-focus-enter',
+        container:      '#menu-wrap',
+        innerContainer: '#menu-inner-wrap',
+     },
+     openOnHover: true,
+     loop: true,
+     submenu: {
+        isEnabled: true,
+        openOnHover: true,
+        on: {
+              afterOpen: function(menu) {
+                 console.log('after open', menu);
+              },
+        }
+     },
+     on: {
+        afterInit: function(menu) {
+              console.log('after init', menu);
+        },
+     },
+  },
+];
+menuHandler.init(menus);
+
+```
+
+## CSS
   
- Example of a menu
+add the following css:  
 
- ```html
+```css
+  .mh-hidden {
+    display: none !important;
+  }
+``` 
+
+## HTML Structure
   
-      <div class="menu-wrap" id="menu-wrap"> 
-         <div class="menu-inner-wrap mh-hidden" id="menu-inner-wrap">
-            <nav class="nav" id="menu-focus-enter">
-
-               <ul class="menu">
-
-                  <li>
-
-                    <button class="button" title="some title" data-mh-submenu-toggle="menu-a">
-                      <span>submenu trigger button</span>
-                      <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
-                    </button>
-
-                    <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-a">
-
-                      <li>
-
-                        <button class="button sub-link" title="some title" data-mh-submenu-toggle="menu-b">
-                          submenu trigger button
-                          <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-plus"></use></svg>
-                        </button>
-
-                        <ul class="sub-menu mh-hidden" aria-label="hidden" aria-expanded="false" data-mh-submenu-list="menu-b"> 
-
-                          <li>
-                            <a class="sub-link" href="#" title="some title">link</a>
-                          </li>
-
-                        </ul>
-                      </li>
-
-                    </ul>
-                  </li>
-
-               </ul>
-
-            </nav>
-
-            <button class="button menu-close" id="menu-close" title="some title">
-               <svg aria-hidden="true" role="presentation"><use xlink:href="#svg-close"></use></svg>
-            </button>
-         </div>
-      </div>
+### Menu
   
-  ```
-  
-  ### menu
-  
-  **the following menu structure is required:**  
-  **container** element that holds nothing, but the inner container.  
-  **inner container** element that holds all the elements.  
-  **[note]** : inner container should have class **mh-hidden**.  
-   
+The following menu structure is required:
 
-  
-  ### submenu
-  
-  submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value a unique identifier for the submenu.  
-  
-#### example :
-  
+1. **container** element that holds nothing, but the inner container.  
+2. **inner container** element that holds all the elements.  
+   **[note]** : inner container should have class **mh-hidden**.  
+
+
+
+### Submenu
+
+submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value a unique identifier for the submenu.  
+
 ```html
-  <button data-mh-submenu-toggle="catalog">
-    ...
-  </button>
+<button data-mh-submenu-toggle="catalog">
+  ...
+</button>
 ```
       
   
 submenu list element should have data attribue **data-mh-submenu-list** and it's value the same submenu identifier as the submenu toggle button.  
-**[note]** : submenu list element should have class **mh-hidden**.
- 
-  
-#### example : 
+**note** : submenu list element should have class **mh-hidden**.
 
 ```html
-  <ul class="mh-hidden" data-mh-submenu-list="catalog">
-    ...
-  </ul>
+<ul class="mh-hidden" data-mh-submenu-list="catalog">
+  ...
+</ul>
 ```
   
+### HTML Example
 
-## CSS
+```html
   
-add the following css line to your css code:  
+<div id="menu-wrap"> 
+   <div class="mh-hidden" id="menu-inner-wrap">
+      <nav id="menu-focus-enter">
+        
+         <ul class="menu">
+            <li>
+              <button data-mh-submenu-toggle="submenu-a">
+                submenu-a trigger button
+              </button>
 
-```css
-  .mh-hidden {display: none !important;}
-```
+              <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
+                <li>
+                  <button data-mh-submenu-toggle="submenu-b">
+                    submenu-b trigger button
+                  </button>
+
+                  <ul class="mh-hidden" data-mh-submenu-list="submenu-b"> 
+                    ...
+                  </ul>
+                </li>
+              </ul>
+              
+            </li>
+         </ul>
+        
+      </nav>
+
+      <button id="menu-close">...</button>
+   </div>
+</div>
+  
+```  
       
-#### it's quite redandent to add a css file to the project, just for one line of code.
 
-## Init Example
+  
+## Options
+  
+### Reference
+// TODO menu options
+- [name](#name) - a name that will be used for the menu
+- [open](#open) - element that triggers opening of the menu
+- [close](#close) - element that triggers menu closing of the menu
+- [container](#container) - menu container element that contains inner menu container
+- [innerContainer](#innerContainer) - element that holds all menu elements
+- [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable
+- [exitFocus](#exitFocus) - element to focus after menu closes  
+- [mobileOpen](#mobileOpen) - **TODO**
+- [mobileClose](#mobileClose) - **TODO**
+- [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to to switch open/close toggles
+- [loop](#loop) - loop all elements inside the innerContainer using Tab key
+- [closeDelay](#closeDelay) - sets delay in miliseconds before innerContainer is hidden
+- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter
+- [menuFunc](#menuFunc) - function to handle on your own of the specific menu
 
-```javascript
+// TODO menu events
+- [beforeInit](#beforeInit) - triggered before the specific menu is initialized  
+- [afterInit](#afterInit) - triggered after the specific menu is initialized  
+- [beforeOpen](#beforeOpen) - triggered before the specific menu is opened
+- [afterOpen](#afterOpen) - triggered after the specific menu opened
+- [beforeClose](#beforeClose) - triggered before the specific menu is closed    
+- [afterClose](#afterClose) - triggered after the specific menu is closed 
 
-  const menus = [
-    {
-       elements: {
-          open:           '#menu-open',
-          close:          '#menu-close',
-          enterFocus:     '#menu-focus-enter',
-          container:      '#menu-wrap',
-          innerContainer: '#menu-inner-wrap',
-       },
-       openOnHover: true,
-       loop: true,
-       submenu: {
-          isEnabled: true,
-          openOnHover: true,
-          on: {
-                afterOpen: function(menu) {
-                   console.log('after open', menu);
-                },
-          }
-       },
-       on: {
-          afterInit: function(menu) {
-                console.log('after init', menu);
-          },
-       },
-    },
-  ];
-  menuHandler.init(menus);
+// TODO submenu options reference
+- [isEnabled](#isEnabled) - enables handling of submenus
+- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter
+- [menuFunc](#menuFunc) - function to handle submenus on your own the specific menu
 
-```
+// TODO submenu events
+- [beforeOpen](#beforeOpen) - triggered before the specific submenu is opened
+- [afterOpen](#afterOpen) - triggered after the specific submenu is opened
+- [beforeClose](#beforeClose) - triggered before the specific submenu is closed
+- [afterClose](#afterClose) - triggered after the specific submenu is closed
+
+### Menu Options
+
+#### name
+
+a name that will be used for the menu  
+  
+default: `randomly generated name`  
+type: `string`
+
+#### open
+
+element that triggers opening of the menu  
+  
+**required**  
+type: `css selector`
+
+#### close
+
+element that triggers closing of the menu  
+  
+default:  `element.open`
+type: `css selector`  
+note: required ,if [loop](#loop) is set to `true`
+
+#### container
+
+menu container element that contains inner menu container  
+  
+**required**  
+type: `css selector`  
+note: holds nothing, but the inner container  
+
+#### innerContainer
+
+element that holds all menu elements  
+  
+**required**
+type: `css selector`  
+note:  will be set to display none when menu is closed  
+
+#### enterFocus
+
+element to focus first when menu opens, will make any provided element focusable  
+  
+type: `css selector`  
+default: `first focusable element`  
+note:  will be set to display none when menu is closed  
+
+#### exitFocus
+
+element to focus after menu closes  
+    
+type: `css selector`  
+default: `elements.open`  
+
+#### mobileOpen
+
+TODO
+  
+type: `css selector`  
+default: `elements.open`  
+
+#### mobileClose
+
+TODO
+  
+type: `css selector`  
+default: `elements.close`  
+
+#### mobileBreakpoint
+        
+max width breakpoint to to switch open/close toggles  
+  
+type: `string`  
+default: `667px`  
+
+#### loop
+        
+loop all elements inside the innerContainer using Tab key for accessibility purposes until a close button or ESC key are pressed
+  
+type: `boolean`  
+default: `false`  
+note: if [loop](#loop) is `true`, elements.close has is required, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer
+
+#### closeDelay
+        
+sets delay in miliseconds before innerContainer is hidden
+  
+type: `integer`  
+default: `0` 
+
+#### openOnHover
+        
+triggers opening of a menu by mouse enter
+  
+type: `boolean`  
+default: `false` 
+
+#### menuFunc
+        
+function to handle on your own of the specific menu
+  
+type: `function`  
+arguments:   
+  `menu` type: `object`  
+  `e` type: `event`  
+note: on open, close events related to the menu will need to be included in the custom function in order for them to work which can be access from the menu object
+
+### Submenu Options
+
+#### isEnabled
+        
+enables handling of submenus
+  
+type: `boolean`  
+default: `false` 
+
+#### openOnHover
+        
+triggers opening of a menu by mouse enter
+  
+type: `boolean`  
+default: `false` 
+
+#### menuFunc
+        
+function to handle submenus on your own the specific menu
+  
+type: `function`  
+arguments:   
+  `menu` type: `object`  
+ 
+
+## Events
+
+### Menu Events
+
+#### beforeInit
+        
+triggered before the specific menu is initialized  
+  
+type: `function`  
+arguments:   
+  `menu` type: `object`  
+  
+#### afterInit
+        
+triggered after the specific menu is initialized
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+
+#### beforeOpen
+        
+triggered before the specific menu is opened
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+  
+#### afterOpen
+        
+triggered after the specific menu opened
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+  
+#### beforeClose
+        
+triggered before the specific menu is closed
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+  
+#### afterClose
+        
+triggered after the specific menu closed
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+
+
+### Submenu Events
+
+#### beforeOpen
+        
+triggered before the specific submenu is opened
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+  `submenu` type: `HTML Element` 
+  `toggle` type: `HTML Element` 
+  
+#### afterOpen
+        
+triggered after the specific submenu opened
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+  `submenu` type: `HTML Element` 
+  `toggle` type: `HTML Element` 
+
+#### beforeClose
+        
+triggered before the specific submenu is closed
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+  `submenu` type: `HTML Element` 
+  `toggle` type: `HTML Element` 
+   
+#### afterClose
+        
+triggered after the specific submenu is closed
+  
+type: `function`  
+arguments:   
+  `menu` type: `object` 
+  `submenu` type: `HTML Element` 
+  `toggle` type: `HTML Element`       
+        
+  
+## API
+
+menu important parameters accessed via menu object
+
+#### activeOpen
+        
+the active element which triggers opening of the menu
+
+type: `read only`  
+default: `element.open` ,if element.mobileOpen is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`
+note: use this ,if you need it in the custom function you pass. **don't use element.open or element.mobileOpen**
+  
+#### activeClose
+        
+the active element which triggers closing of the menu
+
+type: `read only`  
+default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose`
+note: use this ,if you need it in the custom function you pass. **don't use element.close or element.mobileClose**  
       
-<section>
-  
-  <h2>Options</h2>
-  
-  <ul>
-    <li>
-      <strong>name</strong> - (String) <strong>[optional]</strong> a name that will be used for the menu.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : randomly generated name.
-    </li>
-    <br>
-    <li>
-      <strong>elements</strong> - (Object) containing the following options:
-      <ul>
-        <li>
-          <strong>open</strong> - (HTML Element) <strong>[required]</strong> triggers opening of the menu.
-        </li>
-        <br>
-        </li>
-          <strong>close</strong> - (HTML Element) <strong>[optional]</strong> triggers closing of the menu.<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : element.open<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : required ,if loop is set to true.
-        </li>
-        <br>
-        <li>
-          <strong>container</strong> - (HTML Element) <strong>[required]</strong> menu container element that contains inner menu container.
-        </li>
-        <br>
-        <li>
-          <strong>innerContainer</strong> - (HTMLElHTML Element) <strong>[required]</strong> menu inner container element:<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : element that holds all menu elements <br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : will be set to display none when menu is closed.
-        </li>
-        <br>
-        <li>
-          <strong>enterFocus</strong> - (HTML Element) <strong>[optional]</strong> element to focus first when menu opens, will make any provided element focusable<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : first focusable element.
-        </li>
-        <br>
-        <li>
-          <strong>exitFocus</strong> - (HTML Element) <strong>[optional]</strong> element to focus after menu closes.<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : elements.open
-        </li>
-        <br>
-        <li>
-          <strong>mobileOpen</strong> - (HTML Element) <strong>[optional]</strong><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : elements.open
-        </li>
-        <br>
-        <li>
-          <strong>mobileClose</strong> - (HTML Element) <strong>[optional]</strong><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : element.close
-        </li>
-        <br>
-        <li>
-          <strong>activeOpen</strong> - (HTML Element) <strong>[read only]</strong><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : element.open ,if element.mobileOpen is passed and isMobile is true, then element.mobileOpen<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : use this ,if you need it in the custom function you pass. don't use element.open or element.mobileOpen
-        </li>
-        <br>
-        <li>
-          <strong>activeClose</strong> - (HTML Element) <strong>[read only]</strong><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : element.close<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : use this ,if you need it in the custom function you pass. don't use element.close or element.mobileOpen
-        </li>
-      </ul>
-    </li>
-    <br>
-    <li>
-      <strong>isOpen</strong> - (Boolean) <strong>[read only]</strong> Shows the status of a menu at run time.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : internal use
-    </li>
-    <br>
-    <li>
-      <strong>mobileBreakpoint</strong> - (String) <strong>[optional]</strong> a max width beakpoint for mobile triggers, if exist.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : 667px
-    </li>
-    <br>
-    <li>
-      <strong>loop</strong> - (Boolean) <strong>[optional]</strong> will loop all elements inside the innerContainer while using Tab for accessibility purposes until a close button is pressed.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : false<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : if loop is true, elements.close has to be passed, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer.
-    </li>
-    <br>
-    <li>
-      <strong>closeDelay</strong> - (Integer) <strong>[optional]</strong> sets delay in miliseconds before innerContainer is hidden.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : 0
-    </li>
-    <br>
-    <li>
-      <strong>openOnHover</strong> - (Boolean) <strong>[optional]</strong> triggers opening of a menu by mouse enter<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : false
-    </li>
-    <br>
-    <li>
-    <strong>menuFunc</strong> - (Function) <strong>[optional]</strong> function to handle on your own of the specific menu.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object), e (Event)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<strong>[note]</strong> : on open, close events related to the menu will need to be included in the custom function in order for them to work which can be access from the menu object.
-    </li>
-    <br>
-    <li>
-      <strong>on</strong> - (Object) containing the following events options:<br>
-      <ul>
-        <li>
-         <strong>beforeInit</strong> - (Function) <strong>[optional]</strong> triggered before the specific menu is initialized.<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object)
-        </li>
-        <br>
-        <li>
-          <strong>afterInit</strong> - (Function) <strong>[optional]</strong> triggered after the specific menu is initialized.<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object)
-        </li>
-        <br>
-        <li>
-         <strong>beforeOpen</strong> - (Function) <strong>[optional]</strong> triggered before the specific menu is opened.<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object)
-        </li>
-        <br>
-        <li>
-         <strong>afterOpen</strong> - (Function) <strong>[optional]</strong> triggered after the specific menu opened.<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object)
-        </li>
-        <br>
-        <li>
-          <strong>beforeClose</strong> - (Function) <strong>[optional]</strong> triggered before the specific menu is closed.<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object)
-        </li>
-        <br>
-        <li>
-          <strong>afterClose</strong> - (Function) <strong>[optional]</strong> triggered after the specific menu closed.<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object)
-        </li>
-      </ul>
-    </li>
-    <br>
-    <li>
-    <strong>submenu</strong> - (Object) containing the following submenu options:
-      <ul>
-        <li>
-          <strong>isEnabled</strong> - (Boolean) <strong>[optional]</strong> enables handling of submenus.<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : false
-        </li>
-        <br>
-        <li>
-          <strong>openOnHover</strong> - (Boolean) <strong>[optional]</strong> triggers opening of a menu by mouse enter<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[default]</strong> : false
-        </li>
-        <br>
-        <li>
-          <strong>menuFunc</strong> - (Function) <strong>[optional]</strong> function to handle submenus on your own the specific menu.<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object)
-        </li>
-        <br>
-        <li>
-         <strong>on</strong> - (Object) containing the following events options:
-          <ul>
-            <li>
-             <strong>beforeOpen</strong> - (Function) <strong>[optional]</strong> triggered before the specific submenu is opened.<br>
-             &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object), submenu (HTML Element), toggle (HTML Element)
-            </li>
-            <br>
-            <li>
-              <strong>afterOpen</strong> - (Function) <strong>[optional]</strong> triggered after the specific submenu opened.<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object), submenu (HTML Element), toggle (HTML Element)
-            </li>
-            <br>
-            <li>
-              <strong>beforeClose</strong> - (Function) <strong>[optional]</strong> triggered before the specific submenu is closed.<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object), submenu (HTML Element), toggle (HTML Element)
-            </li>
-            <br>
-            <li>
-              <strong>afterClose</strong> - (Function) <strong>[optional]</strong> triggered after the specific submenu closed.<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<strong>[arguments]</strong> : menu (Object), submenu (HTML Element), toggle (HTML Element)
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
+#### isOpen
+        
+Shows the status of a menu at run time
+
+type: `read only`  
+default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose` 
+
 
 
 

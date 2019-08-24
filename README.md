@@ -19,7 +19,9 @@ library functionality:
  - accessiblity
     
 for more functionality and information see [table of contents section](#Table-of-contents)
-
+  
+  
+  
 ## Init
 
 ```javascript
@@ -37,7 +39,9 @@ const menus = [
 ];
 menuHandler.init(menus);
 ```
-
+  
+  
+  
 ## CSS
   
 add the following css:  
@@ -47,7 +51,9 @@ add the following css:
     display: none !important;
   }
 ``` 
-
+  
+  
+  
 ## HTML Structure
   
 ### Menu
@@ -57,8 +63,7 @@ The following menu structure is required:
 1. **container** element that holds nothing, but the inner container.  
 2. **inner container** element that holds all the elements.  
    **note**: inner container should have class **mh-hidden**.  
-
-
+  
 
 ### Submenu
 
@@ -98,8 +103,9 @@ example:
   }
 }
 ```
-
-
+  
+  
+  
 ### HTML Example
 
 ```html
@@ -143,9 +149,9 @@ example:
    </div>
 </div>
 ```  
-
-
-
+  
+  
+  
 ## Table of contents
 
 ### Options
@@ -187,9 +193,9 @@ example:
 - [afterOpen](#afterOpen) - triggered after the specific submenu finished transition and is opened
 - [beforeClose](#beforeClose) - triggered before the specific submenu is closed.
 - [afterClose](#afterClose) - triggered after the specific submenu finished transition and is closed
-
-
-
+  
+  
+  
 ## Options
 
 ### Menu Options
@@ -365,9 +371,9 @@ function to handle submenus on your own the specific menu
 type: `function`  
 arguments:   
 - `menu` type: `object`  
- 
-
-
+  
+  
+  
 ## Events
 
 ### Menu Events
@@ -482,9 +488,9 @@ arguments:
 - `menu` type: `object` 
 - `submenu` type: `object`  
 - `e` type: `event`   
-        
+         
   
-
+  
 ## API
 
 important menu parameters accessible via menu object

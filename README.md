@@ -56,7 +56,7 @@ The following menu structure is required:
 
 1. **container** element that holds nothing, but the inner container.  
 2. **inner container** element that holds all the elements.  
-   **[note]**: inner container should have class **mh-hidden**.  
+   **note**: inner container should have class **mh-hidden**.  
 
 
 
@@ -81,7 +81,7 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 
 **optional**
 submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ). 
-**[note]**: if present ,submenu container will get `mh-open` class when submenu is opened. 
+**note**: if present ,submenu container will get `mh-open` class when submenu is opened. 
   
 submenu container is good for situations when you want to do an opening and closing animation to the submenu.
   
@@ -209,7 +209,7 @@ menu container element that contains inner menu container
 
 **required**  
 type: `css selector`  
-note: holds nothing, but the inner container  
+**note**: holds nothing, but the inner container  
 
 ___
 
@@ -219,7 +219,7 @@ element that holds all menu elements
 
 **required**
 type: `css selector`  
-note:  get class `mh-hidden` when menu is closed 
+**note**:  get class `mh-hidden` when menu is closed 
 
 ___
 
@@ -236,9 +236,9 @@ ___
 
 element that triggers closing of the menu  
   
-default:  `element.open`
 type: `css selector`  
-note: required ,if [loop](#loop) is set to `true`
+default:  `element.open`  
+**note**: required ,if [loop](#loop) is set to `true`
 
 ___
 
@@ -248,7 +248,7 @@ element to focus first when menu opens, will make any provided element focusable
   
 type: `css selector`  
 default: `first focusable element`  
-note:  will be set to display none when menu is closed 
+**note**:  will be set to display none when menu is closed 
 
 ___
 
@@ -277,7 +277,7 @@ element that triggers closing of the menu in mobile breakpoint.
 if both element.mobileClose and element.close are passed ,then element.mobileClose is the one that will trigger close in mobile breakpoint and element.close in larger screens.
   
 type: `css selector`  
-default: `element.`  
+default: `null`  
 
 ___
 
@@ -296,7 +296,7 @@ loop all elements inside the innerContainer using Tab key for accessibility purp
   
 type: `boolean`  
 default: `false`  
-note: if [loop](#loop) is `true`, elements.close has is required, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer
+**note**: if [loop](#loop) is `true`, elements.close has is required, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer
 
 ___
 
@@ -333,9 +333,9 @@ function to handle on your own of the specific menu
   
 type: `function`  
 arguments:   
-  `menu` type: `object`  
-  `e` type: `event`  
-note: on open, close events related to the menu will need to be included in the custom function in order for them to work which can be access from the menu object
+- `menu` type: `object`  
+- `e` type: `event`  
+**note**: on open, close events related to the menu will need to be included in the custom function in order for them to work which can be access from the menu object
 
 
 ### Submenu Options
@@ -364,7 +364,7 @@ function to handle submenus on your own the specific menu
   
 type: `function`  
 arguments:   
-  `menu` type: `object`  
+- `menu` type: `object`  
  
 
 
@@ -378,7 +378,7 @@ triggered before the specific menu is initialized
   
 type: `function`  
 arguments:   
-  `menu` type: `object`  
+- `menu` type: `object`  
   
 ___
 
@@ -388,7 +388,7 @@ triggered after the specific menu is initialized
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
+- `menu` type: `object` 
 
 ___
 
@@ -398,8 +398,8 @@ triggered before the specific menu is opened
   
 type: `function`  
 arguments:   
-  `menu` type: `object`  
-  `e` type: `event`
+- `menu` type: `object`  
+- `e` type: `event`
   
 ___
 
@@ -409,8 +409,8 @@ triggered after the specific menu finished transition and is opened
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
-  `e` type: `event`
+- `menu` type: `object` 
+- `e` type: `event`
   
 ___
 
@@ -420,8 +420,8 @@ triggered before the specific menu is closed
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
-  `e` type: `event`
+- `menu` type: `object` 
+- `e` type: `event`
   
 ___
 
@@ -431,8 +431,8 @@ triggered after the specific menu finished transition and is closed
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
-  `e` type: `event`
+- `menu` type: `object` 
+- `e` type: `event`
 
 
 ### Submenu Events
@@ -443,9 +443,9 @@ triggered before the specific submenu is opened
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
-  `submenu` type: `object` 
-  `e` type: `event`
+- `menu` type: `object` 
+- `submenu` type: `object` 
+- `e` type: `event`
 
 ___
 
@@ -455,9 +455,9 @@ triggered after the specific submenu finished transition and is opened
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
-  `submenu` type: `object` 
-  `e` type: `event`
+- `menu` type: `object` 
+- `submenu` type: `object` 
+- `e` type: `event`
 
 ___
 
@@ -467,9 +467,9 @@ triggered before the specific submenu is closed
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
-  `submenu` type: `object` 
-  `e` type: `event`
+- `menu` type: `object` 
+- `submenu` type: `object` 
+- `e` type: `event`
 
 ___
 
@@ -479,9 +479,9 @@ triggered after the specific submenu finished transition and is closed
   
 type: `function`  
 arguments:   
-  `menu` type: `object` 
-  `submenu` type: `object`  
-  `e` type: `event`   
+- `menu` type: `object` 
+- `submenu` type: `object`  
+- `e` type: `event`   
         
   
 
@@ -497,7 +497,7 @@ the active element which triggers opening of the menu
 
 type: `read only`  
 default: `element.open` ,if element.mobileOpen is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`
-note: use this ,if you need it in the custom function you pass. **don't use element.open or element.mobileOpen**
+**note**: use this ,if you need it in the custom function you pass. **don't use element.open or element.mobileOpen**
 
 ___
 
@@ -507,10 +507,10 @@ the active element which triggers closing of the menu
 
 type: `read only`  
 default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose`
-note: use this ,if you need it in the custom function you pass. **don't use element.close or element.mobileClose**  
+**note**: use this ,if you need it in the custom function you pass. **don't use element.close or element.mobileClose**  
 
 ___
-   
+
 #### isOpen
         
 Shows the status of a menu at run time

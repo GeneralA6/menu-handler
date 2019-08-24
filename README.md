@@ -22,7 +22,6 @@
 ## Init
 
 ```javascript
-
 const menus = [
   {
      elements: {
@@ -34,7 +33,7 @@ const menus = [
      },
      openOnHover: true,
      loop: true,
-     submenu: {
+     submenuOptions: {
         isEnabled: true,
         openOnHover: true,
         on: {
@@ -51,7 +50,6 @@ const menus = [
   },
 ];
 menuHandler.init(menus);
-
 ```
 
 ## CSS
@@ -85,7 +83,7 @@ submenu toggle button element should have data attribute **data-mh-submenu-toggl
   ...
 </button>
 ```
-      
+**TODO: add description about data-mh-submenu-container (optional, what happens ,if is present and for what reasons)** 
   
 submenu list element should have data attribue **data-mh-submenu-list** and it's value the same submenu identifier as the submenu toggle button.  
 **note** : submenu list element should have class **mh-hidden**.
@@ -109,17 +107,21 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
               submenu-a trigger button
             </button>
 
-              <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
-                <li>
-                  <button data-mh-submenu-toggle="submenu-a-1">
-                    submenu-a-1 trigger button
-                  </button>
+              <div data-mh-submenu-container="submenu-a">
+                <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
+                  <li>
+                    <button data-mh-submenu-toggle="submenu-a-1">
+                      submenu-a-1 trigger button
+                    </button>
 
-                  <ul class="mh-hidden" data-mh-submenu-list="submenu-a-1"> 
-                    ...
-                  </ul>
-                </li>
-              </ul>
+                    <div data-mh-submenu-container="submenu-a-1">
+                      <ul class="mh-hidden" data-mh-submenu-list="submenu-a-1"> 
+                        ...
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </li>
         </ul>
         
@@ -150,17 +152,17 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 - [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to to switch open/close toggles
 - [loop](#loop) - loop all elements inside the innerContainer using Tab key
 - [openDelay](#openDelay) - **TODO: description**
-- [closeDelay](#closeDelay) - sets delay in miliseconds before innerContainer is hidden
+- [closeDelay](#closeDelay) - sets delay in miliseconds before innerContainer is hidden **TODO: write a better description**
 - [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu
 
 // TODO menu events
 - [beforeInit](#beforeInit) - triggered before the specific menu is initialized  
 - [afterInit](#afterInit) - triggered after the specific menu is initialized  
-- [beforeOpen](#beforeOpen) - triggered before the specific menu is opened
-- [afterOpen](#afterOpen) - triggered after the specific menu opened
+- [beforeOpen](#beforeOpen) - triggered before the specific menu is opened 
+- [afterOpen](#afterOpen) - triggered after the specific menu opened **TODO: add transition duration explanation**
 - [beforeClose](#beforeClose) - triggered before the specific menu is closed    
-- [afterClose](#afterClose) - triggered after the specific menu is closed 
+- [afterClose](#afterClose) - triggered after the specific menu is closed **TODO: add transition duration explanation**
 
 // TODO submenu options reference
 - [isEnabled](#isEnabled) - enables handling of submenus
@@ -169,9 +171,9 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 
 // TODO submenu events
 - [beforeOpen](#beforeOpen) - triggered before the specific submenu is opened
-- [afterOpen](#afterOpen) - triggered after the specific submenu is opened
+- [afterOpen](#afterOpen) - triggered after the specific submenu is opened **TODO: add transition duration explanation**
 - [beforeClose](#beforeClose) - triggered before the specific submenu is closed
-- [afterClose](#afterClose) - triggered after the specific submenu is closed
+- [afterClose](#afterClose) - triggered after the specific submenu is closed **TODO: add transition duration explanation**
 
 ### Menu Options
 

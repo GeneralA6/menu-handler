@@ -28,7 +28,9 @@ const menuHandler = {
             openDelay: 0,
             closeDelay: 0,
             openOnHover: false,
-            submenu: {
+            transitionDelay: null, // TODO: add to readme
+            transitionDuration: null, // TODO: add to readme
+            submenuOptions: {
                isEnabled: false,
                menuFunc: self.submenuFunc,
                openOnHover: false,
@@ -39,6 +41,7 @@ const menuHandler = {
                   afterClose: null,
                }
             },
+            submenus: [],
             menuFunc: self.menuFunc,
             mobileBreakpoint: '667px',
             on: {
@@ -83,7 +86,7 @@ const menuHandler = {
                }
             }
 
-         } else if ( key == 'submenu' ) {
+         } else if ( key == 'submenuOptions' ) {
             self.initSubmenuOptions(createMenu, options[key]);
 
          } else {
@@ -100,14 +103,14 @@ const menuHandler = {
       for ( key in options ) {
          if ( key == 'on' ) {
             for ( event in options.on ) {
-               if ( event in createMenu.submenu.on && typeof options.on[event] === 'function' ) {
-                  createMenu.submenu.on[event] = options.on[event];
+               if ( event in createMenu.submenuOptions.on && typeof options.on[event] === 'function' ) {
+                  createMenu.submenuOptions.on[event] = options.on[event];
                }
             }
             
          } else {
-            if ( key in createMenu.submenu ) {
-               createMenu.submenu[key] = options[key];
+            if ( key in createMenu.submenuOptions ) {
+               createMenu.submenuOptions[key] = options[key];
             }
          }
       }
@@ -150,82 +153,123 @@ const menuHandler = {
 
          if ( menu.on.beforeInit ) menu.on.beforeInit(menu);
 
-         const svgs = menu.innerContainer.querySelectorAll('svg');
-         const images = menu.innerContainer.querySelectorAll('img');
+         self.initMenuAccessibility(menu);
+         self.initMenuToggleEvents(menu);
 
-         svgs.forEach(el => {
-            if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
-            if ( !el.getAttribute('aria-hidden') ) el.setAttribute('aria-hidden', true);
-         });
-
-         images.forEach(el => {
-            if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
-            if ( !el.getAttribute('aria-hidden') ) el.setAttribute('aria-hidden', true);
-         });
+         if ( menu.submenuOptions.isEnabled ) {
+            self.initSubmenus(menu); 
+         }
          
-         if ( !menu.innerContainer.classList.contains('mh-hidden') ) menu.innerContainer.classList.add('mh-hidden');
-         if ( !menu.innerContainer.getAttribute('aria-hidden') ) menu.innerContainer.setAttribute('aria-hidden', true)
-         if ( !menu.innerContainer.getAttribute('aria-expanded') ) menu.innerContainer.setAttribute('aria-expanded', false);
-         
-         if ( menu.enterFocus.tabIndex == -1 ) {
-            menu.enterFocus.tabIndex = 0;
-         }
-
-         if ( menu.submenu.isEnabled ) {
-            self.initSubmenus(menu);
-         }
-
-         menu.activeOpen.addEventListener('click', e => self.toggleMenu(menu, e));
-         menu.activeClose.addEventListener('click', e => self.toggleMenu(menu, e));
-
-         if ( menu.openOnHover ) {
-            menu.activeOpen.addEventListener('mouseenter', e => self.toggleMenu(menu, e));
-         }
-
          if ( menu.on.afterInit ) menu.on.afterInit(menu);
       });
 
-      document.addEventListener('keydown', e => self.onInteraction(e));
-      document.addEventListener('click', e => self.onInteraction(e));
+      self.initMenuWindowEvents();   
+   },
+
+   initSubmenus(menu) {
+      const self = this;
+
+      const submenuToggles = menu.innerContainer.querySelectorAll('[data-mh-submenu-toggle]'); // important: the NodeList is ordered, the order is parent -> children -> next parent.
+
+      if ( !submenuToggles.length ) {
+         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`, 1);
+      }
+
+      submenuToggles.forEach(toggle => {
+         const submenu = {
+            name: toggle.dataset.mhSubmenuToggle,
+            toggle: toggle,
+            list: null,
+            container: null,
+            parent: null,
+            children: [],
+            transitionDelay: null,
+            transitionDuration: null,
+         }
+         
+         submenu.list = menu.innerContainer.querySelector(`[data-mh-submenu-list="${submenu.name}"]`);
+         if ( !submenu.list ) {
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu, ${submenu.name} not found`, 1);
+         }
+
+         submenu.container = menu.innerContainer.querySelector(`[data-mh-submenu-container="${submenu.name}"]`);
+         
+         submenu.parent = self.getSubmenuParent(submenu.list);
+
+         self.initSubmenuAccessibility(submenu);
+         self.initSubmenuToggleEvents(menu, submenu);
+         self.calcTransition(submenu);
+         
+         if ( !submenu.toggle.getAttribute('title') ) submenu.toggle.setAttribute('title', 'opens sub menu');
+
+         if ( submenu.parent ) {
+            menu.submenus[submenu.parent].children[submenu.name] = submenu; // important: there always be a menu.submenus[submenu.parent] ,becuase the NodeList is ordered.
+
+         } else {
+            menu.submenus[submenu.name] = submenu;
+         }      
+      });
+   },
+
+   initMenuAccessibility(menu) {
+      const svgs = menu.innerContainer.querySelectorAll('svg');
+      const images = menu.innerContainer.querySelectorAll('img');
+
+      svgs.forEach(el => {
+         if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
+         if ( !el.getAttribute('aria-hidden') ) el.setAttribute('aria-hidden', true);
+      });
+
+      images.forEach(el => {
+         if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
+         if ( !el.getAttribute('aria-hidden') ) el.setAttribute('aria-hidden', true);
+      });
+      
+      if ( !menu.innerContainer.classList.contains('mh-hidden') ) menu.innerContainer.classList.add('mh-hidden');
+      if ( !menu.innerContainer.getAttribute('aria-hidden') ) menu.innerContainer.setAttribute('aria-hidden', true)
+      if ( !menu.innerContainer.getAttribute('aria-expanded') ) menu.innerContainer.setAttribute('aria-expanded', false);
+      
+      if ( menu.enterFocus.tabIndex == -1 ) {
+         menu.enterFocus.tabIndex = 0; 
+      }
+   },
+
+   initSubmenuAccessibility(submenu) {
+      if ( !submenu.list.classList.contains('mh-hidden') ) submenu.list.classList.add('mh-hidden');
+      if ( !submenu.list.getAttribute('aria-hidden') ) submenu.list.setAttribute('aria-hidden', true);
+      if ( !submenu.list.getAttribute('aria-expanded') ) submenu.list.setAttribute('aria-expanded', false);
+   },
+
+   initMenuWindowEvents() {
+      const self = this;
+      
+      window.addEventListener('keydown', e => self.onInteraction(e));
+      window.addEventListener('click', e => self.onInteraction(e));
 
       window.addEventListener('scroll', self.debounce(() => { // preventBodyScroll listener.
          document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
       }), 20);
    },
 
-   initSubmenus(menu) {
+   initMenuToggleEvents(menu) {
       const self = this;
 
-      if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu);
+      menu.activeOpen.addEventListener('click', e => self.toggleMenu(menu, e));
+      menu.activeClose.addEventListener('click', e => self.toggleMenu(menu, e));
 
-      const submenuToggles = menu.innerContainer.querySelectorAll('[data-mh-submenu-toggle]'); 
-      const submenuLists = menu.innerContainer.querySelectorAll('[data-mh-submenu-list]');
-
-      if ( !submenuToggles.length ) {
-         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`, 1);
+      if ( menu.openOnHover ) {
+         menu.activeOpen.addEventListener('mouseenter', e => self.toggleMenu(menu, e));
       }
+   },
 
-      if ( !submenuLists.length ) {
-         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu lists not found, consider disabling submenu, if submenu functionality is not being used`, 1);
-      }
+   initSubmenuToggleEvents(menu, submenu) {
+      const self = this;
 
-      submenuToggles.forEach(btn => {
-         if ( !btn.getAttribute('title') ) btn.setAttribute('title', 'opens sub menu');
-      });
-
-      submenuLists.forEach(list => {
-         if ( !list.classList.contains('mh-hidden') ) list.classList.add('mh-hidden');
-         if ( !list.getAttribute('aria-label') ) list.setAttribute('aria-label', hidden);
-         if ( !list.getAttribute('aria-expanded') ) list.setAttribute('aria-expanded', false);
-      });
-
-      submenuToggles.forEach(toggle => {
-         toggle.addEventListener('click', e => self.toggleSubmenu(menu, submenuLists, e));
-
-         if ( menu.submenu.openOnHover ) {
-            toggle.addEventListener('mouseenter', e => self.toggleSubmenu(menu, submenuLists, e));
-         }
-      });
+      submenu.toggle.addEventListener('click', e => self.toggleSubmenu(menu, submenu, e));
+         
+      if ( menu.submenuOptions.openOnHover ) {
+         submenu.toggle.addEventListener('mouseenter', e => self.toggleSubmenu(menu, submenu, e));
+      } 
    },
 
    toggleMenu(menu, e) {
@@ -237,10 +281,9 @@ const menuHandler = {
 
       self.actions.push(menu.name);
 
-      const menuTransition = self.calcTransition(menu.container);
+      const transitionTimeCombined = self.calcTransition(menu); // combined time in seconds.
 
       setTimeout(() => {
-         
          if ( !menu.container.classList.contains('mh-open') ) {
             self.loopMenus(self.closeMenusOnBlur, e);
          }
@@ -256,7 +299,7 @@ const menuHandler = {
                menu.menuFunc(menu, e);
 
                if ( menu.on.afterOpen ) {  // after open
-                  setTimeout(() => menu.on.afterOpen(menu, e), menuTransition); // fire after menu's container transition ends
+                  setTimeout(() => menu.on.afterOpen(menu, e), transitionTimeCombined * 1000); // fire after menu's container transition ends
                }
             }, menu.openDelay);
 
@@ -267,7 +310,7 @@ const menuHandler = {
                menu.menuFunc(menu, e);
 
                if ( menu.on.afterClose ) {  // after close
-                  setTimeout(() => menu.on.afterClose(menu, e), menuTransition); // fire after menu's container transition ends
+                  setTimeout(() => menu.on.afterClose(menu, e), transitionTimeCombined * 1000); // fire after menu's container transition ends
                }
             }, menu.closeDelay);
          }
@@ -277,55 +320,31 @@ const menuHandler = {
       });
    },
 
-   toggleSubmenu(menu, submenuLists, e) {
+   toggleSubmenu(menu, submenu, e) {
       const self = this;
 
-      let toggle = e.target;
-      let submenuWrap = null;
-      let submenuTransition = 0;
+      if ( e.type == 'mouseenter' && submenu.toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button.
 
-      if ( !toggle.dataset.mhSubmenuToggle ) { // if event was bubbled up from inside the toggle.
-         toggle = toggle.closest('[data-mh-submenu-toggle]');
-      }
+      const transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
+      
+      submenu.toggle.classList.toggle('mh-open');
+      
+      if ( submenu.toggle.classList.contains('mh-open') ) {
+         if ( menu.submenuOptions.on.beforeOpen ) menu.submenuOptions.on.beforeOpen(menu, submenu, e); // before open.
 
-      const submenu = [...submenuLists].filter(list => list.dataset.mhSubmenuList === toggle.dataset.mhSubmenuToggle)[0];
+         menu.submenuOptions.menuFunc(menu, submenu, e);
 
-      if ( !submenu ) {
-         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu, ${toggle.dataset.mhSubmenuToggle} not found`, 1);
-      };
-
-      if ( e.type == 'mouseenter' && toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button.
-
-      submenuWrap = submenu.parentElement;
-      if ( !submenuWrap.dataset.mhSubmenuWrap || submenuWrap.dataset.mhSubmenuWrap !== submenu.dataset.mhSubmenuList ) {  // make sure it's a submenu wrap.
-         submenuWrap = null;
-      }
-
-      if ( submenuWrap ) { // if submenu has a wrap ,then take it's transition duration.
-         submenuTransition = self.calcTransition(submenuWrap);
-      } else {
-         submenuTransition = self.calcTransition(submenu);
-      }
-
-      if ( submenuWrap ) submenuWrap.classList.toggle('mh-open');
-      toggle.classList.toggle('mh-open');
-
-      if ( toggle.classList.contains('mh-open') ) {
-         if ( menu.submenu.on.beforeOpen ) menu.submenu.on.beforeOpen(menu, submenu, toggle, e); // before open.
-
-         menu.submenu.menuFunc(menu, submenu, toggle, e);
-
-         if ( menu.submenu.on.afterOpen ) { // after open.
-            setTimeout(() => menu.submenu.on.afterOpen(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends.
+         if ( menu.submenuOptions.on.afterOpen ) { // after open.
+            setTimeout(() => menu.submenuOptions.on.afterOpen(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
          }
 
       } else {
-         if ( menu.submenu.on.beforeClose ) menu.submenu.on.beforeClose(menu, submenu, toggle, e); // before close.
+         if ( menu.submenuOptions.on.beforeClose ) menu.submenuOptions.on.beforeClose(menu, submenu, e); // before close.
 
-         menu.submenu.menuFunc(menu, submenu, toggle, e);
+         menu.submenuOptions.menuFunc(menu, submenu, e);
 
-         if ( menu.submenu.on.afterClose ) { // after close.
-            setTimeout(() => menu.submenu.on.afterClose(menu, submenu, toggle, e), submenuTransition); // fire after submenu's container transition ends.
+         if ( menu.submenuOptions.on.afterClose ) { // after close.
+            setTimeout(() => menu.submenuOptions.on.afterClose(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
          }
       }
    },
@@ -348,21 +367,32 @@ const menuHandler = {
       }
    },
 
-   submenuFunc(menu, submenu, toggle, e) {
+   submenuFunc(menu, submenu, e) {
 
-      if ( toggle.classList.contains('mh-open') ) {
+      if ( submenu.toggle.classList.contains('mh-open') ) {
 
-         submenu.classList.add('mh-open');
-         submenu.classList.remove('mh-hidden');
-         submenu.setAttribute('aria-expanded', true);
-         submenu.setAttribute('aria-hidden', false);
-         
+         submenu.list.classList.remove('mh-hidden');
+         submenu.list.setAttribute('aria-hidden', false);
+
+         if ( submenu.container ) {
+            submenu.container.classList.add('mh-open');
+            submenu.container.setAttribute('aria-expanded', true);
+         } else {
+            submenu.list.classList.add('mh-open');
+            submenu.list.setAttribute('aria-expanded', true);
+         }
+
       } else {
+         submenu.list.classList.add('mh-hidden');
+         submenu.list.setAttribute('aria-hidden', true);
 
-         submenu.classList.add('mh-hidden');
-         submenu.classList.remove('mh-open');
-         submenu.setAttribute('aria-expanded', false);
-         submenu.setAttribute('aria-hidden', true);
+         if ( submenu.container ) {
+            submenu.container.classList.remove('mh-open');
+            submenu.container.setAttribute('aria-expanded', false);
+         } else {
+            submenu.list.classList.remove('mh-open');
+            submenu.list.setAttribute('aria-expanded', false);
+         }
 
       }
    },
@@ -440,7 +470,7 @@ const menuHandler = {
       return isRunning;
    },
 
-   preventBodyScroll() {
+   preventBodyScroll() { // prevents scrolling of the body while a menu is open.
       const body = document.body;
       const self = this;
       let isOpen = false;
@@ -506,15 +536,21 @@ const menuHandler = {
       }
    },
 
-   calcTransition(el) { // calc el transition duration.
-      if (!el) return;
+   calcTransition(obj) { // calc menu or submenu transition duration.
 
-      const transitionDelay = getComputedStyle(el).transitionDelay;
-      const transitionDuration = getComputedStyle(el).transitionDuration;
-      const combined = parseFloat(transitionDelay) + parseFloat(transitionDuration); // combined time in seconds.
-      const menuTransition = combined * 1000; // convert to miliseconds.
+      if ( obj.container ) {
+         obj.transitionDelay = parseFloat( getComputedStyle(obj.container).transitionDelay );
+         obj.transitionDuration = parseFloat( getComputedStyle(obj.container).transitionDuration );
+      } else {
+         obj.transitionDelay = parseFloat( getComputedStyle(obj.list).transitionDelay );
+         obj.transitionDuration = parseFloat( getComputedStyle(obj.list).transitionDuration );
+      }
+   },
 
-      return menuTransition;
+   getSubmenuParent(el) {
+      const parentSubmenu = el.parentElement.closest(`[data-mh-submenu-list]`); // important: start from parent to exclude itself
+
+      return parentSubmenu ? parentSubmenu.dataset.mhSubmenuList : parentSubmenu;
    },
 
    menuError(message, die) {

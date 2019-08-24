@@ -201,21 +201,27 @@ a unique menu name that will be used for the menu
 default: `randomly generated name`  
 type: `string`
 
+___
+
 #### container
 
 menu container element that contains inner menu container  
-  
+
 **required**  
 type: `css selector`  
 note: holds nothing, but the inner container  
 
+___
+
 #### innerContainer
 
 element that holds all menu elements  
-  
+
 **required**
 type: `css selector`  
-note:  will be set to display none when menu is closed  
+note:  get class `mh-hidden` when menu is closed 
+
+___
 
 #### open
 
@@ -223,6 +229,8 @@ element that triggers opening of the menu
   
 **required**  
 type: `css selector`
+
+___
 
 #### close
 
@@ -232,13 +240,17 @@ default:  `element.open`
 type: `css selector`  
 note: required ,if [loop](#loop) is set to `true`
 
+___
+
 #### enterFocus
 
 element to focus first when menu opens, will make any provided element focusable  
   
 type: `css selector`  
 default: `first focusable element`  
-note:  will be set to display none when menu is closed  
+note:  will be set to display none when menu is closed 
+
+___
 
 #### exitFocus
 
@@ -246,6 +258,8 @@ element to focus after menu closes
     
 type: `css selector`  
 default: `elements.open`  
+
+___
 
 #### mobileOpen
 
@@ -255,6 +269,8 @@ if both element.mobileOpen and element.open are passed ,then element.mobileOpen 
 type: `css selector`  
 default: `null`  
 
+___
+
 #### mobileClose
 
 element that triggers closing of the menu in mobile breakpoint.
@@ -263,12 +279,16 @@ if both element.mobileClose and element.close are passed ,then element.mobileClo
 type: `css selector`  
 default: `element.`  
 
+___
+
 #### mobileBreakpoint
         
 max width breakpoint to switch between mobile and desktop open and/or close toggles.  
   
 type: `string`  
 default: `667px`  
+
+___
 
 #### loop
         
@@ -278,12 +298,16 @@ type: `boolean`
 default: `false`  
 note: if [loop](#loop) is `true`, elements.close has is required, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer
 
+___
+
 #### openDelay
         
 sets delay in miliseconds before menu starts opening
   
 type: `integer`  
 default: `0` 
+
+___
 
 #### closeDelay
         
@@ -292,12 +316,16 @@ sets delay in miliseconds before menu starts closing
 type: `integer`  
 default: `0` 
 
+___
+
 #### openOnHover
         
 triggers opening of a menu by mouse enter
   
 type: `boolean`  
 default: `false` 
+
+___
 
 #### menuFunc
         
@@ -319,12 +347,16 @@ enables handling of submenus
 type: `boolean`  
 default: `false` 
 
+___
+
 #### openOnHover
         
 triggers opening of a menu by mouse enter
   
 type: `boolean`  
 default: `false` 
+
+___
 
 #### menuFunc
         
@@ -348,6 +380,8 @@ type: `function`
 arguments:   
   `menu` type: `object`  
   
+___
+
 #### afterInit
         
 triggered after the specific menu is initialized
@@ -355,6 +389,8 @@ triggered after the specific menu is initialized
 type: `function`  
 arguments:   
   `menu` type: `object` 
+
+___
 
 #### beforeOpen
         
@@ -365,6 +401,8 @@ arguments:
   `menu` type: `object`  
   `e` type: `event`
   
+___
+
 #### afterOpen
         
 triggered after the specific menu finished transition and is opened
@@ -374,6 +412,8 @@ arguments:
   `menu` type: `object` 
   `e` type: `event`
   
+___
+
 #### beforeClose
         
 triggered before the specific menu is closed
@@ -383,6 +423,8 @@ arguments:
   `menu` type: `object` 
   `e` type: `event`
   
+___
+
 #### afterClose
         
 triggered after the specific menu finished transition and is closed
@@ -404,7 +446,9 @@ arguments:
   `menu` type: `object` 
   `submenu` type: `object` 
   `e` type: `event`
-  
+
+___
+
 #### afterOpen
         
 triggered after the specific submenu finished transition and is opened
@@ -415,6 +459,8 @@ arguments:
   `submenu` type: `object` 
   `e` type: `event`
 
+___
+
 #### beforeClose
         
 triggered before the specific submenu is closed
@@ -424,7 +470,9 @@ arguments:
   `menu` type: `object` 
   `submenu` type: `object` 
   `e` type: `event`
-   
+
+___
+
 #### afterClose
         
 triggered after the specific submenu finished transition and is closed
@@ -450,7 +498,9 @@ the active element which triggers opening of the menu
 type: `read only`  
 default: `element.open` ,if element.mobileOpen is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`
 note: use this ,if you need it in the custom function you pass. **don't use element.open or element.mobileOpen**
-  
+
+___
+
 #### activeClose
         
 the active element which triggers closing of the menu
@@ -458,7 +508,9 @@ the active element which triggers closing of the menu
 type: `read only`  
 default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose`
 note: use this ,if you need it in the custom function you pass. **don't use element.close or element.mobileClose**  
-      
+
+___
+   
 #### isOpen
         
 Shows the status of a menu at run time

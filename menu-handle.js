@@ -28,20 +28,8 @@ const menuHandler = {
             openDelay: 0,
             closeDelay: 0,
             openOnHover: false,
-            transitionDelay: null, // TODO: add to readme
-            transitionDuration: null, // TODO: add to readme
-            submenuOptions: {
-               isEnabled: false,
-               menuFunc: self.submenuFunc,
-               openOnHover: false,
-               on: {
-                  beforeOpen: null,
-                  afterOpen: null,
-                  beforeClose: null,
-                  afterClose: null,
-               }
-            },
-            submenus: [],
+            transitionDelay: null,
+            transitionDuration: null,
             menuFunc: self.menuFunc,
             mobileBreakpoint: '667px',
             on: {
@@ -52,6 +40,20 @@ const menuHandler = {
                beforeClose: null,
                afterClose: null,
             },
+            submenuOptions: {
+               isEnabled: false,
+               menuFunc: self.submenuFunc,
+               openOnHover: false,
+               transitionDelay: null,
+               transitionDuration: null,
+               on: {
+                  beforeOpen: null,
+                  afterOpen: null,
+                  beforeClose: null,
+                  afterClose: null,
+               }
+            },
+            submenus: [],
          };
 
          if ( !menu.elements ) {
@@ -203,11 +205,10 @@ const menuHandler = {
          if ( !submenu.toggle.getAttribute('title') ) submenu.toggle.setAttribute('title', 'opens sub menu');
 
          if ( submenu.parent ) {
-            menu.submenus[submenu.parent].children[submenu.name] = submenu; // important: there always be a menu.submenus[submenu.parent] ,becuase the NodeList is ordered.
+            menu.submenus[submenu.parent].children.push(submenu.name); // important: there always be a menu.submenus[submenu.parent] ,becuase the NodeList is ordered.
+         }     
 
-         } else {
-            menu.submenus[submenu.name] = submenu;
-         }      
+         menu.submenus[submenu.name] = submenu;
       });
    },
 
@@ -276,13 +277,14 @@ const menuHandler = {
       const self = this;
 
       if ( e ) e.preventDefault(e);
-      if ( e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button.
-      if ( self.actions.indexOf(menu.name) !== -1 ) return; // don't allow, another action of this menu is running.
+      if ( e && e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button.
+
+      if ( self.actions.indexOf(menu.name) !== -1 ) return; // don't allow, another action of this menu while action is running.
 
       self.actions.push(menu.name);
 
-      const transitionTimeCombined = self.calcTransition(menu); // combined time in seconds.
-
+      const transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
+      
       setTimeout(() => {
          if ( !menu.container.classList.contains('mh-open') ) {
             self.loopMenus(self.closeMenusOnBlur, e);
@@ -309,6 +311,10 @@ const menuHandler = {
                
                menu.menuFunc(menu, e);
 
+               for ( name in menu.submenus ) { // close all submenus
+                  self.toggleSubmenu(menu, menu.submenus[name])
+               }
+            
                if ( menu.on.afterClose ) {  // after close
                   setTimeout(() => menu.on.afterClose(menu, e), transitionTimeCombined * 1000); // fire after menu's container transition ends
                }
@@ -323,28 +329,36 @@ const menuHandler = {
    toggleSubmenu(menu, submenu, e) {
       const self = this;
 
-      if ( e.type == 'mouseenter' && submenu.toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button.
+      if ( e && e.type == 'mouseenter' && submenu.toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button.
 
       const transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
-      
-      submenu.toggle.classList.toggle('mh-open');
+      const parentSubmenu = menu.submenus[submenu.parent] || null;   
+      const options = menu.submenuOptions
+
+      if ( menu.isOpen && ( !parentSubmenu || parentSubmenu.toggle.classList.contains('mh-open') ) ) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
+         submenu.toggle.classList.toggle('mh-open');
+      } else { // if parent is closed ,then close this submenu
+         submenu.toggle.classList.remove('mh-open');
+      }
       
       if ( submenu.toggle.classList.contains('mh-open') ) {
-         if ( menu.submenuOptions.on.beforeOpen ) menu.submenuOptions.on.beforeOpen(menu, submenu, e); // before open.
+         if ( options.on.beforeOpen ) options.on.beforeOpen(menu, submenu, e); // before open.
 
-         menu.submenuOptions.menuFunc(menu, submenu, e);
+         options.menuFunc(menu, submenu, e);
 
-         if ( menu.submenuOptions.on.afterOpen ) { // after open.
-            setTimeout(() => menu.submenuOptions.on.afterOpen(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
+         if ( options.on.afterOpen ) { // after open.
+            setTimeout(() => options.on.afterOpen(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
          }
 
       } else {
-         if ( menu.submenuOptions.on.beforeClose ) menu.submenuOptions.on.beforeClose(menu, submenu, e); // before close.
+         if ( options.on.beforeClose ) options.on.beforeClose(menu, submenu, e); // before close.
 
-         menu.submenuOptions.menuFunc(menu, submenu, e);
+         options.menuFunc(menu, submenu, e);
 
-         if ( menu.submenuOptions.on.afterClose ) { // after close.
-            setTimeout(() => menu.submenuOptions.on.afterClose(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
+         submenu.children.forEach((child) => self.toggleSubmenu(menu, menu.submenus[child])); // close child submenu
+
+         if ( options.on.afterClose ) { // after close.
+            setTimeout(() => options.on.afterClose(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
          }
       }
    },
@@ -541,6 +555,7 @@ const menuHandler = {
       if ( obj.container ) {
          obj.transitionDelay = parseFloat( getComputedStyle(obj.container).transitionDelay );
          obj.transitionDuration = parseFloat( getComputedStyle(obj.container).transitionDuration );
+         
       } else {
          obj.transitionDelay = parseFloat( getComputedStyle(obj.list).transitionDelay );
          obj.transitionDuration = parseFloat( getComputedStyle(obj.list).transitionDuration );

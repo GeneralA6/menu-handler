@@ -30,7 +30,6 @@ const menus = [
      elements: {
         open:           '#menu-open',
         close:          '#menu-close',
-        enterFocus:     '#menu-focus-enter',
         container:      '#menu-wrap',
         innerContainer: '#menu-inner-wrap',
      },
@@ -71,7 +70,7 @@ The following menu structure is required:
 submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value the submenu name ( a unique identifier ).  
 
 ```html
-<button data-mh-submenu-toggle="catalog">
+<button data-mh-submenu-toggle="submenu-a">
   ...
 </button>
 ```
@@ -81,16 +80,20 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 **note** : submenu list element should have class **mh-hidden**.
 
 ```html
-<ul class="mh-hidden" data-mh-submenu-list="catalog">
+<ul class="mh-hidden" data-mh-submenu-list="submenu-a">
   ...
 </ul>
 ```
   
-#### submenu container
-**optional**  
+#### submenu container (optional)
 submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ). 
 **note**: if present ,submenu container will get `mh-open` class when submenu is opened. 
   
+```html
+<div data-mh-submenu-container="submenu-a">
+  ...
+</div>
+```
 submenu container is good for situations when you want to do an opening and closing animation to the submenu.
   
 example:  
@@ -220,6 +223,7 @@ menu container element that contains inner menu container
 type: `css selector`  
 **note**: holds nothing, but the inner container  
 
+// todo: add init example, passed inside object whose key is elements
 ___
 
 #### innerContainer
@@ -230,7 +234,8 @@ element that holds all menu elements
 type: `css selector`  
 **note**:  get class `mh-hidden` when menu is closed 
 
-___
+// todo: add init example, passed inside object whose key is elements
+__
 
 #### open
 
@@ -239,7 +244,8 @@ element that triggers opening of the menu
 **required**  
 type: `css selector`
 
-___
+// todo: add init example, passed inside object whose key is elements
+__
 
 #### close
 
@@ -249,7 +255,8 @@ type: `css selector`
 default:  `element.open`  
 **note**: required ,if [loop](#loop) is set to `true`
 
-___
+// todo: add init example, passed inside object whose key is elements
+__
 
 #### enterFocus
 
@@ -259,7 +266,8 @@ type: `css selector`
 default: `first focusable element`  
 **note**:  will be set to display none when menu is closed 
 
-___
+// todo: add init example, passed inside object whose key is elements
+__
 
 #### exitFocus
 
@@ -268,7 +276,8 @@ element to focus after menu closes
 type: `css selector`  
 default: `elements.open`  
 
-___
+// todo: add init example, passed inside object whose key is elements
+__
 
 #### mobileOpen
 
@@ -278,7 +287,8 @@ if both element.mobileOpen and element.open are passed ,then element.mobileOpen 
 type: `css selector`  
 default: `null`  
 
-___
+// todo: add init example, passed inside object whose key is elements
+__
 
 #### mobileClose
 
@@ -288,7 +298,8 @@ if both element.mobileClose and element.close are passed ,then element.mobileClo
 type: `css selector`  
 default: `null`  
 
-___
+// todo: add init example, passed inside object whose key is elements
+__
 
 #### mobileBreakpoint
         
@@ -297,7 +308,8 @@ max width breakpoint to switch between mobile and desktop open and/or close togg
 type: `string`  
 default: `667px`  
 
-___
+// todo: add init example
+__
 
 #### loop
         
@@ -307,7 +319,8 @@ type: `boolean`
 default: `false`  
 **note**: if [loop](#loop) is `true`, elements.close has is required, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer
 
-___
+// todo: add init example
+__
 
 #### openDelay
         
@@ -316,7 +329,8 @@ sets delay in miliseconds before menu starts opening
 type: `integer`  
 default: `0` 
 
-___
+// todo: add init example
+__
 
 #### closeDelay
         
@@ -325,7 +339,8 @@ sets delay in miliseconds before menu starts closing
 type: `integer`  
 default: `0` 
 
-___
+// todo: add init example
+__
 
 #### openOnHover
         
@@ -334,7 +349,8 @@ triggers opening of a menu by mouse enter
 type: `boolean`  
 default: `false` 
 
-___
+// todo: add init example
+__
 
 #### menuFunc
         
@@ -346,6 +362,8 @@ arguments:
 - `e` type: `event`  
 **note**: on open, close events related to the menu will need to be included in the custom function in order for them to work which can be access from the menu object
 
+// todo: add init example
+  
 
 ### Submenu Options
 
@@ -356,7 +374,8 @@ enables handling of submenus
 type: `boolean`  
 default: `false` 
 
-___
+// todo: add init example, passed inside object whose key is submenuOptions
+__
 
 #### openOnHover
         
@@ -365,7 +384,8 @@ triggers opening of a menu by mouse enter
 type: `boolean`  
 default: `false` 
 
-___
+// todo: add init example, passed inside object whose key is submenuOptions
+__
 
 #### menuFunc
         
@@ -374,7 +394,8 @@ function to handle submenus on your own the specific menu
 type: `function`  
 arguments:   
 - `menu` type: `object`  
-  
+
+// todo: add init example, passed inside object whose key is submenuOptions
   
   
 ## Events
@@ -388,8 +409,9 @@ triggered before the specific menu is initialized
 type: `function`  
 arguments:   
 - `menu` type: `object`  
-  
-___
+
+// todo: add init example, passed inside object whose key is on
+__
 
 #### afterInit
         
@@ -399,7 +421,8 @@ type: `function`
 arguments:   
 - `menu` type: `object` 
 
-___
+// todo: add init example, passed inside object whose key is on
+__
 
 #### beforeOpen
         
@@ -410,7 +433,8 @@ arguments:
 - `menu` type: `object`  
 - `e` type: `event`
   
-___
+// todo: add init example, passed inside object whose key is on
+__
 
 #### afterOpen
         
@@ -421,7 +445,8 @@ arguments:
 - `menu` type: `object` 
 - `e` type: `event`
   
-___
+// todo: add init example, passed inside object whose key is on
+__
 
 #### beforeClose
         
@@ -432,7 +457,8 @@ arguments:
 - `menu` type: `object` 
 - `e` type: `event`
   
-___
+// todo: add init example, passed inside object whose key is on
+__
 
 #### afterClose
         
@@ -443,6 +469,8 @@ arguments:
 - `menu` type: `object` 
 - `e` type: `event`
 
+// todo: add init example, passed inside object whose key is on
+  
 
 ### Submenu Events
 
@@ -456,7 +484,8 @@ arguments:
 - `submenu` type: `object` 
 - `e` type: `event`
 
-___
+// todo: add init example, passed inside submenuOptions inside object whose key is on
+__
 
 #### afterOpen
         
@@ -468,7 +497,8 @@ arguments:
 - `submenu` type: `object` 
 - `e` type: `event`
 
-___
+// todo: add init example, passed inside submenuOptions inside object whose key is on
+__
 
 #### beforeClose
         
@@ -480,7 +510,8 @@ arguments:
 - `submenu` type: `object` 
 - `e` type: `event`
 
-___
+// todo: add init example, passed inside submenuOptions inside object whose key is on
+__
 
 #### afterClose
         
@@ -491,7 +522,8 @@ arguments:
 - `menu` type: `object` 
 - `submenu` type: `object`  
 - `e` type: `event`   
-         
+
+// todo: add init example, passed inside submenuOptions inside object whose key is on
   
   
 ## API
@@ -505,7 +537,7 @@ important menu parameters accessible via menu object
 the active element which triggers opening of the menu
 
 type: `read only`  
-default: `element.open` ,if element.mobileOpen is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`
+default: `element.open` ,if element.mobileOpen is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`. 
 **note**: use this ,if you need it in the custom function you pass. **don't use element.open or element.mobileOpen**
 
 ___
@@ -515,7 +547,7 @@ ___
 the active element which triggers closing of the menu
 
 type: `read only`  
-default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose`
+default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose`. 
 **note**: use this ,if you need it in the custom function you pass. **don't use element.close or element.mobileClose**  
 
 ___

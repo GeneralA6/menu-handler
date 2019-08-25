@@ -57,12 +57,10 @@ add the following css:
   
 ### Menu
   
-The following menu structure is required:
-
-#### container 
+#### container (required)
 element that holds nothing, but the inner container.  
 
-#### inner container 
+#### inner container (required)
 element that holds all the menu elements. 
   
 **note**: inner container should have class **mh-hidden**.  

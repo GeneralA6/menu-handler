@@ -199,7 +199,7 @@ example:
 - [afterClose](#afterClose-[menu]) - triggered after the specific menu finished transition and is closed
 
 #### Submenu Events
-- [beforeOpen](#beforeOpen-[submenu]) - triggered before the specific submenu is opened.
+- [beforeOpen](#beforeOpen-(submenu)) - triggered before the specific submenu is opened.
 - [afterOpen](#afterOpen-[submenu]) - triggered after the specific submenu finished transition and is opened
 - [beforeClose](#beforeClose-[submenu]) - triggered before the specific submenu is closed.
 - [afterClose](#afterClose-[submenu]) - triggered after the specific submenu finished transition and is closed
@@ -696,7 +696,7 @@ menuHandler.init(menus);
 
 ### Submenu Events
 
-#### beforeOpen [submenu]
+#### beforeOpen (submenu)
         
 triggered before the specific submenu is opened
   

@@ -540,7 +540,7 @@ important menu parameters accessible via menu object
         
 the active element which triggers opening of the menu
 
-type: `read only`  
+type: `html element`  
 default: `element.open` ,if element.mobileOpen is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`. 
 **note**: use this ,if you need it in the custom function you pass. **don't use element.open or element.mobileOpen**
 
@@ -550,7 +550,7 @@ ___
         
 the active element which triggers closing of the menu
 
-type: `read only`  
+type: `html element`  
 default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose`. 
 **note**: use this ,if you need it in the custom function you pass. **don't use element.close or element.mobileClose**  
 
@@ -560,8 +560,14 @@ ___
         
 Shows the status of a menu at run time
 
-type: `read only`  
+type: `boolean`  
 default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose` 
+
+#### isMobile
+
+Shows the status of menu mobile state at run time.  
+  
+type: `boolean`
 
 ### Submenu
 

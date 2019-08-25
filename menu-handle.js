@@ -276,8 +276,10 @@ const menuHandler = {
    toggleMenu(menu, e) {
       const self = this;
 
+      console.log(menu);
+
       if ( e ) e.preventDefault(e);
-      if ( e && e.type == 'mouseenter' && menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button.
+      if ( e && e.type == 'mouseenter' && menu.isOpen || e.type == 'mouseenter' && menu.isMobile ) return; // prevent closing an open menu by hovering over a toggle open button.
 
       if ( self.actions.indexOf(menu.name) !== -1 ) return; // don't allow, another action of this menu while action is running.
 
@@ -329,7 +331,7 @@ const menuHandler = {
    toggleSubmenu(menu, submenu, e) {
       const self = this;
 
-      if ( e && e.type == 'mouseenter' && submenu.toggle.classList.contains('mh-open') ) return; // prevent closing an open submenu by hovering over a toggle open button.
+      if ( e && e.type == 'mouseenter' && submenu.toggle.classList.contains('mh-open') || e.type == 'mouseenter' && menu.isMobile ) return; // prevent closing an open submenu by hovering over a toggle open button.
 
       const transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
       const parentSubmenu = menu.submenus[submenu.parent] || null;   

@@ -352,7 +352,8 @@ triggers opening of a menu by mouse enter
   
 type: `boolean`  
 default: `false` 
-
+**note**: disabled ,if screen view port is less ,than the menu.mobileBreakpoint  
+  
 // todo: add init example
 __
 
@@ -387,7 +388,8 @@ triggers opening of a menu by mouse enter
   
 type: `boolean`  
 default: `false` 
-
+**note**: disabled ,if screen view port is less ,than the submenu.mobileBreakpoint  
+  
 // todo: add init example, passed inside object whose key is submenuOptions
 __
 

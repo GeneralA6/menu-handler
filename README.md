@@ -59,14 +59,18 @@ add the following css:
   
 The following menu structure is required:
 
-1. **container** element that holds nothing, but the inner container.  
-2. **inner container** element that holds all the elements.  
-   **note**: inner container should have class **mh-hidden**.  
+#### container 
+element that holds nothing, but the inner container.  
+
+#### inner container 
+element that holds all the menu elements. 
+  
+**note**: inner container should have class **mh-hidden**.  
   
 
 ### Submenu
 
-#### submenu toggle
+#### submenu toggle (required)
 submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value the submenu name ( a unique identifier ).  
 
 ```html
@@ -75,8 +79,9 @@ submenu toggle button element should have data attribute **data-mh-submenu-toggl
 </button>
 ```
   
-#### submenu list
-submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).  
+#### submenu list (required)
+submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).   
+  
 **note** : submenu list element should have class **mh-hidden**.
 
 ```html
@@ -87,6 +92,7 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
   
 #### submenu container (optional)
 submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ). 
+  
 **note**: if present ,submenu container will get `mh-open` class when submenu is opened. 
   
 ```html

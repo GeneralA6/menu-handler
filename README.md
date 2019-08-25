@@ -563,7 +563,7 @@ ___
 Shows the status of a menu at run time
 
 type: `boolean`  
-default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose` 
+default: `false`
 
 #### isMobile
 
@@ -572,6 +572,13 @@ Shows the status of menu mobile state at run time.
 type: `boolean`
 
 ### Submenu
+
+#### isOpen
+        
+Shows the status of a submenu at run time
+
+type: `boolean`  
+default: `false`
 
 
 

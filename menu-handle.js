@@ -185,6 +185,7 @@ const menuHandler = {
             container: null,
             parent: null,
             children: [],
+            isOpen: false,
             transitionDelay: null,
             transitionDuration: null,
          }
@@ -276,10 +277,12 @@ const menuHandler = {
    toggleMenu(menu, e) {
       const self = this;
 
-      console.log(menu);
-
       if ( e ) e.preventDefault(e);
-      if ( e && ( e.type == 'mouseenter' && menu.isOpen || e.type == 'mouseenter' && menu.isMobile ) ) return; // prevent closing an open menu by hovering over a toggle open button.
+
+      if ( e && e.type == 'mouseenter' ) {
+         if ( menu.isOpen ) return; // prevent closing an open menu by hovering over a toggle open button.
+         if ( menu.isMobile ) return; // prevent open on hover if isMobile.
+      }
 
       if ( self.actions.indexOf(menu.name) !== -1 ) return; // don't allow, another action of this menu while action is running.
 
@@ -331,19 +334,24 @@ const menuHandler = {
    toggleSubmenu(menu, submenu, e) {
       const self = this;
 
-      if ( e && ( e.type == 'mouseenter' && submenu.toggle.classList.contains('mh-open') || e.type == 'mouseenter' && menu.isMobile ) ) return; // prevent closing an open submenu by hovering over a toggle open button.
+      if ( e && e.type == 'mouseenter' ) {
+         if ( submenu.isOpen ) return; // prevent closing an open submenu by hovering over a toggle open button.
+         if ( menu.isMobile ) return; // prevent open on hover if isMobile.
+      }
 
       const transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
       const parentSubmenu = menu.submenus[submenu.parent] || null;   
       const options = menu.submenuOptions
 
-      if ( menu.isOpen && ( !parentSubmenu || parentSubmenu.toggle.classList.contains('mh-open') ) ) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
+      if ( menu.isOpen && ( !parentSubmenu || parentSubmenu.isOpen ) ) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
          submenu.toggle.classList.toggle('mh-open');
       } else { // if parent is closed ,then close this submenu
          submenu.toggle.classList.remove('mh-open');
       }
+
+      submenu.isOpen = submenu.toggle.classList.contains('mh-open');
       
-      if ( submenu.toggle.classList.contains('mh-open') ) {
+      if ( submenu.isOpen ) {
          if ( options.on.beforeOpen ) options.on.beforeOpen(menu, submenu, e); // before open.
 
          options.menuFunc(menu, submenu, e);

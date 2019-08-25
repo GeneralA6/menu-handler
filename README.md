@@ -30,8 +30,8 @@ const menus = [
      elements: {
         open:           '#menu-open',
         close:          '#menu-close',
-        container:      '#menu-wrap',
-        innerContainer: '#menu-inner-wrap',
+        container:      '#menu-container',
+        innerContainer: '#menu-inner-container',
      },
      loop: true,
   },
@@ -119,8 +119,8 @@ example:
 ### HTML Example
 
 ```html
-<div id="menu-wrap"> 
-  <div class="mh-hidden" id="menu-inner-wrap">
+<div id="menu-container"> 
+  <div class="mh-hidden" id="menu-inner-container">
     <nav id="menu-focus-enter">
         
         <ul class="menu">
@@ -167,42 +167,42 @@ example:
 ### Options
 
 #### Menu Options
-- [name](#name) - a unique menu name that will be used for the menu.
-- [container](#container) - menu container element that contains inner menu container.
-- [innerContainer](#innerContainer) - element that holds all menu elements.
-- [open](#open) - element that triggers opening of the menu.
-- [close](#close) - element that triggers menu closing of the menu.
-- [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable.
-- [exitFocus](#exitFocus) - element to focus after menu closes.
-- [mobileOpen](#mobileOpen) - element that triggers opening of the menu in mobile breakpoint.
-- [mobileClose](#mobileClose) - element that triggers closing of the menu in mobile breakpoint.
-- [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to switch between mobile and desktop open and/or close toggles.
-- [loop](#loop) - loop all elements inside the innerContainer using Tab key.
-- [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
-- [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
-- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
+- [name](#name-[menu]) - a unique menu name that will be used for the menu.
+- [container](#container-[menu]) - menu container element that contains inner menu container.
+- [innerContainer](#innerContainer-[menu]) - element that holds all menu elements.
+- [open](#open-[menu]) - element that triggers opening of the menu.
+- [close](#close-[menu]) - element that triggers menu closing of the menu.
+- [enterFocus](#enterFocus-[menu]) - element to focus first when menu opens, will make any provided element focusable.
+- [exitFocus](#exitFocus-[menu]) - element to focus after menu closes.
+- [mobileOpen](#mobileOpen-[menu]) - element that triggers opening of the menu in mobile breakpoint.
+- [mobileClose](#mobileClose-[menu]) - element that triggers closing of the menu in mobile breakpoint.
+- [mobileBreakpoint](#mobileBreakpoint-[menu]) - max width breakpoint to switch between mobile and desktop open and/or close toggles.
+- [loop](#loop-[menu]) - loop all elements inside the innerContainer using Tab key.
+- [openDelay](#openDelay-[menu]) - sets delay in miliseconds before menu starts opening.
+- [closeDelay](#closeDelay-[menu]) - sets delay in miliseconds before menu starts closing.
+- [openOnHover](#openOnHover-[menu]) - triggers opening of a menu by mouse enter.
+- [menuFunc](#menuFunc-[menu]) - function to handle on your own of the specific menu.
 
 #### Submenu Options
-- [isEnabled](#isEnabled) - enables handling of submenus.
-- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc) - function to handle submenus on your own the specific menu.
+- [isEnabled](#isEnabled-[submenu]) - enables handling of submenus.
+- [openOnHover](#openOnHover-[submenu]) - triggers opening of a menu by mouse enter.
+- [menuFunc](#menuFunc-[submenu]) - function to handle submenus on your own the specific menu.
 
 ### Events
 
 #### Menu Events
-- [beforeInit](#beforeInit) - triggered before the specific menu is initialized.
-- [afterInit](#afterInit) - triggered after the specific menu is initialized.
-- [beforeOpen](#beforeOpen) - triggered before the specific menu is opened.
-- [afterOpen](#afterOpen) - triggered after the specific menu finished transition and is opened
-- [beforeClose](#beforeClose) - triggered before the specific menu is closed.   
-- [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
+- [beforeInit](#beforeInit-[menu]) - triggered before the specific menu is initialized.
+- [afterInit](#afterInit-[menu]) - triggered after the specific menu is initialized.
+- [beforeOpen](#beforeOpen-[menu]) - triggered before the specific menu is opened.
+- [afterOpen](#afterOpen-[menu]) - triggered after the specific menu finished transition and is opened
+- [beforeClose](#beforeClose-[menu]) - triggered before the specific menu is closed.   
+- [afterClose](#afterClose-[menu]) - triggered after the specific menu finished transition and is closed
 
 #### Submenu Events
-- [beforeOpen](#beforeOpen) - triggered before the specific submenu is opened.
-- [afterOpen](#afterOpen) - triggered after the specific submenu finished transition and is opened
-- [beforeClose](#beforeClose) - triggered before the specific submenu is closed.
-- [afterClose](#afterClose) - triggered after the specific submenu finished transition and is closed
+- [beforeOpen](#beforeOpen-[submenu]) - triggered before the specific submenu is opened.
+- [afterOpen](#afterOpen-[submenu]) - triggered after the specific submenu finished transition and is opened
+- [beforeClose](#beforeClose-[submenu]) - triggered before the specific submenu is closed.
+- [afterClose](#afterClose-[submenu]) - triggered after the specific submenu finished transition and is closed
   
   
   
@@ -210,7 +210,7 @@ example:
 
 ### Menu Options
 
-#### name
+#### name [menu]
 
 a unique menu name that will be used for the menu  
   
@@ -219,145 +219,255 @@ type: `string`
 
 ___
 
-#### container
+#### container [menu]
 
-menu container element that contains inner menu container  
+menu container element that contains inner menu container. [see example](#html-example)  
 
 **required**  
 type: `css selector`  
-**note**: holds nothing, but the inner container  
-
-// todo: add init example, passed inside object whose key is elements
+**note**: holds nothing, but the inner container.
+  
+```javascript
+const menus = [
+  {
+    elements: {
+      container: '#menu-container',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 ___
 
-#### innerContainer
+#### innerContainer [menu]
 
-element that holds all menu elements  
+element that holds all menu elements. [see example](#html-example)  
 
 **required**
 type: `css selector`  
-**note**:  get class `mh-hidden` when menu is closed 
-
-// todo: add init example, passed inside object whose key is elements
+**note**:  gets class `mh-hidden` when menu is closed 
+  
+```javascript
+const menus = [
+  {
+    elements: {
+        innerContainer: '#menu-inner-container',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### open
+#### open [menu]
 
 element that triggers opening of the menu  
   
 **required**  
 type: `css selector`
-
-// todo: add init example, passed inside object whose key is elements
+  
+```javascript
+const menus = [
+  {
+    elements: {
+      open: '#menu-toggle-open',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### close
+#### close [menu]
 
 element that triggers closing of the menu  
   
 type: `css selector`  
-default:  `element.open`  
-**note**: required ,if [loop](#loop) is set to `true`
-
-// todo: add init example, passed inside object whose key is elements
+default:  `element.close`  
+**note**: required ,if [loop](#loop-[menu]) is set to `true` for accessibility reasons.  
+  
+```javascript
+const menus = [
+  {
+    elements: {
+      close: '#menu-toggle-close',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### enterFocus
+#### enterFocus [menu]
 
 element to focus first when menu opens, will make any provided element focusable  
   
 type: `css selector`  
 default: `first focusable element`  
 **note**:  will be set to display none when menu is closed 
-
-// todo: add init example, passed inside object whose key is elements
+  
+```javascript
+const menus = [
+  {
+    elements: {
+      enterFocus: '#menu-focus-enter',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### exitFocus
+#### exitFocus [menu]
 
 element to focus after menu closes  
     
 type: `css selector`  
 default: `elements.open`  
-
-// todo: add init example, passed inside object whose key is elements
+  
+```javascript
+const menus = [
+  {
+    elements: {
+      exitFocus: '#menu-exit-focus',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### mobileOpen
+#### mobileOpen [menu]
 
-element that triggers opening of the menu in mobile breakpoint.
-if both element.mobileOpen and element.open are passed ,then element.mobileOpen is the one that will trigger open in mobile breakpoint and element.open in larger screens.
+element that triggers opening of the menu in [mobileBreakpoint](#mobileBreakpoint-[menu]).
+if both [mobileOpen](#mobileOpen-[menu]) and [open](#open-[menu]) are passed ,then [mobileOpen](#mobileOpen-[menu]) is the one that will trigger open in [mobileBreakpoint](#mobileBreakpoint-[menu]) and [open](#open-[menu]) in larger screens.
   
 type: `css selector`  
 default: `null`  
 
-// todo: add init example, passed inside object whose key is elements
+```javascript
+const menus = [
+  {
+    elements: {
+        mobileOpen: '#menu-mobile-toggle-open',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### mobileClose
+#### mobileClose [menu]
 
-element that triggers closing of the menu in mobile breakpoint.
-if both element.mobileClose and element.close are passed ,then element.mobileClose is the one that will trigger close in mobile breakpoint and element.close in larger screens.
+element that triggers closing of the menu in [mobileBreakpoint](#mobileBreakpoint-[menu]).
+if both element.[mobileClose](#mobileClose-[menu]) and [close](#close-[menu]) are passed ,then [mobileClose](#mobileClose-[menu]) is the one that will trigger close in [mobileBreakpoint](#mobileBreakpoint-[menu]) and [close](#close-[menu]) in larger screens.
   
 type: `css selector`  
 default: `null`  
 
-// todo: add init example, passed inside object whose key is elements
+```javascript
+const menus = [
+  {
+    elements: {
+      mobileClose: '#menu-mobile-toggle-close',
+    },
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### mobileBreakpoint
+#### mobileBreakpoint [menu]
         
 max width breakpoint to switch between mobile and desktop open and/or close toggles.  
   
 type: `string`  
 default: `667px`  
 
-// todo: add init example
+```javascript
+const menus = [
+  {
+    mobileBreakpoint: '991px'
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### loop
+#### loop [menu]
         
-loop all elements inside the innerContainer using Tab key for accessibility purposes until a close button or ESC key are pressed
+loop all elements inside the [innerContainer](#innerContainer-[menu]) using Tab key for accessibility purposes until a [close button](#close-[menu]) or ESC key are pressed
   
 type: `boolean`  
 default: `false`  
-**note**: if [loop](#loop) is `true`, elements.close has is required, because a person using tabs will never escape out of the menu and make sure you put the elements.close element inside the innerContainer
+**note**: if [loop](#loop-[menu]) is `true`, [close](#close-[menu]) has is required, because a person using tabs will never escape out of the menu and make sure you put the [close](#close-[menu]) element inside the [innerContainer](#innerContainer-[menu])
 
-// todo: add init example
+```javascript
+const menus = [
+  {
+    elements: {
+      close: '#menu-toggle-close',
+    },
+    loop: true
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### openDelay
+#### openDelay [menu]
         
 sets delay in miliseconds before menu starts opening
   
 type: `integer`  
 default: `0` 
 
-// todo: add init example
+```javascript
+const menus = [
+  {
+    openDelay: 2000
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### closeDelay
+#### closeDelay [menu]
         
 sets delay in miliseconds before menu starts closing
   
 type: `integer`  
 default: `0` 
 
-// todo: add init example
+```javascript
+const menus = [
+  {
+    closeDelay: 1000
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### openOnHover
+#### openOnHover [menu]
         
 triggers opening of a menu by mouse enter
   
 type: `boolean`  
 default: `false` 
-**note**: disabled ,if screen view port is less ,than the menu.mobileBreakpoint  
-  
-// todo: add init example
+**note**: disabled ,if screen view port is less ,than the menu.[mobileBreakpoint](#mobileBreakpoint-[menu])
+
+```javascript
+const menus = [
+  {
+    openOnHover: true
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### menuFunc
+#### menuFunc [menu]
         
 function to handle on your own of the specific menu
   
@@ -365,35 +475,63 @@ type: `function`
 arguments:   
 - `menu` type: `object`  
 - `e` type: `event`  
-**note**: on open, close events related to the menu will need to be included in the custom function in order for them to work which can be access from the menu object
+**note**: on open, close events related to the menu will need to be included in the [custom function](#menuFunc-[menu]) in order for them to work which can be access from the menu object
 
-// todo: add init example
+```javascript
+const menus = [
+  {
+    menuFunc: function(menu, e){
+      console.log(menu);
+    }
+  },
+];
+menuHandler.init(menus);
+```
   
 
 ### Submenu Options
 
-#### isEnabled
+#### isEnabled [submenu]
         
 enables handling of submenus
   
 type: `boolean`  
 default: `false` 
 
-// todo: add init example, passed inside object whose key is submenuOptions
+```javascript
+const menus = [
+  {
+    submenuOptions: {
+      isEnabled: true
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### openOnHover
+#### openOnHover [submenu]
         
 triggers opening of a menu by mouse enter
   
 type: `boolean`  
 default: `false` 
-**note**: disabled ,if screen view port is less ,than the submenu.mobileBreakpoint  
-  
-// todo: add init example, passed inside object whose key is submenuOptions
+**note**: disabled ,if screen view port is less ,than the submenu.[mobileBreakpoint](#mobileBreakpoint-[submenu])  
+
+```javascript
+const menus = [
+  {
+    submenuOptions: {
+      isEnabled: true,
+      openOnHover: true
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### menuFunc
+#### menuFunc [submenu]
         
 function to handle submenus on your own the specific menu
   
@@ -401,14 +539,26 @@ type: `function`
 arguments:   
 - `menu` type: `object`  
 
-// todo: add init example, passed inside object whose key is submenuOptions
+```javascript
+const menus = [
+  {
+    submenuOptions: {
+      isEnabled: true,
+      menuFunc: function(menu, e){
+        console.log (menu);
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
   
   
 ## Events
 
 ### Menu Events
 
-#### beforeInit
+#### beforeInit [menu]
         
 triggered before the specific menu is initialized  
   
@@ -416,10 +566,21 @@ type: `function`
 arguments:   
 - `menu` type: `object`  
 
-// todo: add init example, passed inside object whose key is on
+```javascript
+const menus = [
+  {
+    on: {
+      beforeInit: function(menu) {
+        console.log(menu);
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### afterInit
+#### afterInit [menu]
         
 triggered after the specific menu is initialized
   
@@ -427,10 +588,21 @@ type: `function`
 arguments:   
 - `menu` type: `object` 
 
-// todo: add init example, passed inside object whose key is on
+```javascript
+const menus = [
+  {
+    on: {
+      afterInit: function(menu) {
+        console.log(menu);
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### beforeOpen
+#### beforeOpen [menu]
         
 triggered before the specific menu is opened
   
@@ -438,11 +610,22 @@ type: `function`
 arguments:   
 - `menu` type: `object`  
 - `e` type: `event`
-  
-// todo: add init example, passed inside object whose key is on
+
+```javascript
+const menus = [
+  {
+    on: {
+      beforeOpen: function(menu, e) {
+        console.log(menu);
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### afterOpen
+#### afterOpen [menu]
         
 triggered after the specific menu finished transition and is opened
   
@@ -450,11 +633,22 @@ type: `function`
 arguments:   
 - `menu` type: `object` 
 - `e` type: `event`
-  
-// todo: add init example, passed inside object whose key is on
+
+```javascript
+const menus = [
+  {
+    on: {
+      afterOpen: function(menu, e) {
+        console.log(menu);
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### beforeClose
+#### beforeClose [menu]
         
 triggered before the specific menu is closed
   
@@ -463,10 +657,21 @@ arguments:
 - `menu` type: `object` 
 - `e` type: `event`
   
-// todo: add init example, passed inside object whose key is on
+```javascript
+const menus = [
+  {
+    on: {
+      beforeClose: function(menu, e) {
+        console.log(menu);
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### afterClose
+#### afterClose [menu]
         
 triggered after the specific menu finished transition and is closed
   
@@ -474,13 +679,24 @@ type: `function`
 arguments:   
 - `menu` type: `object` 
 - `e` type: `event`
-
-// todo: add init example, passed inside object whose key is on
+  
+```javascript
+const menus = [
+  {
+    on: {
+      afterClose: function(menu, e) {
+        console.log(menu);
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
   
 
 ### Submenu Events
 
-#### beforeOpen
+#### beforeOpen [submenu]
         
 triggered before the specific submenu is opened
   
@@ -489,11 +705,24 @@ arguments:
 - `menu` type: `object` 
 - `submenu` type: `object` 
 - `e` type: `event`
-
-// todo: add init example, passed inside submenuOptions inside object whose key is on
+  
+```javascript
+const menus = [
+  {
+    submenuOptions: {
+      on: {
+        beforeOpen: function(menu, submenu, e) {
+          console.log(menu);
+        }
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### afterOpen
+#### afterOpen [submenu]
         
 triggered after the specific submenu finished transition and is opened
   
@@ -502,11 +731,24 @@ arguments:
 - `menu` type: `object` 
 - `submenu` type: `object` 
 - `e` type: `event`
-
-// todo: add init example, passed inside submenuOptions inside object whose key is on
+  
+```javascript
+const menus = [
+  {
+    submenuOptions: {
+      on: {
+        afterOpen: function(menu, submenu, e) {
+          console.log(menu);
+        }
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### beforeClose
+#### beforeClose [submenu]
         
 triggered before the specific submenu is closed
   
@@ -515,11 +757,24 @@ arguments:
 - `menu` type: `object` 
 - `submenu` type: `object` 
 - `e` type: `event`
-
-// todo: add init example, passed inside submenuOptions inside object whose key is on
+  
+```javascript
+const menus = [
+  {
+    submenuOptions: {
+      on: {
+        beforeClose: function(menu, submenu, e) {
+          console.log(menu);
+        }
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
 __
 
-#### afterClose
+#### afterClose [submenu]
         
 triggered after the specific submenu finished transition and is closed
   
@@ -528,8 +783,21 @@ arguments:
 - `menu` type: `object` 
 - `submenu` type: `object`  
 - `e` type: `event`   
-
-// todo: add init example, passed inside submenuOptions inside object whose key is on
+  
+```javascript
+const menus = [
+  {
+    submenuOptions: {
+      on: {
+        afterClose: function(menu, submenu, e) {
+          console.log(menu);
+        }
+      }
+    }
+  },
+];
+menuHandler.init(menus);
+```
   
   
 ## API
@@ -538,34 +806,34 @@ important menu parameters accessible via menu object
 
 ### Menu
 
-#### activeOpen
+#### activeOpen [menu]
         
 the active element which triggers opening of the menu
 
 type: `html element`  
-default: `element.open` ,if element.mobileOpen is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`. 
+default: `element.open` ,if [mobileOpen](#mobileOpen-[menu]) is not empty and mobile breakpoint query returns true ,then `element.mobileOpen`. 
 **note**: use this ,if you need it in the custom function you pass. **don't use element.open or element.mobileOpen**
 
 ___
 
-#### activeClose
+#### activeClose [menu]
         
 the active element which triggers closing of the menu
 
 type: `html element`  
-default: `element.open` ,if element.mobileClose is not empty and mobile breakpoint query returns true ,then `element.mobileClose`. 
+default: `element.open` ,if [mobileClose](#mobileClose-[menu]) is not empty and [mobile breakpoint](#mobileBreakpoint-[menu]) query returns true ,then `element.mobileClose`. 
 **note**: use this ,if you need it in the custom function you pass. **don't use element.close or element.mobileClose**  
 
 ___
 
-#### isOpen
+#### isOpen [menu]
         
 Shows the status of a menu at run time
 
 type: `boolean`  
 default: `false`
 
-#### isMobile
+#### isMobile [menu]
 
 Shows the status of menu mobile state at run time.  
   

@@ -59,12 +59,31 @@ add the following css:
   
 #### container (required)
 element that holds nothing, but the inner container.  
+  
+```html
+<div id="menu-container"> 
+  <div class="mh-hidden" id="menu-inner-container">
+    ...
+  </div>
+</div>
+```
+  
+___
 
 #### inner container (required)
 element that holds all the menu elements. 
   
 **note**: inner container should have class **mh-hidden**.  
   
+```html
+<div id="menu-container"> 
+  <div class="mh-hidden" id="menu-inner-container">
+    ...
+  </div>
+</div>
+```
+  
+___
 
 ### Submenu
 
@@ -77,6 +96,8 @@ submenu toggle button element should have data attribute **data-mh-submenu-toggl
 </button>
 ```
   
+___
+
 #### submenu list (required)
 submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).   
   
@@ -88,6 +109,8 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 </ul>
 ```
   
+___
+
 #### submenu container (optional)
 submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ). 
   
@@ -114,6 +137,7 @@ example:
 }
 ```
   
+___
   
   
 ### HTML Example
@@ -160,7 +184,7 @@ example:
 </div>
 ```  
   
-  
+___
   
 ## Table of contents
 

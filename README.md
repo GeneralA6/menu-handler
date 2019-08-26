@@ -23,6 +23,8 @@ for more functionality and information see [table of contents section](#Table-of
   
   
 ## Init
+  
+init with array of menu objects. 
 
 ```javascript
 const menus = [

@@ -199,7 +199,7 @@ example:
 - [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
 
 #### Submenu Events
-- [beforeOpen](#beforeOpen-submenu) - triggered before the specific submenu is opened.
+- [beforeOpen](#beforeOpen-[submenu]) - triggered before the specific submenu is opened.
 - [afterOpen](#afterOpen-[submenu]) - triggered after the specific submenu finished transition and is opened
 - [beforeClose](#beforeClose-[submenu]) - triggered before the specific submenu is closed.
 - [afterClose](#afterClose-[submenu]) - triggered after the specific submenu finished transition and is closed
@@ -210,7 +210,7 @@ example:
 
 ### Menu Options
 
-#### name
+#### name (menu)
 
 a unique menu name that will be used for the menu  
   
@@ -219,7 +219,7 @@ type: `string`
   
 ___
 
-#### container
+#### container (menu)
 
 menu container element that contains inner menu container. [see example](#html-example)  
 
@@ -240,7 +240,7 @@ menuHandler.init(menus);
   
 ___
 
-#### innerContainer
+#### innerContainer (menu)
 
 element that holds all menu elements. [see example](#html-example)  
 

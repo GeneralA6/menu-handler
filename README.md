@@ -125,7 +125,7 @@ submenu container should have data attribute **data-mh-submenu-container** and i
 ```
 submenu container is good for situations when you want to do an opening and closing animation to the submenu.
   
-example:  
+scss example:  
 
 ```scss
 [data-mh-submenu-container] {

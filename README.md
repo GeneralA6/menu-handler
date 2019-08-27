@@ -210,9 +210,9 @@ ___
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
 
 #### Submenu Options
-- [isEnabled](#isEnabled) - enables handling of submenus.
-- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc) - function to handle submenus on your own the specific menu.
+- [isEnabled](#isEnabled:submenu) - enables handling of submenus.
+- [openOnHover](#openOnHover:submenu) - triggers opening of a menu by mouse enter.
+- [menuFunc](#menuFunc:submenu) - function to handle submenus on your own the specific menu.
 
 ### Events
 
@@ -225,10 +225,10 @@ ___
 - [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
 
 #### Submenu Events
-- [beforeOpen](#beforeOpen) - triggered before the specific submenu is opened.
-- [afterOpen](#afterOpen) - triggered after the specific submenu finished transition and is opened
-- [beforeClose](#beforeClose) - triggered before the specific submenu is closed.
-- [afterClose](#afterClose) - triggered after the specific submenu finished transition and is closed
+- [beforeOpen](#beforeOpen:submenu) - triggered before the specific submenu is opened.
+- [afterOpen](#afterOpen:submenu) - triggered after the specific submenu finished transition and is opened
+- [beforeClose](#beforeClose:submenu) - triggered before the specific submenu is closed.
+- [afterClose](#afterClose:submenu) - triggered after the specific submenu finished transition and is closed
   
   
   
@@ -532,7 +532,7 @@ ___
 
 ### Submenu Options
 
-#### isEnabled [submenu]
+#### isEnabled:submenu
         
 enables handling of submenus
   
@@ -552,7 +552,7 @@ menuHandler.init(menus);
   
 ___
 
-#### openOnHover [submenu]
+#### openOnHover:submenu
         
 triggers opening of a menu by mouse enter
   
@@ -574,7 +574,7 @@ menuHandler.init(menus);
   
 ___
 
-#### menuFunc [submenu]
+#### menuFunc:submenu
         
 function to handle submenus on your own the specific menu
   
@@ -746,7 +746,7 @@ ___
 
 ### Submenu Events
 
-#### beforeOpen (submenu)
+#### beforeOpen:submenu
         
 triggered before the specific submenu is opened
   
@@ -773,7 +773,7 @@ menuHandler.init(menus);
   
 ___
 
-#### afterOpen (submenu)
+#### afterOpen:submenu
         
 triggered after the specific submenu finished transition and is opened
   
@@ -800,7 +800,7 @@ menuHandler.init(menus);
   
 ___
 
-#### beforeClose (submenu)
+#### beforeClose:submenu
         
 triggered before the specific submenu is closed
   
@@ -827,7 +827,7 @@ menuHandler.init(menus);
   
 ___
 
-#### afterClose (submenu)
+#### afterClose:submenu
         
 triggered after the specific submenu finished transition and is closed
   

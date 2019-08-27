@@ -285,7 +285,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### open
 
@@ -305,7 +305,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### close
 
@@ -324,9 +324,9 @@ const menus = [
   },
 ];
 menuHandler.init(menus);
-  
 ```
-__
+  
+___
 
 #### enterFocus
 
@@ -347,7 +347,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### exitFocus
 
@@ -367,7 +367,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### mobileOpen
 
@@ -388,7 +388,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### mobileClose
 
@@ -409,7 +409,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### mobileBreakpoint
         
@@ -427,7 +427,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### loop
         
@@ -449,7 +449,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### openDelay
         
@@ -467,7 +467,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### closeDelay
         
@@ -485,7 +485,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### openOnHover
         
@@ -504,7 +504,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### menuFunc
         
@@ -550,7 +550,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### openOnHover [submenu]
         
@@ -572,7 +572,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### menuFunc [submenu]
         
@@ -623,7 +623,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### afterInit
         
@@ -646,7 +646,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### beforeOpen
         
@@ -670,7 +670,7 @@ const menus = [
 menuHandler.init(menus);
 ```
 
-__
+___
 
 #### afterOpen
         
@@ -694,7 +694,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### beforeClose
         
@@ -718,7 +718,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### afterClose
         
@@ -771,7 +771,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### afterOpen (submenu)
         
@@ -798,7 +798,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### beforeClose (submenu)
         
@@ -825,7 +825,7 @@ const menus = [
 menuHandler.init(menus);
 ```
   
-__
+___
 
 #### afterClose (submenu)
         

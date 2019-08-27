@@ -210,9 +210,9 @@ ___
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
 
 #### Submenu Options
-- [isEnabled](#isEnabled-[submenu]) - enables handling of submenus.
-- [openOnHover](#openOnHover-[submenu]) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc-[submenu]) - function to handle submenus on your own the specific menu.
+- [isEnabled](#isEnabled) - enables handling of submenus.
+- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
+- [menuFunc](#menuFunc) - function to handle submenus on your own the specific menu.
 
 ### Events
 
@@ -225,10 +225,10 @@ ___
 - [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
 
 #### Submenu Events
-- [beforeOpen](#beforeOpen-[submenu]) - triggered before the specific submenu is opened.
-- [afterOpen](#afterOpen-[submenu]) - triggered after the specific submenu finished transition and is opened
-- [beforeClose](#beforeClose-[submenu]) - triggered before the specific submenu is closed.
-- [afterClose](#afterClose-[submenu]) - triggered after the specific submenu finished transition and is closed
+- [beforeOpen](#beforeOpen) - triggered before the specific submenu is opened.
+- [afterOpen](#afterOpen) - triggered after the specific submenu finished transition and is opened
+- [beforeClose](#beforeClose) - triggered before the specific submenu is closed.
+- [afterClose](#afterClose) - triggered after the specific submenu finished transition and is closed
   
   
   
@@ -245,7 +245,7 @@ type: `string`
   
 ___
 
-#### container (menu)
+#### container
 
 menu container element that contains inner menu container. [see example](#html-example)  
 
@@ -266,7 +266,7 @@ menuHandler.init(menus);
   
 ___
 
-#### innerContainer (menu)
+#### innerContainer
 
 element that holds all menu elements. [see example](#html-example)  
 
@@ -287,7 +287,7 @@ menuHandler.init(menus);
   
 __
 
-#### open (menu)
+#### open
 
 element that triggers opening of the menu  
   
@@ -307,7 +307,7 @@ menuHandler.init(menus);
   
 __
 
-#### close (menu)
+#### close
 
 element that triggers closing of the menu  
   
@@ -328,7 +328,7 @@ menuHandler.init(menus);
 ```
 __
 
-#### enterFocus (menu)
+#### enterFocus
 
 element to focus first when menu opens, will make any provided element focusable  
   
@@ -349,7 +349,7 @@ menuHandler.init(menus);
   
 __
 
-#### exitFocus (menu)
+#### exitFocus
 
 element to focus after menu closes  
     
@@ -369,7 +369,7 @@ menuHandler.init(menus);
   
 __
 
-#### mobileOpen (menu)
+#### mobileOpen
 
 element that triggers opening of the menu in [mobileBreakpoint](#mobileBreakpoint).
 if both [mobileOpen](#mobileOpen) and [open](#open) are passed ,then [mobileOpen](#mobileOpen) is the one that will trigger open in [mobileBreakpoint](#mobileBreakpoint) and [open](#open) in larger screens.
@@ -390,7 +390,7 @@ menuHandler.init(menus);
   
 __
 
-#### mobileClose (menu)
+#### mobileClose
 
 element that triggers closing of the menu in [mobileBreakpoint](#mobileBreakpoint).
 if both [mobileClose](#mobileClose) and [close](#close) are passed ,then [mobileClose](#mobileClose) is the one that will trigger close in [mobileBreakpoint](#mobileBreakpoin) and [close](#close) in larger screens.
@@ -411,7 +411,7 @@ menuHandler.init(menus);
   
 __
 
-#### mobileBreakpoint (menu)
+#### mobileBreakpoint
         
 max width breakpoint to switch between mobile and desktop open and/or close toggles.  
   
@@ -429,7 +429,7 @@ menuHandler.init(menus);
   
 __
 
-#### loop (menu)
+#### loop
         
 loop all elements inside the [innerContainer](#innerContainer) using Tab key for accessibility purposes until a [close button](#close) or ESC key are pressed
   
@@ -451,7 +451,7 @@ menuHandler.init(menus);
   
 __
 
-#### openDelay (menu)
+#### openDelay
         
 sets delay in miliseconds before menu starts opening
   
@@ -469,7 +469,7 @@ menuHandler.init(menus);
   
 __
 
-#### closeDelay([menu)
+#### closeDelay
         
 sets delay in miliseconds before menu starts closing
   
@@ -487,7 +487,7 @@ menuHandler.init(menus);
   
 __
 
-#### openOnHover (menu)
+#### openOnHover
         
 triggers opening of a menu by mouse enter
   
@@ -506,7 +506,7 @@ menuHandler.init(menus);
   
 __
 
-#### menuFunc (menu)
+#### menuFunc
         
 function to handle on your own of the specific menu
   
@@ -602,7 +602,7 @@ ___
 
 ### Menu Events
 
-#### beforeInit (menu)
+#### beforeInit
         
 triggered before the specific menu is initialized  
   
@@ -625,7 +625,7 @@ menuHandler.init(menus);
   
 __
 
-#### afterInit (menu)
+#### afterInit
         
 triggered after the specific menu is initialized
   
@@ -648,7 +648,7 @@ menuHandler.init(menus);
   
 __
 
-#### beforeOpen (menu)
+#### beforeOpen
         
 triggered before the specific menu is opened
   
@@ -672,7 +672,7 @@ menuHandler.init(menus);
 
 __
 
-#### afterOpen (menu)
+#### afterOpen
         
 triggered after the specific menu finished transition and is opened
   
@@ -696,7 +696,7 @@ menuHandler.init(menus);
   
 __
 
-#### beforeClose (menu)
+#### beforeClose
         
 triggered before the specific menu is closed
   
@@ -720,7 +720,7 @@ menuHandler.init(menus);
   
 __
 
-#### afterClose (menu)
+#### afterClose
         
 triggered after the specific menu finished transition and is closed
   
@@ -860,7 +860,7 @@ important menu parameters accessible via menu object
 
 ### Menu
 
-#### activeOpen (menu)
+#### activeOpen
         
 the active element which triggers opening of the menu
 
@@ -870,7 +870,7 @@ default: `elements.open` ,if [mobileOpen](#mobileOpen) is not empty and [mobileB
   
 ___
 
-#### activeClose (menu)
+#### activeClose
         
 the active element which triggers closing of the menu
 
@@ -880,7 +880,7 @@ default: `elements.close` ,if [mobileClose](#mobileClose-[menu]) is not empty an
   
 ___
 
-#### isOpen (menu)
+#### isOpen
         
 Shows the status of a menu at run time
 

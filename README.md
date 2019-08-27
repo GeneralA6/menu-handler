@@ -236,7 +236,7 @@ ___
 
 ### Menu Options
 
-#### name (menu)
+#### name
 
 a unique menu name that will be used for the menu  
   

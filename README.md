@@ -213,7 +213,7 @@ ___
 - [isEnabled][1] - enables handling of submenus.
 - [openOnHover](#openOnHover:submenu) - triggers opening of a menu by mouse enter.
 - [menuFunc](#menuFunc:submenu) - function to handle submenus on your own the specific menu.
-  [1]:#isEnabled:submenu
+  [1]:(#isEnabled:submenu)
 ### Events
 
 #### Menu Events

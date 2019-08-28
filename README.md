@@ -59,7 +59,8 @@ add the following css:
   
 ### Menu
   
-#### container (required)
+#### container
+**required**
 element that holds nothing, but the inner container.  
   
 ```html
@@ -72,7 +73,8 @@ element that holds nothing, but the inner container.
   
 ___
 
-#### inner container (required)
+#### inner container 
+**required**
 element that holds all the menu elements. 
   
 **note**: inner container should have class **mh-hidden**.  
@@ -89,7 +91,8 @@ ___
 
 ### Submenu
 
-#### submenu toggle (required)
+#### submenu toggle 
+**required**
 submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value the submenu name ( a unique identifier ).  
 
 ```html
@@ -100,7 +103,8 @@ submenu toggle button element should have data attribute **data-mh-submenu-toggl
   
 ___
 
-#### submenu list (required)
+#### submenu list 
+**required**
 submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).   
   
 **note** : submenu list element should have class **mh-hidden**.
@@ -113,7 +117,8 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
   
 ___
 
-#### submenu container (optional)
+#### submenu container
+**optional**
 submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ). 
   
 **note**: if present ,submenu container will get `mh-open` class when submenu is opened. 
@@ -189,9 +194,34 @@ ___
 ___
   
 ## Table of contents
+  
+### Init
+- [init](#init)
+  
+### CSS
+- [css](#css)
+
+### HTML
+  
+#### Menu
+
+- [container](#container) - 
+- [inner container](#inner-container) - 
+  
+#### Submenu
+  
+- [submenu toggle](#submenu-toggle) -
+- [submenu toggle](#submenu-list) -
+- [submenu toggle](#submenu-container) -
+
+#### Complete example
+
+- [html example](#html-example) -
+
+#### Table of contents
 
 ### Options
-
+  
 #### Menu Options
 - [name](#name) - a unique menu name that will be used for the menu.
 - [container](#container) - menu container element that contains inner menu container.
@@ -208,14 +238,14 @@ ___
 - [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
 - [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
-
+  
 #### Submenu Options
 - [isEnabled](#isEnabled---submenu) - enables handling of submenus.
 - [openOnHover](#openOnHover---submenu) - triggers opening of a menu by mouse enter.
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
 
 ### Events
-
+  
 #### Menu Events
 - [beforeInit](#beforeInit) - triggered before the specific menu is initialized.
 - [afterInit](#afterInit) - triggered after the specific menu is initialized.
@@ -223,7 +253,7 @@ ___
 - [afterOpen](#afterOpen) - triggered after the specific menu finished transition and is opened
 - [beforeClose](#beforeClose) - triggered before the specific menu is closed.   
 - [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
-
+  
 #### Submenu Events
 - [beforeOpen](#beforeOpen---submenu) - triggered before the specific submenu is opened.
 - [afterOpen](#afterOpen---submenu) - triggered after the specific submenu finished transition and is opened
@@ -233,9 +263,9 @@ ___
   
   
 ## Options
-
+  
 ### Menu Options
-
+  
 #### name
 
 a unique menu name that will be used for the menu  

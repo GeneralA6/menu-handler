@@ -17,10 +17,75 @@ library functionality:
  - prevent body scroll when a menu is open
  - prevent body swipe when a menu is open
  - accessiblity
-    
-for more functionality and information see [table of contents section](#Table-of-contents)
   
+___
   
+## Table of contents
+  
+### Init
+- [init](#init) - init with array of menu objects
+  
+### CSS
+- [css](#css) - add the following css
+
+### HTML
+  
+#### Menu
+
+- [container](#container) - element that holds nothing, but the inner container 
+- [inner container](#inner-container) - element that holds all the menu elements
+  
+#### Submenu
+  
+- [submenu toggle](#submenu-toggle) - toggle button element should have data attribute data-mh-submenu-toggle
+- [submenu list](#submenu-list) - list element should have data attribue data-mh-submenu-list
+- [submenu container](#submenu-container) - container should have data attribute data-mh-submenu-container
+  
+#### Complete example
+
+- [html example](#html-example) - complete example of a menu structure with submenus
+
+### Options
+  
+#### Menu Options
+- [name](#name) - a unique menu name that will be used for the menu.
+- [container](#container) - menu container element that contains inner menu container.
+- [innerContainer](#innerContainer) - element that holds all menu elements.
+- [open](#open) - element that triggers opening of the menu.
+- [close](#close) - element that triggers menu closing of the menu.
+- [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable.
+- [exitFocus](#exitFocus) - element to focus after menu closes.
+- [mobileOpen](#mobileOpen) - element that triggers opening of the menu in mobile breakpoint.
+- [mobileClose](#mobileClose) - element that triggers closing of the menu in mobile breakpoint.
+- [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to switch between mobile and desktop open and/or close toggles.
+- [loop](#loop) - loop all elements inside the innerContainer using Tab key.
+- [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
+- [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
+- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
+- [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
+  
+#### Submenu Options
+- [isEnabled](#isEnabled---submenu) - enables handling of submenus.
+- [openOnHover](#openOnHover---submenu) - triggers opening of a menu by mouse enter.
+- [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
+
+### Events
+  
+#### Menu Events
+- [beforeInit](#beforeInit) - triggered before the specific menu is initialized.
+- [afterInit](#afterInit) - triggered after the specific menu is initialized.
+- [beforeOpen](#beforeOpen) - triggered before the specific menu is opened.
+- [afterOpen](#afterOpen) - triggered after the specific menu finished transition and is opened
+- [beforeClose](#beforeClose) - triggered before the specific menu is closed.   
+- [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
+  
+#### Submenu Events
+- [beforeOpen](#beforeOpen---submenu) - triggered before the specific submenu is opened.
+- [afterOpen](#afterOpen---submenu) - triggered after the specific submenu finished transition and is opened
+- [beforeClose](#beforeClose---submenu) - triggered before the specific submenu is closed.
+- [afterClose](#afterClose---submenu) - triggered after the specific submenu finished transition and is closed
+  
+___
   
 ## Init
   
@@ -192,77 +257,7 @@ complete example of a menu structure with submenus
    </div>
 </div>
 ```  
-  
 ___
-  
-## Table of contents
-  
-### Init
-- [init](#init) - init with array of menu objects
-  
-### CSS
-- [css](#css) - add the following css
-
-### HTML
-  
-#### Menu
-
-- [container](#container) - element that holds nothing, but the inner container 
-- [inner container](#inner-container) - element that holds all the menu elements
-  
-#### Submenu
-  
-- [submenu toggle](#submenu-toggle) - toggle button element should have data attribute data-mh-submenu-toggle
-- [submenu list](#submenu-list) - list element should have data attribue data-mh-submenu-list
-- [submenu container](#submenu-container) - container should have data attribute data-mh-submenu-container
-  
-#### Complete example
-
-- [html example](#html-example) - complete example of a menu structure with submenus
-
-#### Table of contents
-
-### Options
-  
-#### Menu Options
-- [name](#name) - a unique menu name that will be used for the menu.
-- [container](#container) - menu container element that contains inner menu container.
-- [innerContainer](#innerContainer) - element that holds all menu elements.
-- [open](#open) - element that triggers opening of the menu.
-- [close](#close) - element that triggers menu closing of the menu.
-- [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable.
-- [exitFocus](#exitFocus) - element to focus after menu closes.
-- [mobileOpen](#mobileOpen) - element that triggers opening of the menu in mobile breakpoint.
-- [mobileClose](#mobileClose) - element that triggers closing of the menu in mobile breakpoint.
-- [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to switch between mobile and desktop open and/or close toggles.
-- [loop](#loop) - loop all elements inside the innerContainer using Tab key.
-- [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
-- [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
-- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
-  
-#### Submenu Options
-- [isEnabled](#isEnabled---submenu) - enables handling of submenus.
-- [openOnHover](#openOnHover---submenu) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
-
-### Events
-  
-#### Menu Events
-- [beforeInit](#beforeInit) - triggered before the specific menu is initialized.
-- [afterInit](#afterInit) - triggered after the specific menu is initialized.
-- [beforeOpen](#beforeOpen) - triggered before the specific menu is opened.
-- [afterOpen](#afterOpen) - triggered after the specific menu finished transition and is opened
-- [beforeClose](#beforeClose) - triggered before the specific menu is closed.   
-- [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
-  
-#### Submenu Events
-- [beforeOpen](#beforeOpen---submenu) - triggered before the specific submenu is opened.
-- [afterOpen](#afterOpen---submenu) - triggered after the specific submenu finished transition and is opened
-- [beforeClose](#beforeClose---submenu) - triggered before the specific submenu is closed.
-- [afterClose](#afterClose---submenu) - triggered after the specific submenu finished transition and is closed
-  
-  
   
 ## Options
   

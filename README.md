@@ -94,7 +94,10 @@ library functionality:
 #### Submenu params 
 - [isOpen](#isOpen---submenu) - Shows the status of the submenu at run time
   
-___
+   
+   
+   
+  
   
 ## Init
   

@@ -148,7 +148,9 @@ ___
   
   
 #### HTML Example
-
+  
+complete example of a menu structure with submenus
+  
 ```html
 <div id="menu-container"> 
   <div class="mh-hidden" id="menu-inner-container">
@@ -196,27 +198,27 @@ ___
 ## Table of contents
   
 ### Init
-- [init](#init)
+- [init](#init) - init with array of menu objects
   
 ### CSS
-- [css](#css)
+- [css](#css) - add the following css
 
 ### HTML
   
 #### Menu
 
-- [container](#container) - 
-- [inner container](#inner-container) - 
+- [container](#container) - element that holds nothing, but the inner container 
+- [inner container](#inner-container) - element that holds all the menu elements
   
 #### Submenu
   
-- [submenu toggle](#submenu-toggle) -
-- [submenu toggle](#submenu-list) -
-- [submenu toggle](#submenu-container) -
-
+- [submenu toggle](#submenu-toggle) - toggle button element should have data attribute data-mh-submenu-toggle
+- [submenu list](#submenu-list) - list element should have data attribue data-mh-submenu-list
+- [submenu container](#submenu-container) - container should have data attribute data-mh-submenu-container
+  
 #### Complete example
 
-- [html example](#html-example) -
+- [html example](#html-example) - complete example of a menu structure with submenus
 
 #### Table of contents
 

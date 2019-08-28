@@ -55,7 +55,7 @@ add the following css:
   
   
   
-## HTML Structure
+## HTML
   
 ### Menu
   
@@ -142,7 +142,7 @@ scss example:
 ___
   
   
-### HTML Example
+#### HTML Example
 
 ```html
 <div id="menu-container"> 

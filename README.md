@@ -18,8 +18,6 @@ library functionality:
  - prevent body swipe when a menu is open
  - accessiblity
   
-___
-  
 ## Table of contents
   
 ### Init
@@ -84,6 +82,17 @@ ___
 - [afterOpen](#afterOpen---submenu) - triggered after the specific submenu finished transition and is opened
 - [beforeClose](#beforeClose---submenu) - triggered before the specific submenu is closed.
 - [afterClose](#afterClose---submenu) - triggered after the specific submenu finished transition and is closed
+  
+### API
+
+#### Menu params 
+- [activeOpen](#activeOpen) - the active element which triggers opening of the menu
+- [activeClose](#activeClose) - the active element which triggers closing of the menu
+- [isOpen](#isOpen) - Shows the status of the menu at run time
+- [isMobile](#isMobile) - Shows the status of menu mobile state at run time
+
+#### Submenu params 
+- [isOpen](#isOpen---submenu) - Shows the status of the submenu at run time
   
 ___
   
@@ -916,9 +925,10 @@ default: `false`
   
 ___
 
-#### isMobile (menu)
+#### isMobile
 
 Shows the status of menu mobile state at run time.  
+**note**: calculated with mobileBreakpoint.
   
 type: `boolean`
   
@@ -926,7 +936,7 @@ ___
 
 ### Submenu
 
-#### isOpen
+#### isOpen - submenu
         
 Shows the status of a submenu at run time
 

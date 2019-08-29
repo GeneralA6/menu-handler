@@ -849,6 +849,8 @@ arguments:
 - `submenu` type: `object` 
 - `e` type: `event`
   
+**note**: e is `null` when the closing action was on the parent.
+ 
 ```javascript
 const menus = [
   {
@@ -875,6 +877,8 @@ arguments:
 - `menu` type: `object` 
 - `submenu` type: `object`  
 - `e` type: `event`   
+  
+**note**: e is `null` when the closing action was on the parent.
   
 ```javascript
 const menus = [

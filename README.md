@@ -22,11 +22,10 @@ library functionality:
   
 <details>
   <summary>
-    <h3>Init</h3>
+    <h3 style="display:inline">Init</h3>
   </summary>
   <a href="#init">init</a> - init with array of menu objects
 </details>
-
 
   
 ### CSS

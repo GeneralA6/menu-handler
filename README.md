@@ -20,8 +20,12 @@ library functionality:
   
 ## Table of contents
   
-### Init
+<details>
+  <summary>### Init</summary>
 - [init](#init) - init with array of menu objects
+</details>
+
+
   
 ### CSS
 - [css](#css) - add the following css

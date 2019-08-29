@@ -21,8 +21,10 @@ library functionality:
 ## Table of contents
   
 <details>
-  <summary>### Init</summary>
-- [init](#init) - init with array of menu objects
+  <summary>
+    <h3>Init</h3>
+  </summary>
+  <a href="#init">init</a> - init with array of menu objects
 </details>
 
 

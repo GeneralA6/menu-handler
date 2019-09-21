@@ -12,6 +12,7 @@ const menuHandler = {
 
       passedMenus.forEach(function(menu) {
          const createMenu = {
+            name: null,
             open: null,
             close: null,
             mobileOpen: null,
@@ -98,7 +99,9 @@ const menuHandler = {
          }
       }
 
-      createMenu.name = Math.random().toString(36).substr(2); //  create menu name from a random number converted to base 36.
+      if ( !createMenu.name ) {
+        createMenu.name = Math.random().toString(36).substr(2); //  create menu name from a random number converted to base 36.
+      }
    },
 
    initSubmenuOptions(createMenu, options) {
@@ -218,13 +221,15 @@ const menuHandler = {
       const images = menu.innerContainer.querySelectorAll('img');
 
       svgs.forEach(el => {
-         if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
-         if ( !el.getAttribute('aria-hidden') ) el.setAttribute('aria-hidden', true);
+         if ( !el.getAttribute('aria-label) ) {
+            if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
+         }
       });
 
       images.forEach(el => {
-         if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
-         if ( !el.getAttribute('aria-hidden') ) el.setAttribute('aria-hidden', true);
+         if ( !el.getAttribute('alt') ) {
+            if ( !el.getAttribute('role') ) el.setAttribute('role', 'presentation');
+         }
       });
       
       if ( !menu.innerContainer.classList.contains('mh-hidden') ) menu.innerContainer.classList.add('mh-hidden');

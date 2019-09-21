@@ -565,7 +565,28 @@ const menus = [
 ];
 menuHandler.init(menus);
 ```
+   
+***default code***:
+   
+```javascript
+menuFunc(menu, e) {
 
+   if ( menu.isOpen ) {
+
+      menu.container.setAttribute('aria-expanded', true);
+      menu.container.setAttribute('aria-hidden', false);
+      menu.innerContainer.classList.remove('mh-hidden');
+      menu.enterFocus.focus();
+
+   } else {
+
+      menu.container.setAttribute('aria-expanded', false);
+      menu.container.setAttribute('aria-hidden', true);
+      menu.innerContainer.classList.add('mh-hidden');
+
+   }
+}
+```
 ___
   
 
@@ -634,7 +655,40 @@ const menus = [
 ];
 menuHandler.init(menus);
 ```
-  
+     
+***default code***:
+   
+```javascript
+submenuFunc(menu, submenu, e) {
+
+   if ( submenu.toggle.classList.contains('mh-open') ) {
+
+      submenu.list.classList.remove('mh-hidden');
+      submenu.list.setAttribute('aria-hidden', false);
+
+      if ( submenu.container ) {
+         submenu.container.classList.add('mh-open');
+         submenu.container.setAttribute('aria-expanded', true);
+      } else {
+         submenu.list.classList.add('mh-open');
+         submenu.list.setAttribute('aria-expanded', true);
+      }
+
+   } else {
+      submenu.list.classList.add('mh-hidden');
+      submenu.list.setAttribute('aria-hidden', true);
+
+      if ( submenu.container ) {
+         submenu.container.classList.remove('mh-open');
+         submenu.container.setAttribute('aria-expanded', false);
+      } else {
+         submenu.list.classList.remove('mh-open');
+         submenu.list.setAttribute('aria-expanded', false);
+      }
+
+   }
+}
+```
 ___
   
 ## Events

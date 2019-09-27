@@ -7,8 +7,7 @@ Menu Handler is a tool to speedup the development of side menus, dropdowns and p
 es6, no dependencies.  
 _internet explorer not supported._
 
-library functionality:
-
+library functionality:  
 - open
 - close
 - close on esc press
@@ -16,16 +15,19 @@ library functionality:
 - prevent body scroll when a menu is open
 - prevent body swipe when a menu is open
 - accessiblity
+- event handling
+- custom functions
+- breakpoint options
 
 ## Table of contents
 
-### Init.
+### Init
 
-- [init](#init) - init with array of menu objects
+- [init](#init---section) - init with array of menu objects
 
 ### CSS
 
-- [css](#css) - add the following css
+- [css](#css---section) - add the following css
 
 ### HTML
 
@@ -101,7 +103,7 @@ library functionality:
 
 - [isOpen](#isOpen---submenu) - Shows the status of the submenu at run time
 
-## Init
+## Init - section
 
 init with array of menu objects.
 
@@ -120,7 +122,7 @@ const menus = [
 menuHandler.init(menus);
 ```
 
-## CSS
+## CSS - section
 
 add the following css:
 
@@ -130,7 +132,7 @@ add the following css:
 }
 ```
 
-## HTML
+## HTML - section
 
 ### Menu
 
@@ -274,7 +276,7 @@ complete example of a menu structure with submenus
 
 ---
 
-## Options
+## Options - section
 
 ### Menu Options
 
@@ -763,7 +765,7 @@ submenuFunc(menu, submenu, e) {
 
 ---
 
-## Events
+## Events - section
 
 ### Menu Events
 
@@ -1083,7 +1085,7 @@ menuHandler.init(menus);
 
 ---
 
-## API
+## API - section
 
 important menu parameters accessible via menu object  
 

@@ -36,13 +36,13 @@ library functionality:
 
 #### Submenu
 
-- [submenu toggle](#submenu-toggle) - **required** - toggle button element should have data attribute data-mh-submenu-toggle
-- [submenu list](#submenu-list) - **required** - list element should have data attribue data-mh-submenu-list
-- [submenu container](#submenu-container) - container should have data attribute data-mh-submenu-container
+- [submenu toggle](#submenu-toggle) - **required** - element to trigger open / close of the submenu list
+- [submenu list](#submenu-list) - **required** - element that holds the submenu list
+- [submenu container](#submenu-container) - element that wraps the submenu list.
 
 #### Complete example
 
-- [html example](#html-example) - complete example of a menu structure with submenus
+- [html example](#html-example) - a complete example of a menu structure with submenus
 
 ### Options
 
@@ -136,8 +136,9 @@ add the following css:
 
 #### container
 
-**required**
-element that holds nothing, but the inner container.
+element that holds nothing, but the inner container.  
+  
+**required**  
 
 ```html
 <div id="menu-container">
@@ -151,10 +152,10 @@ element that holds nothing, but the inner container.
 
 #### inner container
 
-**required**
 element that holds all the menu elements.
 
-&#10071; **note**: inner container should have class **mh-hidden**.
+**required**  
+&#10071; **note**: inner container should have class **mh-hidden**.  
 
 ```html
 <div id="menu-container">
@@ -170,8 +171,10 @@ element that holds all the menu elements.
 
 #### submenu toggle
 
-**required**
-submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value the submenu name ( a unique identifier ).
+element to trigger open / close of the submenu list  
+  
+**required**  
+&#10071; **note**: submenu toggle button element should have data attribute **data-mh-submenu-toggle** and it's value the submenu name ( a unique identifier ).
 
 ```html
 <button data-mh-submenu-toggle="submenu-a">
@@ -183,9 +186,10 @@ submenu toggle button element should have data attribute **data-mh-submenu-toggl
 
 #### submenu list
 
-**required**
-submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).
-
+element that holds the submenu content  
+  
+**required**  
+&#10071; **note** : submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).  
 &#10071; **note** : submenu list element should have class **mh-hidden**.
 
 ```html
@@ -198,9 +202,10 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 
 #### submenu container
 
-**optional**
-submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ).
-
+element that wraps the submenu list.  
+  
+**optional**  
+&#10071; **note** : submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ).  
 &#10071; **note**: if present ,submenu container will get `mh-open` class when submenu is opened.
 
 ```html
@@ -209,7 +214,7 @@ submenu container should have data attribute **data-mh-submenu-container** and i
 </div>
 ```
 
-submenu container is good for situations when you want to do an opening and closing animation to the submenu.
+&#10071; submenu container is handy for situations when you want to do an opening and closing animation for the submenu.  
 
 scss example:
 
@@ -275,7 +280,7 @@ complete example of a menu structure with submenus
 
 #### name
 
-a unique menu name that will be used for the menu
+a unique menu name that will be used for the menu  
 
 default: `randomly generated name`  
 type: `string`
@@ -284,7 +289,7 @@ type: `string`
 
 #### container
 
-menu container element that contains inner menu container. [see example](#html-example)
+menu container element that contains inner menu container. [see example](#html-example)  
 
 **required**  
 type: `css selector`  
@@ -307,9 +312,9 @@ menuHandler.init(menus);
 
 #### innerContainer
 
-element that holds all menu elements. [see example](#html-example)
-
-**required**
+element that holds all menu elements. [see example](#html-example)  
+  
+**required**  
 type: `css selector`  
 &#10071; **note**: gets class `mh-hidden` when menu is closed
 
@@ -330,8 +335,8 @@ menuHandler.init(menus);
 
 #### open
 
-element that triggers opening of the menu
-
+element that triggers opening of the menu  
+  
 **required**  
 type: `css selector`
 
@@ -352,8 +357,8 @@ menuHandler.init(menus);
 
 #### close
 
-element that triggers closing of the menu
-
+element that triggers closing of the menu  
+  
 type: `css selector`  
 default: `element.close`  
 &#10071; **note**: required ,if [loop](#loop) is set to `true` for accessibility reasons.
@@ -376,8 +381,8 @@ menuHandler.init(menus);
 
 #### enterFocus
 
-element to focus first when menu opens, will make any provided element focusable
-
+element to focus first when menu opens, will make any provided element focusable  
+  
 type: `css selector`  
 default: `first focusable element`  
 &#10071; **note**: will be set to display none when menu is closed
@@ -400,8 +405,8 @@ menuHandler.init(menus);
 
 #### exitFocus
 
-element to focus after menu closes
-
+element to focus after menu closes  
+  
 type: `css selector`  
 default: `elements.open`
 
@@ -423,11 +428,11 @@ menuHandler.init(menus);
 
 #### mobileOpen
 
-element that triggers opening of the menu in [mobileBreakpoint](#mobileBreakpoint).
-if both [mobileOpen](#mobileOpen) and [open](#open) are passed ,then [mobileOpen](#mobileOpen) is the one that will trigger open in [mobileBreakpoint](#mobileBreakpoint) and [open](#open) in larger screens.
-
+element that triggers opening of the menu in [mobileBreakpoint](#mobileBreakpoint).  
+  
 type: `css selector`  
-default: `null`
+default: `null`  
+&#10071; **note**: if both [mobileOpen](#mobileOpen) and [open](#open) are passed ,then [mobileOpen](#mobileOpen) is the one that will trigger open in [mobileBreakpoint](#mobileBreakpoint) and [open](#open) in larger screens.
 
 ```javascript
 const menus = [
@@ -447,12 +452,12 @@ menuHandler.init(menus);
 
 #### mobileClose
 
-element that triggers closing of the menu in [mobileBreakpoint](#mobileBreakpoint).
-if both [mobileClose](#mobileClose) and [close](#close) are passed ,then [mobileClose](#mobileClose) is the one that will trigger close in [mobileBreakpoint](#mobileBreakpoint) and [close](#close) in larger screens.
+element that triggers closing of the menu in [mobileBreakpoint](#mobileBreakpoint).  
 
 type: `css selector`  
 default: `null`  
-&#10071; **note**: [close](#close) is required, if using mobileClose.
+&#10071; **note**: [close](#close) is required, if using mobileClose.  
+&#10071; **note**: if both [mobileClose](#mobileClose) and [close](#close) are passed ,then [mobileClose](#mobileClose) is the one that will trigger close in [mobileBreakpoint](#mobileBreakpoint) and [close](#close) in larger screens.
 
 ```javascript
 const menus = [
@@ -473,7 +478,7 @@ menuHandler.init(menus);
 
 #### mobileBreakpoint
 
-max width breakpoint to switch between mobile and desktop open and/or close toggles.
+max width breakpoint to switch between mobile and desktop open and/or close toggles.  
 
 type: `string`  
 default: `667px`
@@ -496,7 +501,7 @@ menuHandler.init(menus);
 
 #### loop
 
-loop all elements inside the [innerContainer](#innerContainer) using Tab key for accessibility purposes until a [close button](#close) or ESC key are pressed
+loop all elements inside the [innerContainer](#innerContainer) using Tab key for accessibility purposes until a [close button](#close) or ESC key are pressed  
 
 type: `boolean`  
 default: `false`  
@@ -521,7 +526,7 @@ menuHandler.init(menus);
 
 #### openDelay
 
-sets delay in miliseconds before menu starts opening
+sets delay in miliseconds before menu starts opening  
 
 type: `integer`  
 default: `0`
@@ -544,7 +549,7 @@ menuHandler.init(menus);
 
 #### closeDelay
 
-sets delay in miliseconds before menu starts closing
+sets delay in miliseconds before menu starts closing  
 
 type: `integer`  
 default: `0`
@@ -567,11 +572,11 @@ menuHandler.init(menus);
 
 #### openOnHover
 
-triggers opening of a menu by mouse enter
+triggers opening of a menu by mouse enter  
 
 type: `boolean`  
 default: `false`  
-&#10071; **note**: disabled ,if screen view port is less ,than the [mobileBreakpoint](#mobileBreakpoint)
+&#10071; **note**: disabled ,if screen view port is less ,than the [mobileBreakpoint](#mobileBreakpoint)  
 
 ```javascript
 const menus = [
@@ -591,7 +596,7 @@ menuHandler.init(menus);
 
 #### menuFunc
 
-function to handle on your own of the specific menu
+function to handle on your own of the specific menu  
 
 type: `function`  
 arguments:
@@ -616,7 +621,7 @@ const menus = [
 menuHandler.init(menus);
 ```
 
-&#10071; **note**: default code
+&#10071; **note**: default code  
 
 ```javascript
 menuFunc(menu, e) {
@@ -644,7 +649,7 @@ menuFunc(menu, e) {
 
 #### isEnabled - submenu
 
-enables handling of submenus
+enables handling of submenus  
 
 type: `boolean`  
 default: `false`
@@ -669,7 +674,7 @@ menuHandler.init(menus);
 
 #### openOnHover - submenu
 
-triggers opening of a menu by mouse enter
+triggers opening of a menu by mouse enter  
 
 type: `boolean`  
 default: `false`  
@@ -696,7 +701,7 @@ menuHandler.init(menus);
 
 #### menuFunc - submenu
 
-function to handle submenus on your own the specific menu
+function to handle submenus on your own the specific menu  
 
 type: `function`  
 arguments:
@@ -722,7 +727,7 @@ const menus = [
 menuHandler.init(menus);
 ```
 
-&#10071; **note**: default code
+&#10071; **note**: default code  
 
 ```javascript
 submenuFunc(menu, submenu, e) {
@@ -764,7 +769,7 @@ submenuFunc(menu, submenu, e) {
 
 #### beforeInit
 
-triggered before the specific menu is initialized
+triggered before the specific menu is initialized  
 
 type: `function`  
 arguments:
@@ -793,7 +798,7 @@ menuHandler.init(menus);
 
 #### afterInit
 
-triggered after the specific menu is initialized
+triggered after the specific menu is initialized  
 
 type: `function`  
 arguments:
@@ -822,7 +827,7 @@ menuHandler.init(menus);
 
 #### beforeOpen
 
-triggered before the specific menu is opened
+triggered before the specific menu is opened  
 
 type: `function`  
 arguments:
@@ -852,7 +857,7 @@ menuHandler.init(menus);
 
 #### afterOpen
 
-triggered after the specific menu finished transition and is opened
+triggered after the specific menu finished transition and is opened  
 
 type: `function`  
 arguments:
@@ -882,7 +887,7 @@ menuHandler.init(menus);
 
 #### beforeClose
 
-triggered before the specific menu is closed
+triggered before the specific menu is closed  
 
 type: `function`  
 arguments:
@@ -912,7 +917,7 @@ menuHandler.init(menus);
 
 #### afterClose
 
-triggered after the specific menu finished transition and is closed
+triggered after the specific menu finished transition and is closed  
 
 type: `function`  
 arguments:
@@ -944,7 +949,7 @@ menuHandler.init(menus);
 
 #### beforeOpen - submenu
 
-triggered before the specific submenu is opened
+triggered before the specific submenu is opened  
 
 type: `function`  
 arguments:
@@ -977,7 +982,7 @@ menuHandler.init(menus);
 
 #### afterOpen - submenu
 
-triggered after the specific submenu finished transition and is opened
+triggered after the specific submenu finished transition and is opened  
 
 type: `function`  
 arguments:
@@ -1010,7 +1015,7 @@ menuHandler.init(menus);
 
 #### beforeClose - submenu
 
-triggered before the specific submenu is closed
+triggered before the specific submenu is closed  
 
 type: `function`  
 arguments:
@@ -1045,7 +1050,7 @@ menuHandler.init(menus);
 
 #### afterClose - submenu
 
-triggered after the specific submenu finished transition and is closed
+triggered after the specific submenu finished transition and is closed  
 
 type: `function`  
 arguments:
@@ -1080,7 +1085,7 @@ menuHandler.init(menus);
 
 ## API
 
-important menu parameters accessible via menu object
+important menu parameters accessible via menu object  
 
 ### Menu
 
@@ -1096,7 +1101,7 @@ default: `elements.open` ,if [mobileOpen](#mobileOpen) is not empty and [mobileB
 
 #### activeClose
 
-the active element which triggers closing of the menu
+the active element which triggers closing of the menu  
 
 type: `html element`  
 default: `elements.close` ,if [mobileClose](#mobileClose-[menu]) is not empty and [mobile breakpoint](#mobileBreakpoint-[menu]) query returns true ,then drfault is [mobileClose](#mobileClose).

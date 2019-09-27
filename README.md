@@ -19,15 +19,15 @@ library functionality:
 
 ## Table of contents
 
-### [Init]
+### Init.
 
 - [init](#init) - init with array of menu objects
 
-### [CSS]
+### CSS
 
 - [css](#css) - add the following css
 
-### [HTML]
+### HTML
 
 #### Menu
 
@@ -44,7 +44,7 @@ library functionality:
 
 - [html example](#html-example) - a complete example of a menu structure with submenus
 
-### [Options]
+### Options
 
 #### Menu Options
 
@@ -70,7 +70,7 @@ library functionality:
 - [openOnHover](#openOnHover---submenu) - triggers opening of a menu by mouse enter.
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
 
-### [Events]
+### Events
 
 #### Menu Events
 
@@ -88,7 +88,7 @@ library functionality:
 - [beforeClose](#beforeClose---submenu) - triggered before the specific submenu is closed.
 - [afterClose](#afterClose---submenu) - triggered after the specific submenu finished transition and is closed
 
-### [API]
+### API
 
 #### Menu params
 

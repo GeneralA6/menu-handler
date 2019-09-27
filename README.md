@@ -25,20 +25,20 @@ library functionality:
 
 ### CSS
 
-- [css](#css) - add the following css
+- [css](#css) - &#9888; - add the following css
 
 ### HTML
 
 #### Menu
 
 - [container](#container) - **required** - element that holds nothing, but the inner container
-- &#9888; [inner container](#inner-container) - **required** - element that holds all the menu elements
+- [inner container](#inner-container) - **required** - &#9888; - element that holds all the menu elements
 
 #### Submenu
 
-- &#9888; [submenu toggle](#submenu-toggle) - **required** - toggle button element should have data attribute data-mh-submenu-toggle
-- &#9888; [submenu list](#submenu-list) - **required** - list element should have data attribue data-mh-submenu-list
-- &#9888; [submenu container](#submenu-container) - container should have data attribute data-mh-submenu-container
+- [submenu toggle](#submenu-toggle) - **required** - &#9888; - toggle button element should have data attribute data-mh-submenu-toggle
+- [submenu list](#submenu-list) - **required** - &#9888; - list element should have data attribue data-mh-submenu-list
+- [submenu container](#submenu-container) - &#9888; - container should have data attribute data-mh-submenu-container
 
 #### Complete example
 
@@ -52,23 +52,23 @@ library functionality:
 - [container](#container) - **required** - menu container element that contains inner menu container.
 - [innerContainer](#innerContainer) - **required** - element that holds all menu elements.
 - [open](#open) - **required** - element that triggers opening of the menu.
-- &#9888; [close](#close) - element that triggers menu closing of the menu.
+- [close](#close) - &#9888; - element that triggers menu closing of the menu.
 - [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable.
 - [exitFocus](#exitFocus) - element to focus after menu closes.
 - [mobileOpen](#mobileOpen) - element that triggers opening of the menu in mobile breakpoint.
-- &#9888; [mobileClose](#mobileClose) - element that triggers closing of the menu in mobile breakpoint.
+- [mobileClose](#mobileClose) - &#9888; - element that triggers closing of the menu in mobile breakpoint.
 - [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to switch between mobile and desktop open and/or close toggles.
-- &#9888; [loop](#loop) - loop all elements inside the innerContainer using Tab key.
+- [loop](#loop) - &#9888; - loop all elements inside the innerContainer using Tab key.
 - [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
 - [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
 - [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
-- &#9888; [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
+- [menuFunc](#menuFunc) - &#9888; - function to handle on your own of the specific menu.
 
 #### Submenu Options
 
 - [isEnabled](#isEnabled---submenu) - enables handling of submenus.
 - [openOnHover](#openOnHover---submenu) - triggers opening of a menu by mouse enter.
-- &#9888; [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
+- [menuFunc](#menuFunc---submenu) - &#9888; - function to handle submenus on your own the specific menu.
 
 ### Events
 

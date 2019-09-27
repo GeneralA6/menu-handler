@@ -32,13 +32,13 @@ library functionality:
 #### Menu
 
 - [container](#container) - **required** - element that holds nothing, but the inner container
-- [inner container](#inner-container) - **required** - &#10071; - element that holds all the menu elements
+- [inner container](#inner-container) - **required** - element that holds all the menu elements
 
 #### Submenu
 
-- [submenu toggle](#submenu-toggle) - **required** - &#10071; - toggle button element should have data attribute data-mh-submenu-toggle
-- [submenu list](#submenu-list) - **required** - &#10071; - list element should have data attribue data-mh-submenu-list
-- [submenu container](#submenu-container) - &#10071; - container should have data attribute data-mh-submenu-container
+- [submenu toggle](#submenu-toggle) - **required** - toggle button element should have data attribute data-mh-submenu-toggle
+- [submenu list](#submenu-list) - **required** - list element should have data attribue data-mh-submenu-list
+- [submenu container](#submenu-container) - container should have data attribute data-mh-submenu-container
 
 #### Complete example
 
@@ -52,23 +52,23 @@ library functionality:
 - [container](#container) - **required** - menu container element that contains inner menu container.
 - [innerContainer](#innerContainer) - **required** - element that holds all menu elements.
 - [open](#open) - **required** - element that triggers opening of the menu.
-- [close](#close) - &#10071; - element that triggers menu closing of the menu.
+- [close](#close) - element that triggers menu closing of the menu.
 - [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable.
 - [exitFocus](#exitFocus) - element to focus after menu closes.
 - [mobileOpen](#mobileOpen) - element that triggers opening of the menu in mobile breakpoint.
-- [mobileClose](#mobileClose) - &#10071; - element that triggers closing of the menu in mobile breakpoint.
+- [mobileClose](#mobileClose) - element that triggers closing of the menu in mobile breakpoint.
 - [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to switch between mobile and desktop open and/or close toggles.
-- [loop](#loop) - &#10071; - loop all elements inside the innerContainer using Tab key.
+- [loop](#loop) - loop all elements inside the innerContainer using Tab key.
 - [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
 - [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
 - [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc) - &#10071; - function to handle on your own of the specific menu.
+- [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
 
 #### Submenu Options
 
 - [isEnabled](#isEnabled---submenu) - enables handling of submenus.
 - [openOnHover](#openOnHover---submenu) - triggers opening of a menu by mouse enter.
-- [menuFunc](#menuFunc---submenu) - &#10071; - function to handle submenus on your own the specific menu.
+- [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
 
 ### Events
 
@@ -500,7 +500,7 @@ loop all elements inside the [innerContainer](#innerContainer) using Tab key for
 
 type: `boolean`  
 default: `false`  
-&#10071; **note**: if [loop](#loop) is `true`, [close](#close) has is required, because a person using tabs will never escape out of the menu and make sure you put the [close](#close) element inside the [innerContainer](#innerContainer)
+&#10071; **note**: if [loop](#loop) is `true`, [close](#close) has is `required`, because a person using tabs will never escape out of the menu and make sure you put the [close](#close) element inside the [innerContainer](#innerContainer)
 
 ```javascript
 const menus = [
@@ -570,7 +570,7 @@ menuHandler.init(menus);
 triggers opening of a menu by mouse enter
 
 type: `boolean`  
-default: `false`
+default: `false`  
 &#10071; **note**: disabled ,if screen view port is less ,than the [mobileBreakpoint](#mobileBreakpoint)
 
 ```javascript
@@ -597,7 +597,7 @@ type: `function`
 arguments:
 
 - `menu` type: `object`
-- `e` type: `event`  
+- `e` type: `event`
   &#10071; **note**: on open, close events related to the menu will need to be included in the [custom function](#menuFunc-[menu]) in order for them to work which can be accessed from the menu object
 
 ```javascript
@@ -616,7 +616,7 @@ const menus = [
 menuHandler.init(menus);
 ```
 
-**_default code_**:
+&#10071; **note**: default code
 
 ```javascript
 menuFunc(menu, e) {
@@ -672,7 +672,7 @@ menuHandler.init(menus);
 triggers opening of a menu by mouse enter
 
 type: `boolean`  
-default: `false`
+default: `false`  
 &#10071; **note**: disabled ,if screen view port is less ,than the submenu.[mobileBreakpoint](#mobileBreakpoint-[submenu])
 
 ```javascript
@@ -722,7 +722,7 @@ const menus = [
 menuHandler.init(menus);
 ```
 
-**_default code_**:
+&#10071; **note**: default code
 
 ```javascript
 submenuFunc(menu, submenu, e) {

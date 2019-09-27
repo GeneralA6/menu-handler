@@ -154,7 +154,7 @@ element that holds nothing, but the inner container.
 **required**
 element that holds all the menu elements.
 
-**note**: inner container should have class **mh-hidden**.
+&#10071; **note**: inner container should have class **mh-hidden**.
 
 ```html
 <div id="menu-container">
@@ -186,7 +186,7 @@ submenu toggle button element should have data attribute **data-mh-submenu-toggl
 **required**
 submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).
 
-**note** : submenu list element should have class **mh-hidden**.
+&#10071; **note** : submenu list element should have class **mh-hidden**.
 
 ```html
 <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
@@ -201,7 +201,7 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 **optional**
 submenu container should have data attribute **data-mh-submenu-container** and it's value the submenu name ( same as the submenu toggle identifier ).
 
-**note**: if present ,submenu container will get `mh-open` class when submenu is opened.
+&#10071; **note**: if present ,submenu container will get `mh-open` class when submenu is opened.
 
 ```html
 <div data-mh-submenu-container="submenu-a">
@@ -288,7 +288,7 @@ menu container element that contains inner menu container. [see example](#html-e
 
 **required**  
 type: `css selector`  
-**note**: holds nothing, but the inner container.
+&#10071; **note**: holds nothing, but the inner container.
 
 ```javascript
 const menus = [
@@ -311,7 +311,7 @@ element that holds all menu elements. [see example](#html-example)
 
 **required**
 type: `css selector`  
-**note**: gets class `mh-hidden` when menu is closed
+&#10071; **note**: gets class `mh-hidden` when menu is closed
 
 ```javascript
 const menus = [
@@ -356,7 +356,7 @@ element that triggers closing of the menu
 
 type: `css selector`  
 default: `element.close`  
-**note**: required ,if [loop](#loop) is set to `true` for accessibility reasons.
+&#10071; **note**: required ,if [loop](#loop) is set to `true` for accessibility reasons.
 
 ```javascript
 const menus = [
@@ -380,7 +380,7 @@ element to focus first when menu opens, will make any provided element focusable
 
 type: `css selector`  
 default: `first focusable element`  
-**note**: will be set to display none when menu is closed
+&#10071; **note**: will be set to display none when menu is closed
 
 ```javascript
 const menus = [
@@ -452,7 +452,7 @@ if both [mobileClose](#mobileClose) and [close](#close) are passed ,then [mobile
 
 type: `css selector`  
 default: `null`  
-**note**: [close](#close) is required, if using mobileClose.
+&#10071; **note**: [close](#close) is required, if using mobileClose.
 
 ```javascript
 const menus = [
@@ -500,7 +500,7 @@ loop all elements inside the [innerContainer](#innerContainer) using Tab key for
 
 type: `boolean`  
 default: `false`  
-**note**: if [loop](#loop) is `true`, [close](#close) has is required, because a person using tabs will never escape out of the menu and make sure you put the [close](#close) element inside the [innerContainer](#innerContainer)
+&#10071; **note**: if [loop](#loop) is `true`, [close](#close) has is required, because a person using tabs will never escape out of the menu and make sure you put the [close](#close) element inside the [innerContainer](#innerContainer)
 
 ```javascript
 const menus = [
@@ -571,7 +571,7 @@ triggers opening of a menu by mouse enter
 
 type: `boolean`  
 default: `false`
-**note**: disabled ,if screen view port is less ,than the [mobileBreakpoint](#mobileBreakpoint)
+&#10071; **note**: disabled ,if screen view port is less ,than the [mobileBreakpoint](#mobileBreakpoint)
 
 ```javascript
 const menus = [
@@ -598,7 +598,7 @@ arguments:
 
 - `menu` type: `object`
 - `e` type: `event`  
-  **note**: on open, close events related to the menu will need to be included in the [custom function](#menuFunc-[menu]) in order for them to work which can be accessed from the menu object
+  &#10071; **note**: on open, close events related to the menu will need to be included in the [custom function](#menuFunc-[menu]) in order for them to work which can be accessed from the menu object
 
 ```javascript
 const menus = [
@@ -673,7 +673,7 @@ triggers opening of a menu by mouse enter
 
 type: `boolean`  
 default: `false`
-**note**: disabled ,if screen view port is less ,than the submenu.[mobileBreakpoint](#mobileBreakpoint-[submenu])
+&#10071; **note**: disabled ,if screen view port is less ,than the submenu.[mobileBreakpoint](#mobileBreakpoint-[submenu])
 
 ```javascript
 const menus = [
@@ -1019,7 +1019,7 @@ arguments:
 - `submenu` type: `object`
 - `e` type: `event`
 
-**note**: e is `null` when the closing action was on the parent.
+&#10071; **note**: e is `null` when the closing action was on the parent.
 
 ```javascript
 const menus = [
@@ -1054,7 +1054,7 @@ arguments:
 - `submenu` type: `object`
 - `e` type: `event`
 
-**note**: e is `null` when the closing action was on the parent.
+&#10071; **note**: e is `null` when the closing action was on the parent.
 
 ```javascript
 const menus = [
@@ -1090,7 +1090,7 @@ the active element which triggers opening of the menu
 
 type: `html element`  
 default: `elements.open` ,if [mobileOpen](#mobileOpen) is not empty and [mobileBreakpoint](#mobileBreakpoint) query returns true ,then default is [mobileOpen](#mobileOpen).
-**note**: use this ,if you need it in the custom function you pass. **don't use elements.open or elements.mobileOpen**
+&#10071; **note**: use this ,if you need it in the custom function you pass. **don't use elements.open or elements.mobileOpen**
 
 ---
 
@@ -1100,7 +1100,7 @@ the active element which triggers closing of the menu
 
 type: `html element`  
 default: `elements.close` ,if [mobileClose](#mobileClose-[menu]) is not empty and [mobile breakpoint](#mobileBreakpoint-[menu]) query returns true ,then drfault is [mobileClose](#mobileClose).
-**note**: use this ,if you need it in the custom function you pass. **don't use elements.close or elements.mobileClose**
+&#10071; **note**: use this ,if you need it in the custom function you pass. **don't use elements.close or elements.mobileClose**
 
 ---
 
@@ -1116,7 +1116,7 @@ default: `false`
 #### isMobile
 
 Shows the status of menu mobile state at run time.  
-**note**: affected by mobileBreakpoint and viewport width.
+&#10071; **note**: affected by mobileBreakpoint and viewport width.
 
 type: `boolean`
 

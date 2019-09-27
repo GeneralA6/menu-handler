@@ -142,7 +142,7 @@ element that holds nothing, but the inner container.
 ```html
 <div id="menu-container">
   <div class="mh-hidden" id="menu-inner-container">
-    '...'
+    ...
   </div>
 </div>
 ```
@@ -159,7 +159,7 @@ element that holds all the menu elements.
 ```html
 <div id="menu-container">
   <div class="mh-hidden" id="menu-inner-container">
-    '...'
+    ...
   </div>
 </div>
 ```
@@ -175,7 +175,7 @@ submenu toggle button element should have data attribute **data-mh-submenu-toggl
 
 ```html
 <button data-mh-submenu-toggle="submenu-a">
-  '...'
+  ...
 </button>
 ```
 
@@ -190,7 +190,7 @@ submenu list element should have data attribue **data-mh-submenu-list** and it's
 
 ```html
 <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
-  '...'
+  ...
 </ul>
 ```
 
@@ -205,7 +205,7 @@ submenu container should have data attribute **data-mh-submenu-container** and i
 
 ```html
 <div data-mh-submenu-container="submenu-a">
-  '...'
+  ...
 </div>
 ```
 
@@ -250,7 +250,7 @@ complete example of a menu structure with submenus
 
                 <div data-mh-submenu-container="submenu-a-1">
                   <ul class="mh-hidden" data-mh-submenu-list="submenu-a-1">
-                    '...'
+                    ...
                   </ul>
                 </div>
               </li>

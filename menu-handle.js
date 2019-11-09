@@ -3,36 +3,45 @@ const menuHandler = {
    actions: [], // a temporary storage for keys of occuring actions. 
    // it is to make sure only one action is occuring at a time and only for one menu.
    // several menus can't be active at a time.
-   init(passedMenus) {
+   init(_menus) {
       const self = this;
 
-      if (!Array.isArray(passedMenus) || !passedMenus.length) {
-         self.menuError('[menuHandler] [general] Initialization requires an array of menus to be passed as an argument. see documentation', 1);
+      if (!Array.isArray(_menus) || !_menus.length) {
+         self.menuError('[menuHandler] [general] Initialization requires an array of menus to be passed as an argument. see documentation');
       }
 
-      passedMenus.forEach(function (menu) {
-         const createMenu = {
+      _menus.forEach(function (_menu) {
+         const menuTemplate = {
             name: null,
             open: null,
             close: null,
-            mobileOpen: null,
-            mobileClose: null,
-            activeOpen: null,
-            activeClose: null,
             enterFocus: null,
             exitFocus: null,
+            activeOpen: null,
+            activeClose: null,
+            activeEnterFocus: null,
+            activeExitFocus: null,
             container: null,
             innerContainer: null,
             loop: false,
             isOpen: false,
-            isMobile: false,
+            isPinned: false,
             openDelay: 0,
             closeDelay: 0,
             openOnHover: false,
             transitionDelay: null,
             transitionDuration: null,
             menuFunc: self.menuFunc,
-            mobileBreakpoint: '667px',
+            pin: false,
+            mobile: {
+               breakpoint: '667px',
+               isMobile: false,
+               open: null,
+               close: null,
+               pin: false,
+               enterFocus: null,
+               exitFocus: null,
+            },
             on: {
                beforeInit: null,
                afterInit: null,
@@ -54,105 +63,313 @@ const menuHandler = {
                   afterClose: null,
                }
             },
-            submenus: [],
+            submenus: {},
          };
 
-         if (!menu.elements) {
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: menu elements object is missing`, 1);
+         if (!_menu.name) {
+            menuTemplate.name = Math.random().toString(36).substr(2); // create a random menu name from a random number converted to base 36.
+         } else {
+            menuTemplate.name = _menu.name;
          }
 
-         self.initMenuElements(createMenu, menu.elements);
-         self.initMenuOptions(createMenu, menu);
+         if (!_menu.elements) {
+            self.menuError(`[menuHandler] [menu:${menuTemplate.name}] Error: menu elements object is missing`);
+         }
+         self.initMenuElements(menuTemplate, _menu.elements);
 
-         if (self.checkRequiredElement(createMenu)) {
-            self.menus.push(createMenu);
+         if (_menu.mobile && _menu.mobile.elements) {
+            self.initMenuMobileElements(menuTemplate, _menu.mobile.elements);
+         }
+
+         self.initMenuOptions(menuTemplate, _menu);
+
+         // !important: in order to find the event and remove it by removeEventListener, 
+         // we need to pass a reference to the function and bind it to the menuHandler object
+         menuTemplate.toggleMenu = self.toggleMenu.bind(self, menuTemplate);
+
+         if (self.checkRequiredElement(menuTemplate)) {
+            self.menus.push(menuTemplate);
          }
       });
 
       if (!self.menus.length) {
-         self.menuError(`[menuHandler] [general] Error: no menus initialized`, 1);
+         self.menuError(`[menuHandler] [general] Error: no menus initialized`);
       }
 
       self.initMenus();
    },
 
-   initMenuOptions(createMenu, options) {
+   initMenuElements(menu, elements) {
       const self = this;
 
-      delete options.elements;
-
-      for (key in options) {
-         if (key == 'on') {
-            for (event in options.on) {
-               if (event in createMenu.on && typeof options.on[event] === 'function') {
-                  createMenu.on[event] = options.on[event];
-               }
-            }
-
-         } else if (key == 'submenuOptions') {
-            self.initSubmenuOptions(createMenu, options[key]);
-
-         } else {
-            if (key in createMenu && key != 'isOpen' && key != 'activeOpen' && key != 'activeClose') {
-               createMenu[key] = options[key];
-            }
+      for (key in elements) {
+         el = document.querySelector(elements[key]);
+         if (!el) {
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector`);
          }
+         menu[key] = el;
       }
 
-      if (!createMenu.name) {
-         createMenu.name = Math.random().toString(36).substr(2); //  create menu name from a random number converted to base 36.
+      if (!menu.enterFocus && menu.innerContainer) {
+         const menuFocusables = menu.innerContainer.querySelectorAll('[tabindex]:not([tabindex="-1"]), button, a, input:not([type="hidden"]) ,select, textarea');
+         menu.enterFocus = menuFocusables[0];
       }
+
+      if (!menu.close) menu.close = menu.open;
+      if (!menu.exitFocus) menu.exitFocus = menu.open;
    },
 
-   initSubmenuOptions(createMenu, options) {
-      for (key in options) {
-         if (key == 'on') {
-            for (event in options.on) {
-               if (event in createMenu.submenuOptions.on && typeof options.on[event] === 'function') {
-                  createMenu.submenuOptions.on[event] = options.on[event];
-               }
-            }
-
-         } else {
-            if (key in createMenu.submenuOptions) {
-               createMenu.submenuOptions[key] = options[key];
-            }
-         }
-      }
-   },
-
-   initMenuElements(createMenu, options) {
+   initMenuOptions(menu, options) {
       const self = this;
 
       for (key in options) {
-         el = document.querySelector(options[key]);
-         createMenu[key] = el;
+
+         if (key == 'elements') continue;
+
+         switch ( key ) {
+            case 'on':
+               self.initMenuEvents(menu, options.on);
+               break;
+
+            case 'submenuOptions':
+               self.initSubmenuOptions(menu, options[key]);
+               break;
+
+            case 'mobile':
+               self.initMenuMobileOptions(menu, options[key]);
+               break;
+
+            case 'pin':
+            case 'loop':
+            case 'openOnHover':
+               menu[key] = !!options[key] || false; // convert to boolean
+               break;
+
+            default:
+               if (key in menu && key != 'isOpen' && key != 'isPinned' && key != 'activeOpen' && key != 'activeClose') {
+                  menu[key] = options[key];
+               }
+               break;
+         }
+      }
+   },
+
+   initMenuMobileElements(menu, elements) {
+      const self = this;
+
+      for (key in elements) {
+         el = document.querySelector(elements[key]);
+         if (!el) {
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector`);
+         }
+         menu.mobile[key] = el;
+      }
+   },
+
+   initMenuMobileOptions(menu, options) {
+      const self = this;
+
+      for (key in options) {
+
+         if (key == 'elements') continue;
+
+         switch ( key ) {
+            case 'breakpoint':
+               if (!options[key].includes('px')) {
+                  options[key] += 'px';
+               }
+               menu.mobile[key] = options[key];
+               break;
+
+            case 'pin':
+               menu.mobile[key] = !!options[key] || false; // convert to boolean
+               break;
+
+            default:
+               if (key in menu.mobile && key != 'isMobile') {
+                  menu.mobile[key] = options[key];
+               }
+               break;
+         }
       }
 
-      if (!createMenu.enterFocus && createMenu.innerContainer) {
-         const focusable = createMenu.innerContainer.querySelectorAll('[tabindex]:not([tabindex="-1"]), button, [href], input:not([type="hidden"]) ,select, textarea');
-         const firstFocusable = focusable[0];
-         createMenu.enterFocus = firstFocusable;
-      }
-
-      if (!createMenu.close) createMenu.close = createMenu.open;
-      if (!createMenu.exitFocus) createMenu.exitFocus = createMenu.open;
-
-      if (!createMenu.mobileBreakpoint.includes('px')) {
-         createMenu.mobileBreakpoint += 'px';
-      }
-
-      createMenu.isMobile = window.matchMedia(`(max-width: ${createMenu.mobileBreakpoint})`).matches;
-
-      // !important: in order to find the event and remove it by removeEventListener, 
-      // we need to pass a reference to the function and bind it to the menuHandler object
-      createMenu.toggleMenu = self.toggleMenu.bind(self, createMenu);
-      self.setActiveTriggers(createMenu);
-
+      menu.mobile.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
       window.addEventListener('resize', self.debounce(() => {
-         createMenu.isMobile = window.matchMedia(`(max-width: ${createMenu.mobileBreakpoint})`).matches;
-         self.setActiveTriggers(createMenu);
+         
+         menu.mobile.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
       }, 20));
+   },
+
+   setActiveElements(menu) {
+      const self = this;
+
+      self.setActiveOpen(menu);
+      self.setActiveClose(menu);
+      self.setActiveEnterFocus(menu);
+      self.setActiveExitFocus(menu);
+   },
+
+   setActiveOpen(menu) {
+      const self = this;
+
+      menu.activeOpen = menu.open;
+
+      if (menu.mobile.isMobile) {
+
+         if (menu.mobile.open) {
+
+            menu.activeOpen = menu.mobile.open;
+            self.setMenuToggleEvents(menu, menu.mobile.open, menu.open);
+         } else {
+            
+            self.setMenuToggleEvents(menu, menu.open);
+         }
+      } else {
+
+         self.setMenuToggleEvents(menu, menu.open, menu.mobile.open);
+      }
+   },
+
+   setActiveClose(menu) {
+      const self = this;
+
+      menu.activeClose = menu.close;
+
+      if (menu.mobile.isMobile) {
+
+         if (menu.mobile.close) {
+
+            menu.activeClose = menu.mobile.close;
+            self.setMenuToggleEvents(menu, menu.mobile.close, menu.close);
+         } else {
+            
+            self.setMenuToggleEvents(menu, menu.close);
+         }
+      } else {
+
+         self.setMenuToggleEvents(menu, menu.close, menu.mobile.close);
+      }
+   },
+
+   setActiveEnterFocus(menu) {
+      const self = this;
+
+      menu.activeEnterFocus = menu.enterFocus;
+
+      if (menu.mobile.isMobile && menu.mobile.enterFocus) {
+            menu.activeEnterFocus = menu.mobile.enterFocus;
+      }
+   },
+   
+   setActiveExitFocus(menu) {
+      const self = this;
+
+      menu.activeExitFocus = menu.exitFocus;
+
+      if (menu.mobile.isMobile && menu.mobile.exitFocus) {
+         menu.activeExitFocus = menu.mobile.exitFocus;
+      }
+   },  
+
+   initSubmenuOptions(menu, options) {
+      for (key in options) {
+
+         switch (key) {
+            case 'on':
+                  for (event in options.on) {
+                     if (event in menu.submenuOptions.on && typeof options.on[event] === 'function') {
+                        menu.submenuOptions.on[event] = options.on[event];
+                     }
+                  }
+               break;
+
+            case 'isEnabled':
+            case 'openOnHover':
+               menu.submenuOptions[key] = !!options[key] || false; // convert to boolean
+               break;
+
+            default:
+                  if (key in menu.submenuOptions) {
+                     menu.submenuOptions[key] = options[key];
+                  }
+               break;
+         }
+      }
+   },
+
+   initMenuEvents(menu, events) {
+
+      for (event in events) {
+         if (event in menu.on && typeof events[event] === 'function') {
+            menu.on[event] = events[event];
+         }
+      }
+   },
+
+   initMenuPinCheck(menu) {
+      const self = this;
+
+      self.toggleMenuPinned(menu);
+      window.addEventListener('resize', self.debounce(() => {
+         
+         self.toggleMenuPinned(menu);
+      }, 20));
+   },
+
+   toggleMenuPinned(menu) {
+      const self = this;
+
+      menu.isPinned = false;
+
+      if (menu.mobile.isMobile) {
+         menu.isPinned = menu.mobile.pin;
+      } else {
+         menu.isPinned = menu.pin;
+      }
+
+      if (menu.isOpen && menu.isPinned) {
+         self.closeMenu(menu);
+      }
+
+      if (!menu.isOpen) {
+         if (menu.isPinned) {
+
+            menu.container.classList.add('mh-pinned');
+            menu.innerContainer.classList.remove('mh-hidden');
+            menu.innerContainer.setAttribute('aria-hidden', false)
+            menu.innerContainer.setAttribute('aria-expanded', true);
+         } else {
+            
+            menu.innerContainer.classList.add('mh-hidden');
+            menu.container.classList.remove('mh-pinned');
+            menu.innerContainer.setAttribute('aria-hidden', true)
+            menu.innerContainer.setAttribute('aria-expanded', false);
+         }
+
+         self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
+      }
+   },
+
+   initMenu(menu) {
+      const self = this;
+
+      if (menu.on.beforeInit) menu.on.beforeInit(menu);
+
+      self.initMenuPinCheck(menu);
+         
+      self.setActiveElements(menu);
+      window.addEventListener('resize', self.debounce(() => {
+         
+         self.setActiveElements(menu);
+      }, 20));
+
+      self.initMenuAccessibility(menu);
+
+      if (menu.submenuOptions.isEnabled) {
+         self.initSubmenus(menu);
+      }
+
+      if (menu.on.afterInit) menu.on.afterInit(menu);
    },
 
    initMenus() {
@@ -160,15 +377,7 @@ const menuHandler = {
 
       self.menus.forEach(menu => {
 
-         if (menu.on.beforeInit) menu.on.beforeInit(menu);
-
-         self.initMenuAccessibility(menu);
-
-         if (menu.submenuOptions.isEnabled) {
-            self.initSubmenus(menu);
-         }
-
-         if (menu.on.afterInit) menu.on.afterInit(menu);
+         self.initMenu(menu);
       });
 
       self.initMenuWindowEvents();
@@ -180,7 +389,7 @@ const menuHandler = {
       const submenuToggles = menu.innerContainer.querySelectorAll('[data-mh-submenu-toggle]'); // important: the NodeList is ordered, the order is parent -> children -> next parent.
 
       if (!submenuToggles.length) {
-         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`, 1);
+         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`);
       }
 
       submenuToggles.forEach(toggle => {
@@ -198,7 +407,7 @@ const menuHandler = {
 
          submenu.list = menu.innerContainer.querySelector(`[data-mh-submenu-list="${submenu.name}"]`);
          if (!submenu.list) {
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu, ${submenu.name} not found`, 1);
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu, ${submenu.name} not found`);
          }
 
          submenu.container = menu.innerContainer.querySelector(`[data-mh-submenu-container="${submenu.name}"]`);
@@ -211,6 +420,7 @@ const menuHandler = {
 
          if (!submenu.toggle.getAttribute('title')) submenu.toggle.setAttribute('title', 'opens sub menu');
 
+         
          if (submenu.parent) {
             menu.submenus[submenu.parent].children.push(submenu.name); // important: there always be a menu.submenus[submenu.parent] ,becuase the NodeList is ordered.
          }
@@ -220,6 +430,7 @@ const menuHandler = {
    },
 
    initMenuAccessibility(menu) {
+      const self = this;
       const svgs = menu.innerContainer.querySelectorAll('svg');
       const images = menu.innerContainer.querySelectorAll('img');
 
@@ -235,13 +446,21 @@ const menuHandler = {
          }
       });
 
-      if (!menu.innerContainer.classList.contains('mh-hidden')) menu.innerContainer.classList.add('mh-hidden');
-      if (!menu.innerContainer.getAttribute('aria-hidden')) menu.innerContainer.setAttribute('aria-hidden', true)
-      if (!menu.innerContainer.getAttribute('aria-expanded')) menu.innerContainer.setAttribute('aria-expanded', false);
+      self.toggleMenuPinned(menu);
 
-      if (menu.enterFocus.tabIndex == -1) {
-         menu.enterFocus.tabIndex = 0;
-      }
+      ['enterFocus', 'exitFocus'].forEach((key) => {
+
+         if (menu[key] && menu[key].tabIndex == -1) {
+            menu[key].tabIndex = 0;
+         }
+      });
+
+      ['enterFocus', 'exitFocus'].forEach((key) => {
+        
+         if (menu.mobile[key] && menu.mobile[key].tabIndex == -1) {
+            menu.mobile[key].tabIndex = 0;
+         }
+      });
    },
 
    initSubmenuAccessibility(submenu) {
@@ -267,7 +486,7 @@ const menuHandler = {
       if (add) add.addEventListener('click', menu.toggleMenu);
       if (remove) remove.removeEventListener('click', menu.toggleMenu);
 
-      if (menu.openOnHover && add && (add == menu.open || add == menu.mobileOpen)) {
+      if (menu.openOnHover && add && add == menu.activeOpen) {
 
          add.addEventListener('mouseenter', menu.toggleMenu);
          if (remove) remove.removeEventListener('mouseenter', menu.toggleMenu);
@@ -289,11 +508,13 @@ const menuHandler = {
    toggleMenu(menu, e) {
       const self = this;
 
-      if (e) e.preventDefault(e);
+      if (e) e.preventDefault();
+
+      if (!menu.isOpen && menu.isPinned) return;
 
       if (e && e.type == 'mouseenter') {
          if (menu.isOpen) return; // prevent closing an open menu by hovering over a toggle open button.
-         if (menu.isMobile) return; // prevent open on hover if isMobile.
+         if (menu.mobile.isMobile) return; // prevent open on hover if isMobile.
       }
 
       if (self.actions.indexOf(menu.name) !== -1) return; // don't allow, another action of this menu while action is running.
@@ -303,8 +524,9 @@ const menuHandler = {
       const transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
 
       setTimeout(() => {
+
          if (!menu.container.classList.contains('mh-open')) {
-            self.loopMenus(self.closeMenusOnBlur, e);
+            self.loopMenus(self.closeOnBlur, e);
          }
 
          document.body.classList.toggle(`mh-${menu.name}-open`);
@@ -328,9 +550,7 @@ const menuHandler = {
 
                menu.menuFunc(menu, e);
 
-               for (name in menu.submenus) { // close all submenus
-                  self.toggleSubmenu(menu, menu.submenus[name])
-               }
+               self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
 
                if (menu.on.afterClose) { // after close
                   setTimeout(() => menu.on.afterClose(menu, e), transitionTimeCombined * 1000); // fire after menu's container transition ends
@@ -348,16 +568,28 @@ const menuHandler = {
 
       if (e && e.type == 'mouseenter') {
          if (submenu.isOpen) return; // prevent closing an open submenu by hovering over a toggle open button.
-         if (menu.isMobile) return; // prevent open on hover if isMobile.
+         if (menu.mobile.isMobile) return; // prevent open on hover if isMobile.
       }
 
       const transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
       const parentSubmenu = menu.submenus[submenu.parent] || null;
       const options = menu.submenuOptions
 
-      if (menu.isOpen && (!parentSubmenu || parentSubmenu.isOpen)) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
-         submenu.toggle.classList.toggle('mh-open');
+      if ((menu.isOpen || menu.isPinned) && !submenu.isOpen && (!parentSubmenu || parentSubmenu.isOpen)) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
+
+         if (!parentSubmenu) {
+            
+            for (key in menu.submenus) { // close all other submenus recursively,before opening this one
+               if (key != submenu.name && !menu.submenus[key].parent && menu.submenus[key].isOpen) {
+                  self.toggleSubmenu(menu, menu.submenus[key]);
+               }
+            }
+         }
+         
+         submenu.toggle.classList.add('mh-open');
+         
       } else { // if parent is closed ,then close this submenu
+         
          submenu.toggle.classList.remove('mh-open');
       }
 
@@ -373,11 +605,12 @@ const menuHandler = {
             setTimeout(() => options.on.afterOpen(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
          }
       } else {
+
          if (options.on.beforeClose) options.on.beforeClose(menu, submenu, e); // before close.
 
          options.menuFunc(menu, submenu, e);
 
-         submenu.children.forEach((child) => self.toggleSubmenu(menu, menu.submenus[child])); // close child submenu
+         submenu.children.forEach(child => self.toggleSubmenu(menu, menu.submenus[child])); // close child submenu
 
          if (options.on.afterClose) { // after close.
             setTimeout(() => options.on.afterClose(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
@@ -392,7 +625,7 @@ const menuHandler = {
          menu.container.setAttribute('aria-expanded', true);
          menu.container.setAttribute('aria-hidden', false);
          menu.innerContainer.classList.remove('mh-hidden');
-         menu.enterFocus.focus();
+         menu.activeEnterFocus.focus();
       } else {
 
          menu.container.setAttribute('aria-expanded', false);
@@ -445,8 +678,7 @@ const menuHandler = {
          }
       });
 
-      // other edge cases
-      if (menu.loop === true && !menu.close) {
+      if (menu.loop === true && !menu.close) { // other edge cases
          self.menuError(`[menuHandler] [menu:${menu.name}] Error: in order to use loop option elements.close is required`);
          status = false;
       }
@@ -458,28 +690,93 @@ const menuHandler = {
       const self = this;
 
       self.menus.forEach(function (menu) {
-         func(menu, e);
+         func.call(self, menu, e);
       });
    },
 
-   closeMenusOnEscPress(menu, e) { // On ESC press close menus.
-      if (menu.isOpen) {
-         menuHandler.closeMenuContainer(menu); // note: there are situations where we get to this function from other functions, so the "this" changes to window. that's why we specify explicitly the direction to the function.
+   loopSubmenus(menu, func) {
+      const self = this;
+
+      for (key in menu.submenus) {
+         func.call(self, menu, menu.submenus[key]);
       }
    },
 
-   closeMenusOnBlur(menu, e) { // On Blur close menus.
-      if (e.target && menu.isOpen && e.target != menu.activeOpen && !menu.activeOpen.contains(e.target) && !menu.container.contains(e.target)) {
-         if (menu.loop === true && e.type !== 'click' && e.type !== 'mouseenter' && menu.enterFocus) { // loop inside menu
-            menu.enterFocus.focus();
+   closeOnEscPress(menu, e) {
+      const self = this;
 
-         } else {
-            menuHandler.closeMenuContainer(menu); // there are situations where we get to this function from other functions, so the "this" changes to window. that's why we specify explicitly the direction to the function.
+      if (menu.isOpen && !menu.isPinned) { // close menu
+
+         self.closeMenu(menu);
+      } else if (menu.isPinned) { // close all submenus of the menu
+
+         self.loopSubmenus(menu, self.closeSubmenu);
+      }
+   },
+
+   closeOnBlur(menu, e) {
+      const self = this;
+
+      if (menu.isOpen && !menu.isPinned && e.target && e.target != menu.activeOpen && !menu.container.contains(e.target) && !menu.activeOpen.contains(e.target)) {
+
+         self.closeMenuOnBlur(menu, e);
+      } else { // close all submenus of a menu
+         
+         self.closeSubmenuOnBlur(menu, e);
+      }
+   },
+
+   closeMenuOnBlur(menu, e) {
+      const self = this;
+
+      if (menu.loop === true && e.type !== 'click' && e.type !== 'mouseenter' && menu.activeEnterFocus) { // loop inside menu
+
+         menu.activeEnterFocus.focus();
+      } else { // close menu       
+         
+         self.closeMenu(menu);
+      }
+   },
+
+   closeSubmenuOnBlur(menu, e) {
+      const self = this;
+
+      if (menu.isPinned) { // close submenus on blur when menu is pinned
+         
+         let isAnotherOpenSubmenu = true;
+         for (key in menu.submenus) {
+            
+            if (menu.submenus[key].isOpen && (menu.submenus[key].toggle == e.target || menu.submenus[key].toggle.contains(e.target))) {
+               isAnotherOpenSubmenu = false;
+            }
+         }
+
+         if (isAnotherOpenSubmenu) {
+            self.loopSubmenus(menu, self.closeSubmenu);
+         }
+      }
+
+      // this part is a not efficient. think of a better way.
+      if (menu.isOpen && !menu.isPinned && e.target && menu.container.contains(e.target)) { // close submenus on blur inside of an open menu
+
+         let isFocusable = false;
+         const menuFocusables = menu.innerContainer.querySelectorAll('[tabindex]:not([tabindex="-1"]), button, a, input:not([type="hidden"]) ,select, textarea');
+
+         menuFocusables.forEach((el, i) => {
+   
+            if (el == e.target || el.contains(e.target)) {
+               isFocusable = true;
+               return;
+            }
+         });
+         
+         if (!isFocusable) {
+            self.loopSubmenus(menu, self.closeSubmenu);
          }
       }
    },
 
-   closeMenuContainer(menu) { // Close Menu.
+   closeMenu(menu) { // close menu.
       const self = this;
 
       if (!menu.activeClose) {
@@ -487,20 +784,32 @@ const menuHandler = {
 
       } else {
          menu.activeClose.click();
-         menu.exitFocus.focus();
+         menu.activeExitFocus.focus();
       }
    },
 
-   checkIsBusy() { // checks for menu name, if any present, than a menu is open and has action related to it running. prevents conflicts of several actions running at the same time.
+   closeSubmenu(menu, submenu) {
+      const self = this;
+
+      if (submenu.isOpen) {
+         self.toggleSubmenu(menu, submenu);
+      }
+   },
+
+   /*
+   * a very early way of handling menu states. maybe rewrite in the future or remove completely if is not neccessery.
+   * NOTE: don't remove unless you really understand all the code it is intergrated in.
+   * checks for menu name, if any present, than a menu related action is running. 
+   * prevents conflicts of several actions running at the same time.
+   */
+   checkIsBusy() { 
       const self = this;
       let isRunning = false;
 
-      self.actions.forEach(action => {
-         self.menus.forEach(menu => {
-            if (menu.name === action) {
-               isRunning = true;
-            }
-         });
+      self.menus.forEach(menu => {
+         if (self.actions.includes(menu.name)) {
+            isRunning = true;
+         }
       });
 
       return isRunning;
@@ -538,12 +847,12 @@ const menuHandler = {
    onInteraction(e) { // closes menu on click / tab / escape.
       const self = this;
       const isBusy = self.checkIsBusy();
-
+      
       if ((e.type === 'click' || e.type === 'keydown' && e.keyCode == 9) && self.actions.indexOf('clicktab') === -1 && !isBusy) {
-
+      
          self.actions.push('clicktab');
          setTimeout(() => {
-            self.loopMenus(self.closeMenusOnBlur, e);
+            self.loopMenus(self.closeOnBlur, e);
             self.actions.splice(self.actions.indexOf('clicktab'), 1);
          });
 
@@ -552,39 +861,9 @@ const menuHandler = {
          self.actions.push('escape');
 
          setTimeout(() => {
-            self.loopMenus(self.closeMenusOnEscPress, e);
+            self.loopMenus(self.closeOnEscPress, e);
             self.actions.splice(self.actions.indexOf('escape'), 1);
          });
-      }
-   },
-
-   setActiveTriggers(menu) {
-      const self = this;
-
-      menu.activeOpen = menu.open;
-      menu.activeClose = menu.close;
-
-      if (menu.isMobile) {
-
-         if (menu.mobileOpen) {
-            menu.activeOpen = menu.mobileOpen;
-            self.setMenuToggleEvents(menu, menu.mobileOpen, menu.open);
-         } else {
-            self.setMenuToggleEvents(menu, menu.open);
-         }
-
-         if (menu.mobileClose) {
-            menu.activeClose = menu.mobileClose;
-            self.setMenuToggleEvents(menu, menu.mobileClose, menu.close);
-         } else {
-            self.setMenuToggleEvents(menu, menu.close);
-         }
-
-      } else {
-
-         self.setMenuToggleEvents(menu, menu.open, menu.mobileOpen);
-         self.setMenuToggleEvents(menu, menu.close, menu.mobileClose);
-
       }
    },
 
@@ -606,10 +885,9 @@ const menuHandler = {
       return parentSubmenu ? parentSubmenu.dataset.mhSubmenuList : parentSubmenu;
    },
 
-   menuError(message, die) {
+   menuError(message) {
       console.error(message);
       console.trace();
-      if (die) return;
    },
 
    debounce(func, wait, immediate) {

@@ -17,7 +17,8 @@ functionality added to the menus by the library:
 - prevent body swipe when a menu is open
 - accessiblity
 - events
-- breakpoint options
+- pin menu to keep it open for specific breakpoints and hide at another breakpoint unless opened.
+- mobile options
 - replacing specific menu's functionality with custom functionality by passing custom function
 
 ## Table of contents
@@ -58,19 +59,26 @@ functionality added to the menus by the library:
 - [close](#close) - element that triggers menu closing of the menu.
 - [enterFocus](#enterFocus) - element to focus first when menu opens, will make any provided element focusable.
 - [exitFocus](#exitFocus) - element to focus after menu closes.
-- [mobileOpen](#mobileOpen) - element that triggers opening of the menu in mobile breakpoint.
-- [mobileClose](#mobileClose) - element that triggers closing of the menu in mobile breakpoint.
-- [mobileBreakpoint](#mobileBreakpoint) - max width breakpoint to switch between mobile and desktop open and/or close toggles.
+- [pin](#pin) - pin menu to keep it open at desktop media queries.
 - [loop](#loop) - loop all elements inside the innerContainer using Tab key.
 - [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
 - [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
 - [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
+   
+#### Menu Mobile Options
+
+- [breakpoint](#breakpoint---mobile) - max width breakpoint to switch between mobile and desktop options.
+- [pin](#pin---mobile) - pin menu to keep it open at mobile media queries.
+- [open](#open---mobile) - element that triggers opening of the menu at mobile breakpoint.
+- [close](#close---mobile) - element that triggers closing of the menu at mobile breakpoint.
+- [enterFocus](#enterFocus---mobile) - element to focus first when menu opens, will make any provided element focusable at mobile breakpoint.
+- [exitFocus](#exitFocus---mobile) - element to focus after menu closes at mobile breakpoint.
 
 #### Submenu Options
 
 - [isEnabled](#isEnabled---submenu) - enables handling of submenus.
-- [openOnHover](#openOnHover---submenu) - triggers opening of a menu by mouse enter.
+- [openOnHover](#openOnHover---submenu) - triggers opening of a submenu by mouse enter.
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
 
 ### Events
@@ -98,7 +106,8 @@ functionality added to the menus by the library:
 - [activeOpen](#activeOpen) - the active element which triggers opening of the menu
 - [activeClose](#activeClose) - the active element which triggers closing of the menu
 - [isOpen](#isOpen) - Shows the status of the menu at run time
-- [isMobile](#isMobile) - Shows the status of menu mobile state at run time
+- [isPinned](#isPinned) - Shows if menu is pinned at run time
+- [isMobile](#isMobile---mobile) - Shows the status of menu mobile state at run time
 
 #### Submenu params
 
@@ -244,7 +253,7 @@ complete example of a menu structure with submenus
 ```html
 <div id="menu-container">
   <div class="mh-hidden" id="menu-inner-container">
-    <nav id="menu-focus-enter">
+    <nav id="menu-enter-focus">
       <ul class="menu">
         <li>
           <button data-mh-submenu-toggle="submenu-a">
@@ -390,7 +399,6 @@ element to focus first when menu opens, will make any provided element focusable
   
 type: `css selector`  
 default: `first focusable element`  
-&#10071; **note**: will be set to display none when menu is closed
 
 ```javascript
 const menus = [
@@ -399,7 +407,7 @@ const menus = [
       container: ...,
       innerContainer: ...,
       open: ...,
-      enterFocus: "#menu-focus-enter"
+      enterFocus: "#menu-enter-focus"
     }
   }
 ];
@@ -428,16 +436,17 @@ const menus = [
 ];
 menuHandler.init(menus);
 ```
-
+   
 ---
 
-#### mobileOpen
+#### pin
 
-element that triggers opening of the menu in [mobileBreakpoint](#mobileBreakpoint).  
+pin menu to keep it open at desktop media queries.
   
 type: `css selector`  
-default: `null`  
-&#10071; **note**: if both [mobileOpen](#mobileOpen) and [open](#open) are passed ,then [mobileOpen](#mobileOpen) is the one that will trigger open in [mobileBreakpoint](#mobileBreakpoint) and [open](#open) in larger screens.
+default: `false`   
+&#10071; **note**: if [pin](#pin) is set to `true` ,then the following functionalities of the menu are disabled: [open](#open), [close](#close)   
+&#10071; **note**: blur and ESC press events won't close a pinned menu, but will close all submenus.   
 
 ```javascript
 const menus = [
@@ -446,71 +455,22 @@ const menus = [
       container: ...,
       innerContainer: ...,
       open: ...,
-      mobileOpen: "#menu-mobile-toggle-open"
-    }
-  }
-];
-menuHandler.init(menus);
-```
-
----
-
-#### mobileClose
-
-element that triggers closing of the menu in [mobileBreakpoint](#mobileBreakpoint).  
-
-type: `css selector`  
-default: `null`  
-&#10071; **note**: [close](#close) is required, if using mobileClose.  
-&#10071; **note**: if both [mobileClose](#mobileClose) and [close](#close) are passed ,then [mobileClose](#mobileClose) is the one that will trigger close in [mobileBreakpoint](#mobileBreakpoint) and [close](#close) in larger screens.
-
-```javascript
-const menus = [
-  {
-    elements: {
-      container: ...,
-      innerContainer: ...,
-      open: ...,
-      close: ...,
-      mobileClose: "#menu-mobile-toggle-close"
-    }
-  }
-];
-menuHandler.init(menus);
-```
-
----
-
-#### mobileBreakpoint
-
-max width breakpoint to switch between mobile and desktop open and/or close toggles.  
-
-type: `string`  
-default: `667px`
-
-```javascript
-const menus = [
-  {
-    elements: {
-      container: "#menu-container",
-      innerContainer: "#menu-inner-container",
-      open: "#menu-toggle-open"
     },
-    mobileBreakpoint: "991px"
+    pin: true
   }
 ];
 menuHandler.init(menus);
 ```
-
+   
 ---
 
 #### loop
 
-loop all elements inside the [innerContainer](#innerContainer) using Tab key for accessibility purposes until a [close button](#close) or ESC key are pressed  
+loop all elements inside the [elements.innerContainer](#innerContainer) using Tab key for accessibility purposes until a [elements.close](#close) or ESC key are pressed  
 
 type: `boolean`  
 default: `false`  
-&#10071; **note**: if [loop](#loop) is `true`, [close](#close) has is `required`, because a person using tabs will never escape out of the menu and make sure you put the [close](#close) element inside the [innerContainer](#innerContainer)
+&#10071; **note**: if [loop](#loop) is `true`, [elements.close](#close) has is `required`, because a person using tabs will never escape out of the menu and make sure you put the [elements.close](#close) element inside the [elements.innerContainer](#innerContainer)
 
 ```javascript
 const menus = [
@@ -581,7 +541,7 @@ triggers opening of a menu by mouse enter
 
 type: `boolean`  
 default: `false`  
-&#10071; **note**: disabled ,if screen view port is less ,than the [mobileBreakpoint](#mobileBreakpoint)  
+&#10071; **note**: disabled ,if screen viewport is less ,than [mobile.breakpoint](#breakpoint---mobile).  
 
 ```javascript
 const menus = [
@@ -608,7 +568,7 @@ arguments:
 
 - `menu` type: `object`
 - `e` type: `event`
-  &#10071; **note**: on open, close events related to the menu will need to be included in the [custom function](#menuFunc-[menu]) in order for them to work which can be accessed from the menu object
+  &#10071; **note**: on open, close events related to the menu will need to be included in the [custom function](#menuFunc) in order for them to work which can be accessed from the menu object
 
 ```javascript
 const menus = [
@@ -647,7 +607,167 @@ menuFunc(menu, e) {
    }
 }
 ```
+   
+### Menu Mobile Options
+   
+---
 
+#### breakpoint - mobile
+
+max width breakpoint to switch between mobile and desktop options.    
+
+type: `string`  
+default: `667px`
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    mobile: {
+      breakpoint: "991px"
+    }
+  }
+];
+menuHandler.init(menus);
+``` 
+---   
+
+#### open - mobile   
+   
+element that triggers opening of the menu in [mobile.breakpoint](#breakpoint---mobile).  
+  
+type: `css selector`  
+default: `elements.open`  
+&#10071; **note**: if [pin](#pin) is set to `true` at desktop media queries ,then you don't need to pass this selector ,just pass [open](#open).   
+&#10071; **note**: if both [mobile.elements.open](#open---mobile) and [open](#open) are passed ,then [mobile.elements.open](#open---mobile) is the one that will trigger open in [mobile.breakpoint](#breakpoint---mobile) and [open](#open) in larger media queries.
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: ...,
+      innerContainer: ...,
+      open: ...,
+    },
+    mobile: {
+      open: "#menu-mobile-toggle-open"
+    }
+  }
+];
+menuHandler.init(menus);
+```
+
+---
+
+#### close - mobile   
+   
+element that triggers closing of the menu in [mobile.breakpoint](#breakpoint---mobile).  
+
+type: `css selector`  
+default: `elements.close`  
+&#10071; **note**: [close](#close) is required, if using [mobile.close](#close---mobile).   
+&#10071; **note**: if both [mobile.elements.close](#close---mobile) and [close](#close) are passed ,then [mobile.elements.close](#close---mobile) is the one that will trigger close in [mobile.breakpoint](#breakpoint---mobile) and [close](#close) in larger media queries.
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: ...,
+      innerContainer: ...,
+      open: ...,
+      close: ...,
+    },
+    mobile: {
+      close: "#menu-mobile-toggle-close"
+    }
+  }
+];
+menuHandler.init(menus);
+```  
+   
+---
+
+#### enterFocus - mobile
+
+element to focus first when menu opens, will make any provided element focusable at mobile [mobile.breakpoint](#breakpoint---mobile).   
+  
+type: `css selector`  
+default: `elements.enterFocus`   
+&#10071; **note**: if both [mobile.elements.enterFocus](#enterFocus---mobile) and [enterFocus](#enterFocus) are passed ,then [mobile.elements.enterFocus](#enterFocus---mobile) is the one that will get focused in [mobile.breakpoint](#breakpoint---mobile) and [close](#close) in larger media queries.   
+   
+```javascript
+const menus = [
+  {
+    elements: {
+      container: ...,
+      innerContainer: ...,
+      open: ...,
+    },
+    mobile: {
+      enterFocus: "#menu-enter-focus"
+    }
+  }
+];
+menuHandler.init(menus);
+```
+
+---
+
+#### exitFocus - mobile
+
+element to focus after menu closes at [mobile.breakpoint](#breakpoint---mobile).
+  
+type: `css selector`  
+default: `elements.exitFocus`   
+&#10071; **note**: if both [mobile.elements.exitFocus](#exitFocus---mobile) and [exitFocus](#exitFocus) are passed ,then [mobile.elements.exitFocus](#exitFocus---mobile) is the one that will get focused in [mobile.breakpoint](#breakpoint---mobile) and [close](#close) in larger media queries.  
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: ...,
+      innerContainer: ...,
+      open: ...,
+    },
+    mobile: {
+      exitFocus: "#menu-exit-focus"
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+
+#### pin - mobile
+
+pin menu to keep it open at mobile [mobile.breakpoint](#breakpoint---mobile).
+  
+type: `css selector`  
+default: `false`   
+&#10071; **note**: if [mobile.pin](#pin--mobile) is set to `true` ,then the following functionalities of the menu are disabled: [open](#open), [close](#close) 
+&#10071; **note**: blur and ESC press events won't close a pinned menu, but will close all submenus.    
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: ...,
+      innerContainer: ...,
+      open: ...,
+    },
+    mobile: {
+      pin: true,
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
 ---
 
 ### Submenu Options
@@ -679,11 +799,11 @@ menuHandler.init(menus);
 
 #### openOnHover - submenu
 
-triggers opening of a menu by mouse enter  
+triggers opening of a submenu on mouse enter  
 
 type: `boolean`  
 default: `false`  
-&#10071; **note**: disabled ,if screen view port is less ,than the submenu.[mobileBreakpoint](#mobileBreakpoint-[submenu])
+&#10071; **note**: disabled at mobile viewport (if screen viewport is less ,than [mobile.breakpoint](#breakpoint---mobile)).   
 
 ```javascript
 const menus = [
@@ -1099,8 +1219,8 @@ important menu parameters accessible via menu object
 the active element which triggers opening of the menu
 
 type: `html element`  
-default: `elements.open` ,if [mobileOpen](#mobileOpen) is not empty and [mobileBreakpoint](#mobileBreakpoint) query returns true ,then default is [mobileOpen](#mobileOpen).
-&#10071; **note**: use this ,if you need it in the custom function you pass. **don't use elements.open or elements.mobileOpen**
+default: `elements.open` ,if [mobile.open](#open---mobile) is not empty and [mobile.breakpoint](#breakpoint---mobile) query returns true ,then default is [mobile.open](#open---mobile).
+&#10071; **note**: use this ,if you need it in the custom function you pass. **don't use [elements.open](#open) or [mobile.elements.open](#open---mobile)**
 
 ---
 
@@ -1109,8 +1229,8 @@ default: `elements.open` ,if [mobileOpen](#mobileOpen) is not empty and [mobileB
 the active element which triggers closing of the menu  
 
 type: `html element`  
-default: `elements.close` ,if [mobileClose](#mobileClose-[menu]) is not empty and [mobile breakpoint](#mobileBreakpoint-[menu]) query returns true ,then drfault is [mobileClose](#mobileClose).
-&#10071; **note**: use this ,if you need it in the custom function you pass. **don't use elements.close or elements.mobileClose**
+default: `elements.close` ,if [mobile.elements.close](#close---mobile) is not empty and [mobile.breakpoint](#breakpoint---mobile) query returns true ,then default is [mobile.elements.close](#close---mobile).
+&#10071; **note**: use this ,if you need it in the custom function you pass. **don't use [elements.close](#close) or [mobile.elements.close](#close---mobile)**
 
 ---
 
@@ -1120,17 +1240,26 @@ Shows the status of a menu at run time
 
 type: `boolean`  
 default: `false`
+   
+---   
+   
+#### isPinned
 
----
+Shows if menu is pinned at run time
 
-#### isMobile
+type: `boolean`  
+default: `false`
+   
+---   
+
+#### isMobile - mobile
 
 Shows the status of menu mobile state at run time.  
-&#10071; **note**: affected by mobileBreakpoint and viewport width.
+&#10071; **note**: affected by [mobile.breakpoint](#breakpoint---mobile) and viewport width.
 
 type: `boolean`
-
----
+   
+---   
 
 ### Submenu
 

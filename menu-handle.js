@@ -122,6 +122,21 @@ const menuHandler = {
    initMenuOptions(menu, options) {
       const self = this;
 
+      const ignore = [
+         'open',
+         'close',
+         'isOpen', 
+         'isPinned', 
+         'container',
+         'activeOpen', 
+         'exitFocus',
+         'enterFocus',
+         'activeClose',
+         'innerContainer',
+         'activeExitFocus',
+         'activeEnterFocus',
+      ];
+
       for (key in options) {
 
          if (key == 'elements') continue;
@@ -146,7 +161,7 @@ const menuHandler = {
                break;
 
             default:
-               if (key in menu && key != 'isOpen' && key != 'isPinned' && key != 'activeOpen' && key != 'activeClose') {
+               if (key in menu && !ignore.includes(key)) {
                   menu[key] = options[key];
                }
                break;
@@ -169,12 +184,20 @@ const menuHandler = {
    initMenuMobileOptions(menu, options) {
       const self = this;
 
+      const ignore = [
+         'open',
+         'close',
+         'isMobile',
+         'exitFocus',
+         'enterFocus',
+      ];
+
       for (key in options) {
 
          if (key == 'elements') continue;
 
          switch ( key ) {
-            case 'breakpoint':
+            case 'breakpoint': 
                if (!options[key].includes('px')) {
                   options[key] += 'px';
                }
@@ -186,7 +209,7 @@ const menuHandler = {
                break;
 
             default:
-               if (key in menu.mobile && key != 'isMobile') {
+               if (key in menu.mobile && !ignore.includes(key)) {
                   menu.mobile[key] = options[key];
                }
                break;

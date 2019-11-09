@@ -656,7 +656,9 @@ const menus = [
       open: ...,
     },
     mobile: {
-      open: "#menu-mobile-toggle-open"
+      elements: {
+        open: "#menu-mobile-toggle-open"
+      }
     }
   }
 ];
@@ -684,7 +686,9 @@ const menus = [
       close: ...,
     },
     mobile: {
-      close: "#menu-mobile-toggle-close"
+      elements: {
+        close: "#menu-mobile-toggle-close"
+      }
     }
   }
 ];
@@ -710,7 +714,9 @@ const menus = [
       open: ...,
     },
     mobile: {
-      enterFocus: "#menu-enter-focus"
+      elements: {
+        enterFocus: "#menu-enter-focus"
+      }
     }
   }
 ];
@@ -736,7 +742,9 @@ const menus = [
       open: ...,
     },
     mobile: {
-      exitFocus: "#menu-exit-focus"
+      elements: {
+        exitFocus: "#menu-exit-focus"
+      }
     }
   }
 ];

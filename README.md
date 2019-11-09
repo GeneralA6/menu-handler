@@ -12,7 +12,8 @@ functionality added to the menus by the library:
 - close
 - close on esc press
 - close on blur
-- close all menus ( initialized with menuhandler) on menu open
+- close all menus on menu open
+- close all submenus on submenu open
 - prevent body scroll when a menu is open
 - prevent body swipe when a menu is open
 - accessiblity

@@ -122,7 +122,7 @@ const menuHandler = {
    initMenuOptions(menu, options) {
       const self = this;
 
-      const ignore = [
+      const ignores = [
          'open',
          'close',
          'isOpen', 
@@ -161,7 +161,7 @@ const menuHandler = {
                break;
 
             default:
-               if (key in menu && !ignore.includes(key)) {
+               if (key in menu && !ignores.includes(key)) {
                   menu[key] = options[key];
                }
                break;
@@ -184,7 +184,7 @@ const menuHandler = {
    initMenuMobileOptions(menu, options) {
       const self = this;
 
-      const ignore = [
+      const ignores = [
          'open',
          'close',
          'isMobile',
@@ -209,7 +209,7 @@ const menuHandler = {
                break;
 
             default:
-               if (key in menu.mobile && !ignore.includes(key)) {
+               if (key in menu.mobile && !ignores.includes(key)) {
                   menu.mobile[key] = options[key];
                }
                break;
@@ -358,13 +358,29 @@ const menuHandler = {
          if (menu.isPinned) {
 
             menu.container.classList.add('mh-pinned');
+
             menu.innerContainer.classList.remove('mh-hidden');
+
+            menu.open.classList.add('mh-hidden');
+            if (menu.mobile.open) menu.mobile.open.classList.add('mh-hidden');
+
+            if (menu.close) menu.close.classList.add('mh-hidden');
+            if (menu.mobile.close) menu.mobile.close.classList.add('mh-hidden');
+
             menu.innerContainer.setAttribute('aria-hidden', false)
             menu.innerContainer.setAttribute('aria-expanded', true);
          } else {
             
-            menu.innerContainer.classList.add('mh-hidden');
             menu.container.classList.remove('mh-pinned');
+
+            menu.innerContainer.classList.add('mh-hidden');
+
+            menu.open.classList.remove('mh-hidden');
+            if (menu.mobile.open) menu.mobile.open.classList.remove('mh-hidden');
+
+            if (menu.close) menu.close.classList.remove('mh-hidden');
+            if (menu.mobile.close) menu.mobile.close.classList.remove('mh-hidden');
+
             menu.innerContainer.setAttribute('aria-hidden', true)
             menu.innerContainer.setAttribute('aria-expanded', false);
          }
@@ -608,7 +624,7 @@ const menuHandler = {
                }
             }
          }
-         
+
          submenu.toggle.classList.add('mh-open');
          
       } else { // if parent is closed ,then close this submenu

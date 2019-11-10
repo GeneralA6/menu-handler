@@ -444,10 +444,13 @@ menuHandler.init(menus);
 #### pin
 
 pin menu to keep it open at desktop media queries.
+a
   
 type: `css selector`  
 default: `false`   
-&#10071; **note**: if [pin](#pin) is set to `true` ,then the following functionalities of the menu are disabled: [open](#open), [close](#close)   
+&#10071; **note**: adds class `mh-pinned` to [elements.container](#container) when menu is pinned.   
+&#10071; **note**: if [pin](#pin) is set to `true` ,then the following functionalities of the menu are disabled: [open](#open), [close](#close).   
+&#10071; **note**: adds class `mh-hidden` to menu toggle buttons ([elements.open](#open),[elements.close](#close),[elements.mobile.open](#open---mobile),[elements.mobile.close](#close---mobile)) when menu is pinned.    
 &#10071; **note**: blur and ESC press events won't close a pinned menu, but will close all submenus.   
 
 ```javascript
@@ -758,8 +761,10 @@ menuHandler.init(menus);
 pin menu to keep it open at mobile [mobile.breakpoint](#breakpoint---mobile).
   
 type: `css selector`  
-default: `false`   
-&#10071; **note**: if [mobile.pin](#pin--mobile) is set to `true` ,then the following functionalities of the menu are disabled: [open](#open), [close](#close) 
+default: `false`  
+&#10071; **note**: adds class `mh-pinned` to [elements.container](#container) when menu is pinned.    
+&#10071; **note**: if [mobile.pin](#pin--mobile) is set to `true` ,then the following functionalities of the menu are disabled: [open](#open), [close](#close).  
+&#10071; **note**: adds class `mh-hidden` to menu toggle buttons ([elements.open](#open),[elements.close](#close),[elements.mobile.open](#open---mobile),[elements.mobile.close](#close---mobile)) when menu is pinned.   
 &#10071; **note**: blur and ESC press events won't close a pinned menu, but will close all submenus.    
 
 ```javascript

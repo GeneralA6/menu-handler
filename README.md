@@ -1278,6 +1278,7 @@ default: `elements.close` ,if [mobile.elements.close](#close---mobile) is not em
 #### isOpen
 
 Shows the status of a menu at run time
+&#10071; **note**: when menu isOpened a class `mh-<<menu name>>-open` is added to the body.
 
 type: `boolean`  
 default: `false`
@@ -1287,6 +1288,8 @@ default: `false`
 #### isPinned
 
 Shows if menu is pinned at run time
+&#10071; **note**: when menu isPinned a class `mh-pinned` is added to [elements.container](#container).   
+&#10071; **note**: when menu isPinned a class  class `mh-hidden` is added to menu toggle buttons ([elements.open](#open),[elements.close](#close),[elements.mobile.open](#open---mobile),[elements.mobile.close](#close---mobile)).   
 
 type: `boolean`  
 default: `false`

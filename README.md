@@ -65,6 +65,7 @@ functionality added to the menus by the library:
 - [loop](#loop) - loop all elements inside the innerContainer using Tab key.
 - [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
 - [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
+- [debounce](#debounce) - sets debounce treshhold in miliseconds on menu liseteners.
 - [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
    
@@ -533,6 +534,30 @@ const menus = [
       open: "#menu-toggle-open"
     },
     closeDelay: 1000
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+
+#### debounce
+
+sets debounce treshhold in miliseconds on menu liseteners.
+
+type: `integer`  
+default: `20`
+&#10071; **note**: to disable debounce set value to `0` (not recommended).
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    debounce: 30
   }
 ];
 menuHandler.init(menus);

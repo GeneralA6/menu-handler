@@ -28,6 +28,7 @@ const menuHandler = {
             isPinned: false,
             openDelay: 0,
             closeDelay: 0,
+            debounce: 20,
             openOnHover: false,
             transitionDelay: null,
             transitionDuration: null,
@@ -160,6 +161,12 @@ const menuHandler = {
                menu[key] = !!options[key] || false; // convert to boolean
                break;
 
+            case 'openDelay':
+            case 'closeDelay':
+            case 'debounce':
+               menu[key] = parseInt(options[key]);
+               break;
+
             default:
                if (key in menu && !ignores.includes(key)) {
                   menu[key] = options[key];
@@ -220,7 +227,7 @@ const menuHandler = {
       window.addEventListener('resize', self.debounce(() => {
          
          menu.mobile.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
-      }, 20));
+      }, menu.debounce));
    },
 
    setActiveElements(menu) {
@@ -336,7 +343,7 @@ const menuHandler = {
       window.addEventListener('resize', self.debounce(() => {
          
          self.toggleMenuPinned(menu);
-      }, 20));
+      }, menu.debounce));
    },
 
    toggleMenuPinned(menu) {
@@ -400,7 +407,7 @@ const menuHandler = {
       window.addEventListener('resize', self.debounce(() => {
          
          self.setActiveElements(menu);
-      }, 20));
+      }, menu.debounce));
 
       self.initMenuAccessibility(menu);
 
@@ -516,7 +523,7 @@ const menuHandler = {
 
       window.addEventListener('scroll', self.debounce(() => { // preventBodyScroll listener.
          document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
-      }), 20);
+      }), 100);
    },
 
    setMenuToggleEvents(menu, add, remove) {

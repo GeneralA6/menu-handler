@@ -1270,46 +1270,53 @@ default: `elements.open` ,if [mobile.open](#open---mobile) is not empty and [mob
 the active element which triggers closing of the menu  
 
 type: `html element`  
-default: `elements.close` ,if [mobile.elements.close](#close---mobile) is not empty and [mobile.breakpoint](#breakpoint---mobile) query returns true ,then default is [mobile.elements.close](#close---mobile).
+default: `elements.close` ,if [mobile.elements.close](#close---mobile) is not empty and [mobile.breakpoint](#breakpoint---mobile) query returns true ,then default is [mobile.elements.close](#close---mobile).   
+
 &#10071; **note**: use this ,if you need it in the custom function you pass. **don't use [elements.close](#close) or [mobile.elements.close](#close---mobile)**
 
 ---
 
 #### isOpen
 
-Shows the status of a menu at run time
-&#10071; **note**: when menu isOpened a class `mh-<<menu name>>-open` is added to the body.
+Shows the status of a menu at run time   
 
 type: `boolean`  
-default: `false`
+default: `false`   
+   
+&#10071; **note**: when menu isOpened a class `mh-<<menu name>>-open` is added to the body.
    
 ---   
    
 #### isPinned
 
-Shows if menu is pinned at run time
-&#10071; **note**: when menu isPinned a class `mh-pinned` is added to [elements.container](#container).   
-&#10071; **note**: when menu isPinned a class  class `mh-hidden` is added to menu toggle buttons ([elements.open](#open),[elements.close](#close),[elements.mobile.open](#open---mobile),[elements.mobile.close](#close---mobile)).   
+Shows if menu is pinned at run time   
 
 type: `boolean`  
-default: `false`
+default: `false`   
+   
+&#10071; **note**: when menu isPinned a class `mh-pinned` is added to [elements.container](#container).   
+&#10071; **note**: when menu isPinned a class  class `mh-hidden` is added to menu toggle buttons ([elements.open](#open),[elements.close](#close),[elements.mobile.open](#open---mobile),[elements.mobile.close](#close---mobile)).   
    
 ---   
 
 #### isMobile - mobile
 
 Shows the status of menu mobile state at run time.  
+   
+type: `boolean`   
+   
 &#10071; **note**: affected by [mobile.breakpoint](#breakpoint---mobile) and viewport width.
 
-type: `boolean`
-   
 ---   
 
 ### Submenu
 
 #### isOpen - submenu
 
-Shows the status of a submenu at run time
+Shows the status of a submenu at run time   
 
 type: `boolean`  
-default: `false`
+default: `false`   
+   
+&#10071; **note**: when menu isOpen a class `mh-open` is added to [data-mh-submenu-toggle](#submenu-toggle) and [data-mh-submenu-list](#submenu-list).   
+&#10071; **note**: if [data-mh-submenu-container](#submenu-container) is being used to contain the [data-mh-submenu-list](#submenu-list) ,then [data-mh-submenu-container](#submenu-container) will have `mh-open` instead of [data-mh-submenu-list](#submenu-list).   

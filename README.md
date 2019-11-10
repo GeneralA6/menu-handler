@@ -22,6 +22,7 @@ functionality added to the menus by the library:
 - pin menu to keep it open for specific breakpoints and hide at another breakpoint unless opened.
 - mobile options
 - replacing specific menu's functionality with custom functionality by passing custom function
+- and more...
 
 ## Table of contents
 

@@ -1318,5 +1318,5 @@ Shows the status of a submenu at run time
 type: `boolean`  
 default: `false`   
    
-&#10071; **note**: when menu isOpen a class `mh-open` is added to [data-mh-submenu-toggle](#submenu-toggle) and [data-mh-submenu-list](#submenu-list).   
+&#10071; **note**: when submenu isOpen a class `mh-open` is added to [data-mh-submenu-toggle](#submenu-toggle) and [data-mh-submenu-list](#submenu-list).   
 &#10071; **note**: if [data-mh-submenu-container](#submenu-container) is being used to contain the [data-mh-submenu-list](#submenu-list) ,then [data-mh-submenu-container](#submenu-container) will have `mh-open` instead of [data-mh-submenu-list](#submenu-list).   

@@ -362,23 +362,24 @@ const menuHandler = {
       }
 
       if (!menu.isOpen) {
+
          if (menu.isPinned) {
 
             menu.container.classList.add('mh-pinned');
+            menu.container.setAttribute('aria-hidden', false);
 
             menu.innerContainer.classList.remove('mh-hidden');
 
             menu.open.classList.add('mh-hidden');
             if (menu.mobile.open) menu.mobile.open.classList.add('mh-hidden');
-
+            
             if (menu.close) menu.close.classList.add('mh-hidden');
             if (menu.mobile.close) menu.mobile.close.classList.add('mh-hidden');
 
-            menu.innerContainer.setAttribute('aria-hidden', false)
-            menu.innerContainer.setAttribute('aria-expanded', true);
          } else {
             
             menu.container.classList.remove('mh-pinned');
+            menu.container.setAttribute('aria-hidden', true);
 
             menu.innerContainer.classList.add('mh-hidden');
 
@@ -387,9 +388,6 @@ const menuHandler = {
 
             if (menu.close) menu.close.classList.remove('mh-hidden');
             if (menu.mobile.close) menu.mobile.close.classList.remove('mh-hidden');
-
-            menu.innerContainer.setAttribute('aria-hidden', true)
-            menu.innerContainer.setAttribute('aria-expanded', false);
          }
 
          self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
@@ -492,7 +490,17 @@ const menuHandler = {
          }
       });
 
-      self.toggleMenuPinned(menu);
+      if (!menu.container.id || !menu.container.id.length) {
+         menu.container.id = `mh-menu-${menu.name}`;
+      }
+
+      if (!menu.open.getAttribute('aria-controls') || !menu.open.getAttribute('aria-controls').length) {
+         menu.open.setAttribute('aria-controls', menu.container.id);
+      }
+
+      if (menu.mobile.open && (!menu.mobile.open.getAttribute('aria-controls') || !menu.mobile.open.getAttribute('aria-controls').length)){
+         menu.mobile.open.setAttribute('aria-controls', menu.container.id);
+      } 
 
       ['enterFocus', 'exitFocus'].forEach((key) => {
 
@@ -509,10 +517,13 @@ const menuHandler = {
       });
    },
 
-   initSubmenuAccessibility(submenu) {
+   initSubmenuAccessibility(submenu) { 
+      
       if (!submenu.list.classList.contains('mh-hidden')) submenu.list.classList.add('mh-hidden');
       if (!submenu.list.getAttribute('aria-hidden')) submenu.list.setAttribute('aria-hidden', true);
-      if (!submenu.list.getAttribute('aria-expanded')) submenu.list.setAttribute('aria-expanded', false);
+      if (!submenu.list.id || !submenu.list.id.length) submenu.list.id = `mh-submenu-${submenu.name}`;
+      if (!submenu.toggle.getAttribute('aria-expanded')) submenu.toggle.setAttribute('aria-expanded', false);
+      if (!submenu.toggle.getAttribute('aria-controls')) submenu.toggle.setAttribute('aria-controls', submenu.list.id);
    },
 
    initMenuWindowEvents() {
@@ -668,13 +679,15 @@ const menuHandler = {
 
       if (menu.isOpen) {
 
-         menu.container.setAttribute('aria-expanded', true);
+         menu.open.setAttribute('aria-expanded', true);
+         if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', true);
          menu.container.setAttribute('aria-hidden', false);
          menu.innerContainer.classList.remove('mh-hidden');
          menu.activeEnterFocus.focus();
       } else {
 
-         menu.container.setAttribute('aria-expanded', false);
+         menu.open.setAttribute('aria-expanded', false);
+         if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', false);
          menu.container.setAttribute('aria-hidden', true);
          menu.innerContainer.classList.add('mh-hidden');
 
@@ -687,26 +700,24 @@ const menuHandler = {
 
          submenu.list.classList.remove('mh-hidden');
          submenu.list.setAttribute('aria-hidden', false);
+         submenu.toggle.setAttribute('aria-expanded', true);
 
          if (submenu.container) {
             submenu.container.classList.add('mh-open');
-            submenu.container.setAttribute('aria-expanded', true);
          } else {
             submenu.list.classList.add('mh-open');
-            submenu.list.setAttribute('aria-expanded', true);
          }
 
       } else {
 
          submenu.list.classList.add('mh-hidden');
          submenu.list.setAttribute('aria-hidden', true);
+         submenu.toggle.setAttribute('aria-expanded', false);
 
          if (submenu.container) {
             submenu.container.classList.remove('mh-open');
-            submenu.container.setAttribute('aria-expanded', false);
          } else {
             submenu.list.classList.remove('mh-open');
-            submenu.list.setAttribute('aria-expanded', false);
          }
 
       }

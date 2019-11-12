@@ -568,7 +568,7 @@ menuHandler.init(menus);
 
 #### openOnHover
 
-triggers opening of a menu by mouse enter  
+triggers opening of a menu on mouse enter  
 
 type: `boolean`  
 default: `false`  
@@ -620,18 +620,21 @@ menuHandler.init(menus);
 &#10071; **note**: default code  
 
 ```javascript
-menuFunc(menu, e) {
+function(menu, e) {
+   if (menu.isOpen) {
 
-   if ( menu.isOpen ) {
+      menu.open.setAttribute('aria-expanded', true);
+      if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', true);
 
-      menu.container.setAttribute('aria-expanded', true);
       menu.container.setAttribute('aria-hidden', false);
       menu.innerContainer.classList.remove('mh-hidden');
-      menu.enterFocus.focus();
-
+      
+      menu.activeEnterFocus.focus();
    } else {
 
-      menu.container.setAttribute('aria-expanded', false);
+      menu.open.setAttribute('aria-expanded', false);
+      if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', false);
+
       menu.container.setAttribute('aria-hidden', true);
       menu.innerContainer.classList.add('mh-hidden');
 
@@ -897,31 +900,30 @@ menuHandler.init(menus);
 &#10071; **note**: default code  
 
 ```javascript
-submenuFunc(menu, submenu, e) {
+function(menu, submenu, e) {
 
-   if ( submenu.toggle.classList.contains('mh-open') ) {
+   if (submenu.toggle.classList.contains('mh-open')) {
 
       submenu.list.classList.remove('mh-hidden');
       submenu.list.setAttribute('aria-hidden', false);
+      submenu.toggle.setAttribute('aria-expanded', true);
 
-      if ( submenu.container ) {
+      if (submenu.container) {
          submenu.container.classList.add('mh-open');
-         submenu.container.setAttribute('aria-expanded', true);
       } else {
          submenu.list.classList.add('mh-open');
-         submenu.list.setAttribute('aria-expanded', true);
       }
 
    } else {
+
       submenu.list.classList.add('mh-hidden');
       submenu.list.setAttribute('aria-hidden', true);
+      submenu.toggle.setAttribute('aria-expanded', false);
 
-      if ( submenu.container ) {
+      if (submenu.container) {
          submenu.container.classList.remove('mh-open');
-         submenu.container.setAttribute('aria-expanded', false);
       } else {
          submenu.list.classList.remove('mh-open');
-         submenu.list.setAttribute('aria-expanded', false);
       }
 
    }

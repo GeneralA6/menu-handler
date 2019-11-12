@@ -620,18 +620,21 @@ menuHandler.init(menus);
 &#10071; **note**: default code  
 
 ```javascript
-menuFunc(menu, e) {
+function(menu, e) {
+   if (menu.isOpen) {
 
-   if ( menu.isOpen ) {
+      menu.open.setAttribute('aria-expanded', true);
+      if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', true);
 
-      menu.container.setAttribute('aria-expanded', true);
       menu.container.setAttribute('aria-hidden', false);
       menu.innerContainer.classList.remove('mh-hidden');
-      menu.enterFocus.focus();
-
+      
+      menu.activeEnterFocus.focus();
    } else {
 
-      menu.container.setAttribute('aria-expanded', false);
+      menu.open.setAttribute('aria-expanded', false);
+      if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', false);
+
       menu.container.setAttribute('aria-hidden', true);
       menu.innerContainer.classList.add('mh-hidden');
 

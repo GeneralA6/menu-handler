@@ -860,7 +860,7 @@ const menus = [
     },
     submenuOptions: {
       isEnabled: true,
-      openOnHover: true
+      openOnHover: true 
     }
   }
 ];

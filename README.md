@@ -845,6 +845,7 @@ triggers opening of a submenu on mouse enter
 type: `boolean`  
 default: `false`  
 &#10071; **note**: disabled at mobile viewport (if screen viewport is less ,than [mobile.breakpoint](#breakpoint---mobile)).   
+&#10071; **note**: to disable openOnHover of a specific submenu ,just add `data-mh-hover-disabled="true"` attribute to the submenu toggle.
 
 ```javascript
 const menus = [

@@ -445,6 +445,7 @@ const menuHandler = {
             parent: null,
             children: [],
             isOpen: false,
+            openOnHover: menu.submenuOptions.openOnHover,
             transitionDelay: null,
             transitionDuration: null,
          }
@@ -457,6 +458,10 @@ const menuHandler = {
          submenu.container = menu.innerContainer.querySelector(`[data-mh-submenu-container="${submenu.name}"]`);
 
          submenu.parent = self.getSubmenuParent(submenu.list);
+
+         if (submenu.openOnHover && submenu.toggle.dataset.mhHoverDisabled) {
+            submenu.openOnHover = false;
+         }
 
          self.initSubmenuAccessibility(submenu);
          self.initSubmenuToggleEvents(menu, submenu);
@@ -557,7 +562,7 @@ const menuHandler = {
 
       submenu.toggle.addEventListener('click', submenuToggle);
 
-      if (menu.submenuOptions.openOnHover) {
+      if (submenu.openOnHover) {
          submenu.toggle.addEventListener('mouseenter', submenuToggle);
       }
    },

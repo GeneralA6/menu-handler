@@ -896,31 +896,30 @@ menuHandler.init(menus);
 &#10071; **note**: default code  
 
 ```javascript
-submenuFunc(menu, submenu, e) {
+function(menu, submenu, e) {
 
-   if ( submenu.toggle.classList.contains('mh-open') ) {
+   if (submenu.toggle.classList.contains('mh-open')) {
 
       submenu.list.classList.remove('mh-hidden');
       submenu.list.setAttribute('aria-hidden', false);
+      submenu.toggle.setAttribute('aria-expanded', true);
 
-      if ( submenu.container ) {
+      if (submenu.container) {
          submenu.container.classList.add('mh-open');
-         submenu.container.setAttribute('aria-expanded', true);
       } else {
          submenu.list.classList.add('mh-open');
-         submenu.list.setAttribute('aria-expanded', true);
       }
 
    } else {
+
       submenu.list.classList.add('mh-hidden');
       submenu.list.setAttribute('aria-hidden', true);
+      submenu.toggle.setAttribute('aria-expanded', false);
 
-      if ( submenu.container ) {
+      if (submenu.container) {
          submenu.container.classList.remove('mh-open');
-         submenu.container.setAttribute('aria-expanded', false);
       } else {
          submenu.list.classList.remove('mh-open');
-         submenu.list.setAttribute('aria-expanded', false);
       }
 
    }

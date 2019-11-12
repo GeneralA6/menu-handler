@@ -568,7 +568,7 @@ menuHandler.init(menus);
 
 #### openOnHover
 
-triggers opening of a menu by mouse enter  
+triggers opening of a menu on mouse enter  
 
 type: `boolean`  
 default: `false`  

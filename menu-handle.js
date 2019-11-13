@@ -24,19 +24,19 @@ const menuHandler = {
             container: null,
             innerContainer: null,
             loop: false,
-            isOpen: false,
-            isPinned: false,
+            isOpen: false, // run time
+            isPinned: false, // run time
+            isMobile: false, // run time
             openDelay: 0,
             closeDelay: 0,
             debounce: 20,
             openOnHover: false,
-            transitionDelay: null,
-            transitionDuration: null,
+            transitionDelay: 0, // run time
+            transitionDuration: 0, // run time
             menuFunc: self.menuFunc,
             pin: false,
             mobile: {
                breakpoint: '667px',
-               isMobile: false,
                open: null,
                close: null,
                pin: false,
@@ -50,13 +50,17 @@ const menuHandler = {
                afterOpen: null,
                beforeClose: null,
                afterClose: null,
+               beforePin: null,
+               afterPin: null,
             },
             submenuOptions: {
                isEnabled: false,
                menuFunc: self.submenuFunc,
                openOnHover: false,
-               transitionDelay: null,
-               transitionDuration: null,
+               closeOnBlur: true,
+               mobile: {
+                  closeOnBlur: true,
+               },
                on: {
                   beforeOpen: null,
                   afterOpen: null,
@@ -123,11 +127,12 @@ const menuHandler = {
    initMenuOptions(menu, options) {
       const self = this;
 
-      const ignores = [
+      const ignores = [ // maybe change this
          'open',
          'close',
          'isOpen', 
          'isPinned', 
+         'isMobile',
          'container',
          'activeOpen', 
          'exitFocus',
@@ -191,10 +196,9 @@ const menuHandler = {
    initMenuMobileOptions(menu, options) {
       const self = this;
 
-      const ignores = [
+      const ignores = [ // maybe change this
          'open',
          'close',
-         'isMobile',
          'exitFocus',
          'enterFocus',
       ];
@@ -223,10 +227,10 @@ const menuHandler = {
          }
       }
 
-      menu.mobile.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
+      menu.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
       window.addEventListener('resize', self.debounce(() => {
          
-         menu.mobile.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
+         menu.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
       }, menu.debounce));
    },
 
@@ -244,7 +248,7 @@ const menuHandler = {
 
       menu.activeOpen = menu.open;
 
-      if (menu.mobile.isMobile) {
+      if (menu.isMobile) {
 
          if (menu.mobile.open) {
 
@@ -265,7 +269,7 @@ const menuHandler = {
 
       menu.activeClose = menu.close;
 
-      if (menu.mobile.isMobile) {
+      if (menu.isMobile) {
 
          if (menu.mobile.close) {
 
@@ -286,7 +290,7 @@ const menuHandler = {
 
       menu.activeEnterFocus = menu.enterFocus;
 
-      if (menu.mobile.isMobile && menu.mobile.enterFocus) {
+      if (menu.isMobile && menu.mobile.enterFocus) {
             menu.activeEnterFocus = menu.mobile.enterFocus;
       }
    },
@@ -296,12 +300,14 @@ const menuHandler = {
 
       menu.activeExitFocus = menu.exitFocus;
 
-      if (menu.mobile.isMobile && menu.mobile.exitFocus) {
+      if (menu.isMobile && menu.mobile.exitFocus) {
          menu.activeExitFocus = menu.mobile.exitFocus;
       }
    },  
 
    initSubmenuOptions(menu, options) {
+      const self = this;
+
       for (key in options) {
 
          switch (key) {
@@ -315,7 +321,12 @@ const menuHandler = {
 
             case 'isEnabled':
             case 'openOnHover':
+            case 'closeOnBlur':
                menu.submenuOptions[key] = !!options[key] || false; // convert to boolean
+               break;
+
+            case 'mobile':
+               self.initSubmenuMobileOptions(menu, options[key]);
                break;
 
             default:
@@ -325,6 +336,28 @@ const menuHandler = {
                break;
          }
       }
+   },
+
+   initSubmenuMobileOptions(menu, options) {
+      const self = this;
+
+      const ignores = [];
+
+      for (key in options) {
+
+         switch ( key ) {
+            case 'closeOnBlur':
+               menu.submenuOptions.mobile[key] = !!options[key] || false; // convert to boolean
+               break;
+
+            default:
+               if (key in menu.submenuOptions.mobile && !ignores.includes(key)) {
+                  menu.submenuOptions.mobile[key] = options[key];
+               }
+               break;
+         }
+      }
+      console.log(menu);
    },
 
    initMenuEvents(menu, events) {
@@ -351,7 +384,7 @@ const menuHandler = {
 
       menu.isPinned = false;
 
-      if (menu.mobile.isMobile) {
+      if (menu.isMobile) {
          menu.isPinned = menu.mobile.pin;
       } else {
          menu.isPinned = menu.pin;
@@ -361,37 +394,50 @@ const menuHandler = {
          self.closeMenu(menu);
       }
 
-      if (!menu.isOpen) {
+      if (menu.isOpen) return;
 
-         if (menu.isPinned) {
+      if (menu.isPinned) {
 
-            menu.container.classList.add('mh-pinned');
-            menu.container.setAttribute('aria-hidden', false);
+         menu.transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
 
-            menu.innerContainer.classList.remove('mh-hidden');
+         if (menu.on.beforePinOpen) menu.on.beforePinOpen(menu, e); // before pin open
 
-            menu.open.classList.add('mh-hidden');
-            if (menu.mobile.open) menu.mobile.open.classList.add('mh-hidden');
-            
-            if (menu.close) menu.close.classList.add('mh-hidden');
-            if (menu.mobile.close) menu.mobile.close.classList.add('mh-hidden');
+         menu.container.classList.add('mh-pinned');
+         menu.container.setAttribute('aria-hidden', false);
 
-         } else {
-            
-            menu.container.classList.remove('mh-pinned');
-            menu.container.setAttribute('aria-hidden', true);
+         menu.innerContainer.classList.remove('mh-hidden');
 
-            menu.innerContainer.classList.add('mh-hidden');
+         menu.open.classList.add('mh-hidden');
+         if (menu.mobile.open) menu.mobile.open.classList.add('mh-hidden');
+         
+         if (menu.close) menu.close.classList.add('mh-hidden');
+         if (menu.mobile.close) menu.mobile.close.classList.add('mh-hidden');
 
-            menu.open.classList.remove('mh-hidden');
-            if (menu.mobile.open) menu.mobile.open.classList.remove('mh-hidden');
-
-            if (menu.close) menu.close.classList.remove('mh-hidden');
-            if (menu.mobile.close) menu.mobile.close.classList.remove('mh-hidden');
+         if (menu.on.afterPinOpen) { // after pin open
+            setTimeout(() => menu.on.afterPinOpen(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
          }
 
-         self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
+      } else {
+         
+         if (menu.on.beforePinClose) menu.on.beforePinClose(menu, e); // before pin close
+
+         menu.container.classList.remove('mh-pinned');
+         menu.container.setAttribute('aria-hidden', true);
+
+         menu.innerContainer.classList.add('mh-hidden');
+
+         menu.open.classList.remove('mh-hidden');
+         if (menu.mobile.open) menu.mobile.open.classList.remove('mh-hidden');
+
+         if (menu.close) menu.close.classList.remove('mh-hidden');
+         if (menu.mobile.close) menu.mobile.close.classList.remove('mh-hidden');
+
+         if (menu.on.afterPinClose) { // after pin close
+            setTimeout(() => menu.on.afterPinClose(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
+         }
       }
+
+      self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
    },
 
    initMenu(menu) {
@@ -444,10 +490,14 @@ const menuHandler = {
             container: null,
             parent: null,
             children: [],
-            isOpen: false,
+            isOpen: false, // run time
             openOnHover: menu.submenuOptions.openOnHover,
-            transitionDelay: null,
-            transitionDuration: null,
+            transitionDelay: 0, // run time
+            transitionDuration: 0, // run time
+            // closeOnBlur: menu.submenuOptions.closeOnBlur, // maybe remake it later for each submenu
+            // mobile: {
+            //    closeOnBlur: menu.submenuOptions.mobile.closeOnBlur, // maybe remake it later for each submenu
+            // }
          }
 
          submenu.list = menu.innerContainer.querySelector(`[data-mh-submenu-list="${submenu.name}"]`);
@@ -463,12 +513,15 @@ const menuHandler = {
             submenu.openOnHover = false;
          }
 
+         // if (submenu.closeOnBlur && submenu.toggle.dataset.mhBlurDisabled) {
+         //    submenu.closeOnBlur = false;
+         // }
+
          self.initSubmenuAccessibility(submenu);
          self.initSubmenuToggleEvents(menu, submenu);
          self.calcTransition(submenu);
 
          if (!submenu.toggle.getAttribute('title')) submenu.toggle.setAttribute('title', 'opens sub menu');
-
          
          if (submenu.parent) {
             menu.submenus[submenu.parent].children.push(submenu.name); // important: there always be a menu.submenus[submenu.parent] ,becuase the NodeList is ordered.
@@ -576,14 +629,14 @@ const menuHandler = {
 
       if (e && e.type == 'mouseenter') {
          if (menu.isOpen) return; // prevent closing an open menu by hovering over a toggle open button.
-         if (menu.mobile.isMobile) return; // prevent open on hover if isMobile.
+         if (menu.isMobile) return; // prevent open on hover if isMobile.
       }
 
       if (self.actions.indexOf(menu.name) !== -1) return; // don't allow, another action of this menu while action is running.
 
       self.actions.push(menu.name);
 
-      const transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
+      menu.transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
 
       setTimeout(() => {
 
@@ -602,7 +655,7 @@ const menuHandler = {
                menu.menuFunc(menu, e);
 
                if (menu.on.afterOpen) { // after open
-                  setTimeout(() => menu.on.afterOpen(menu, e), transitionTimeCombined * 1000); // fire after menu's container transition ends
+                  setTimeout(() => menu.on.afterOpen(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
                }
             }, menu.openDelay);
 
@@ -615,7 +668,7 @@ const menuHandler = {
                self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
 
                if (menu.on.afterClose) { // after close
-                  setTimeout(() => menu.on.afterClose(menu, e), transitionTimeCombined * 1000); // fire after menu's container transition ends
+                  setTimeout(() => menu.on.afterClose(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
                }
             }, menu.closeDelay);
          }
@@ -630,15 +683,14 @@ const menuHandler = {
 
       if (e && e.type == 'mouseenter') {
          if (submenu.isOpen) return; // prevent closing an open submenu by hovering over a toggle open button.
-         if (menu.mobile.isMobile) return; // prevent open on hover if isMobile.
+         if (menu.isMobile) return; // prevent open on hover if isMobile.
       }
 
-      const transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
-      const parentSubmenu = menu.submenus[submenu.parent] || null;
       const options = menu.submenuOptions
-
+      const parentSubmenu = menu.submenus[submenu.parent] || null;
+      
       if ((menu.isOpen || menu.isPinned) && !submenu.isOpen && (!parentSubmenu || parentSubmenu.isOpen)) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
-
+      
          if (!parentSubmenu) {
             
             for (key in menu.submenus) { // close all other submenus recursively,before opening this one
@@ -647,15 +699,16 @@ const menuHandler = {
                }
             }
          }
-
+         
          submenu.toggle.classList.add('mh-open');
          
       } else { // if parent is closed ,then close this submenu
          
          submenu.toggle.classList.remove('mh-open');
       }
-
+      
       submenu.isOpen = submenu.toggle.classList.contains('mh-open');
+      submenu.transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
 
       if (submenu.isOpen) {
 
@@ -664,7 +717,7 @@ const menuHandler = {
          options.menuFunc(menu, submenu, e);
 
          if (options.on.afterOpen) { // after open.
-            setTimeout(() => options.on.afterOpen(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
+            setTimeout(() => options.on.afterOpen(menu, submenu, e), submenu.transitionTimeCombined * 1000); // fire after submenu's container transition ends.
          }
       } else {
 
@@ -675,7 +728,7 @@ const menuHandler = {
          submenu.children.forEach(child => self.toggleSubmenu(menu, menu.submenus[child])); // close child submenu
 
          if (options.on.afterClose) { // after close.
-            setTimeout(() => options.on.afterClose(menu, submenu, e), transitionTimeCombined * 1000); // fire after submenu's container transition ends.
+            setTimeout(() => options.on.afterClose(menu, submenu, e), submenu.transitionTimeCombined * 1000); // fire after submenu's container transition ends.
          }
       }
    },
@@ -802,40 +855,19 @@ const menuHandler = {
 
    closeSubmenuOnBlur(menu, e) {
       const self = this;
-
-      if (menu.isPinned) { // close submenus on blur when menu is pinned
          
-         let isAnotherOpenSubmenu = true;
-         for (key in menu.submenus) {
-            
-            if (menu.submenus[key].isOpen && (menu.submenus[key].toggle == e.target || menu.submenus[key].toggle.contains(e.target))) {
-               isAnotherOpenSubmenu = false;
-            }
-         }
-
-         if (isAnotherOpenSubmenu) {
-            self.loopSubmenus(menu, self.closeSubmenu);
+      let isAnotherOpenSubmenu = true;
+      for (key in menu.submenus) {
+         
+         if (menu.submenus[key].isOpen && (menu.submenus[key].toggle == e.target || menu.submenus[key].toggle.contains(e.target) || menu.submenus[key].list == e.target || menu.submenus[key].list.contains(e.target))) {
+            isAnotherOpenSubmenu = false;
          }
       }
-
-      // this part is a not efficient. think of a better way.
-      if (menu.isOpen && !menu.isPinned && e.target && menu.container.contains(e.target)) { // close submenus on blur inside of an open menu
-
-         let isFocusable = false;
-         const menuFocusables = menu.innerContainer.querySelectorAll('[tabindex]:not([tabindex="-1"]), button, a, input:not([type="hidden"]) ,select, textarea');
-
-         menuFocusables.forEach((el, i) => {
    
-            if (el == e.target || el.contains(e.target)) {
-               isFocusable = true;
-               return;
-            }
-         });
-         
-         if (!isFocusable) {
-            self.loopSubmenus(menu, self.closeSubmenu);
-         }
+      if (isAnotherOpenSubmenu && (!menu.isMobile && menu.submenuOptions.closeOnBlur || menu.isMobile && menu.submenuOptions.mobile.closeOnBlur)) {
+         self.loopSubmenus(menu, self.closeSubmenu);
       }
+
    },
 
    closeMenu(menu) { // close menu.
@@ -930,6 +962,8 @@ const menuHandler = {
    },
 
    calcTransition(obj) { // calc menu or submenu transition duration.
+
+      // TODO: check how it works and implement for both menu and submenu
 
       if (obj.container) {
          obj.transitionDelay = parseFloat(getComputedStyle(obj.container).transitionDelay);

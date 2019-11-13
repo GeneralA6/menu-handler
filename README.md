@@ -82,9 +82,14 @@ functionality added to the menus by the library:
 #### Submenu Options
 
 - [isEnabled](#isEnabled---submenu) - enables handling of submenus.
-- [openOnHover](#openOnHover---submenu) - triggers opening of a submenu by mouse enter.
+- [openOnHover](#openOnHover---submenu) - triggers opening of a submenu on mouse enter.
+- [closeOnBlur](#closeOnBlur---submenu) - triggers closing of a submenu on blur.   
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
-
+   
+#### Submenu Mobile Options
+   
+- [closeOnBlur](#closeOnBlur---submenu---mobile) - triggers closing of a submenu on blur at mobile breakpoint.  
+   
 ### Events
 
 #### Menu Events
@@ -255,24 +260,24 @@ scss example:
 complete example of a menu structure with submenus
 
 ```html
-<div id="menu-container">
+<div id="menu-container" aria-hidden="true">
   <div class="mh-hidden" id="menu-inner-container">
     <nav id="menu-enter-focus">
       <ul class="menu">
         <li>
-          <button data-mh-submenu-toggle="submenu-a">
+          <button data-mh-submenu-toggle="submenu-a" aria-expanded="false" aria-controls="mh-submenu-submenu-a" title="">
             submenu-a trigger button
           </button>
 
           <div data-mh-submenu-container="submenu-a">
-            <ul class="mh-hidden" data-mh-submenu-list="submenu-a">
+            <ul id="mh-submenu-submenu-a" class="mh-hidden" data-mh-submenu-list="submenu-a" aria-hidden="true">
               <li>
-                <button data-mh-submenu-toggle="submenu-a-1">
+                <button data-mh-submenu-toggle="submenu-a-1" aria-expanded="false" aria-controls="mh-submenu-submenu-a-1" title="">
                   submenu-a-1 trigger button
                 </button>
 
                 <div data-mh-submenu-container="submenu-a-1">
-                  <ul class="mh-hidden" data-mh-submenu-list="submenu-a-1">
+                  <ul id="mh-submenu-submenu-a-1" class="mh-hidden" data-mh-submenu-list="submenu-a-1" aria-hidden="true">
                     ...
                   </ul>
                 </div>
@@ -283,7 +288,7 @@ complete example of a menu structure with submenus
       </ul>
     </nav>
 
-    <button id="menu-close">
+    <button id="menu-close" aria-controls="menu-container" aria-expanded="false" title="">
       menu toggle button
     </button>
   </div>
@@ -866,7 +871,33 @@ const menus = [
 ];
 menuHandler.init(menus);
 ```
+   
+---
 
+#### closeOnBlur - submenu
+
+triggers closing of a submenu on blur.
+
+type: `boolean`  
+default: `true`   
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    submenuOptions: {
+      isEnabled: true,
+      closeOnBlur: false, // to disable
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
 ---
 
 #### menuFunc - submenu
@@ -929,6 +960,36 @@ function(menu, submenu, e) {
    }
 }
 ```
+   
+### Submenu Mobile Options
+   
+#### closeOnBlur - submenu - mobile
+
+triggers closing of a submenu on blur at mobile [mobile.breakpoint](#breakpoint---mobile).
+
+type: `boolean`  
+default: `true`   
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open",
+    },
+    submenuOptions: {
+      isEnabled: true,
+      mobile: {
+        closeOnBlur: false, // to disable
+      }
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
 
 ---
 

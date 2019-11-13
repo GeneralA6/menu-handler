@@ -14,7 +14,7 @@ functionality added to the menus by the library:
 - close on blur
 - close all menus on menu open
 - close all submenus on submenu open
-- close all submenus on blur
+- close submenus on blur
 - prevent body scroll when a menu is open
 - prevent body swipe when a menu is open
 - accessiblity

@@ -960,6 +960,8 @@ function(menu, submenu, e) {
    }
 }
 ```
+      
+---
    
 ### Submenu Mobile Options
    
@@ -988,8 +990,6 @@ const menus = [
 ];
 menuHandler.init(menus);
 ```
-   
----
 
 ---
 

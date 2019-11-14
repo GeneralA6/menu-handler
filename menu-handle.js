@@ -137,7 +137,7 @@ const menuHandler = {
             case 'on':
                self.initMenuEvents(menu, options.on); 
                break;
-
+ 
             case 'submenuOptions':
                self.initSubmenuOptions(menu, options[key]);
                break;
@@ -347,7 +347,11 @@ const menuHandler = {
 
       for (event in events) {
          if (event in menu.on && typeof events[event] === 'function') {
+
             menu.on[event] = events[event];
+         } else {
+
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${event}:${events[event]} cannot be initialized in menu.on`);
          }
       }
    },
@@ -364,6 +368,8 @@ const menuHandler = {
 
    toggleMenuPinned(menu) {
       const self = this;
+
+      const wasPinned = menu.isPinned;
 
       menu.isPinned = false;
 
@@ -383,7 +389,7 @@ const menuHandler = {
 
          menu.transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
 
-         if (menu.on.beforePinOpen) menu.on.beforePinOpen(menu, e); // before pin open
+         if (menu.on.beforePinOpen && !wasPinned) menu.on.beforePinOpen(menu); // before pin open
 
          menu.container.classList.add('mh-pinned');
          menu.container.setAttribute('aria-hidden', false);
@@ -396,13 +402,13 @@ const menuHandler = {
          if (menu.close) menu.close.classList.add('mh-hidden');
          if (menu.mobile.close) menu.mobile.close.classList.add('mh-hidden');
 
-         if (menu.on.afterPinOpen) { // after pin open
-            setTimeout(() => menu.on.afterPinOpen(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
+         if (menu.on.afterPinOpen && !wasPinned) { // after pin open
+            setTimeout(() => menu.on.afterPinOpen(menu), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
          }
 
       } else {
          
-         if (menu.on.beforePinClose) menu.on.beforePinClose(menu, e); // before pin close
+         if (menu.on.beforePinClose && wasPinned) menu.on.beforePinClose(menu); // before pin close
 
          menu.container.classList.remove('mh-pinned');
          menu.container.setAttribute('aria-hidden', true);
@@ -415,8 +421,8 @@ const menuHandler = {
          if (menu.close) menu.close.classList.remove('mh-hidden');
          if (menu.mobile.close) menu.mobile.close.classList.remove('mh-hidden');
 
-         if (menu.on.afterPinClose) { // after pin close
-            setTimeout(() => menu.on.afterPinClose(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
+         if (menu.on.afterPinClose && wasPinned) { // after pin close
+            setTimeout(() => menu.on.afterPinClose(menu), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
          }
       }
 

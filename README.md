@@ -1145,6 +1145,122 @@ menuHandler.init(menus);
 
 ---
 
+#### beforePinOpen
+
+triggered before the specific menu is pinned  
+
+type: `function`  
+arguments:
+
+- `menu` type: `object`
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    on: {
+      beforePinOpen: function(menu) {
+        console.log(menu);
+      }
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+   
+#### afterPinOpen
+
+triggered after the specific menu finished transition and is pinned  
+
+type: `function`  
+arguments:
+
+- `menu` type: `object`
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    on: {
+      afterPinOpen: function(menu) {
+        console.log(menu);
+      }
+    }
+  }
+];
+menuHandler.init(menus); 
+```
+   
+---
+     
+#### beforePinClose
+
+triggered before the specific menu is unpinned.
+
+type: `function`  
+arguments:
+
+- `menu` type: `object`
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    on: {
+      beforePinClose: function(menu) {
+        console.log(menu);
+      }
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+   
+#### afterPinClose
+
+triggered after the specific menu is finished transition and is unpinned.
+
+type: `function`  
+arguments:
+
+- `menu` type: `object`
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    on: {
+      afterPinClose: function(menu) {
+        console.log(menu);
+      }
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+   
 ### Submenu Events
 
 #### beforeOpen - submenu

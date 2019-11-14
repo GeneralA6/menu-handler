@@ -96,9 +96,13 @@ functionality added to the menus by the library:
 - [beforeInit](#beforeInit) - triggered before the specific menu is initialized.
 - [afterInit](#afterInit) - triggered after the specific menu is initialized.
 - [beforeOpen](#beforeOpen) - triggered before the specific menu is opened.
-- [afterOpen](#afterOpen) - triggered after the specific menu finished transition and is opened
+- [afterOpen](#afterOpen) - triggered after the specific menu finished transition and is opened.
 - [beforeClose](#beforeClose) - triggered before the specific menu is closed.
-- [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed
+- [afterClose](#afterClose) - triggered after the specific menu finished transition and is closed.
+- [beforePinOpen](#beforePinOpen) - triggered before the specific menu is pinned.
+- [afterPinOpen](#afterPinOpen) - triggered after the specific menu finished transition and is pinned.
+- [beforePinClose](#beforePinClose) - triggered before the specific menu is unpinned.
+- [afterPinClose](#afterPinClose) - triggered after the specific menu finished transition and is unpinned.
 
 #### Submenu Events
 

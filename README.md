@@ -81,7 +81,6 @@ functionality added to the menus by the library:
 
 #### Submenu Options
 
-- [isEnabled](#isEnabled---submenu) - enables handling of submenus.
 - [openOnHover](#openOnHover---submenu) - triggers opening of a submenu on mouse enter.
 - [closeOnBlur](#closeOnBlur---submenu) - triggers closing of a submenu on blur.   
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
@@ -820,32 +819,7 @@ menuHandler.init(menus);
 ---
 
 ### Submenu Options
-
-#### isEnabled - submenu
-
-enables handling of submenus  
-
-type: `boolean`  
-default: `false`
-
-```javascript
-const menus = [
-  {
-    elements: {
-      container: "#menu-container",
-      innerContainer: "#menu-inner-container",
-      open: "#menu-toggle-open"
-    },
-    submenuOptions: {
-      isEnabled: true
-    }
-  }
-];
-menuHandler.init(menus);
-```
-
----
-
+   
 #### openOnHover - submenu
 
 triggers opening of a submenu on mouse enter  
@@ -864,7 +838,6 @@ const menus = [
       open: "#menu-toggle-open"
     },
     submenuOptions: {
-      isEnabled: true,
       openOnHover: true 
     }
   }
@@ -890,7 +863,6 @@ const menus = [
       open: "#menu-toggle-open"
     },
     submenuOptions: {
-      isEnabled: true,
       closeOnBlur: false, // to disable
     }
   }
@@ -918,7 +890,6 @@ const menus = [
       open: "#menu-toggle-open"
     },
     submenuOptions: {
-      isEnabled: true,
       menuFunc: function(menu, e) {
         console.log(menu);
       }
@@ -981,7 +952,6 @@ const menus = [
       open: "#menu-toggle-open",
     },
     submenuOptions: {
-      isEnabled: true,
       mobile: {
         closeOnBlur: false, // to disable
       }

@@ -50,8 +50,10 @@ const menuHandler = {
                afterOpen: null,
                beforeClose: null,
                afterClose: null,
-               beforePin: null,
-               afterPin: null,
+               beforePinOpen: null,
+               afterPinOpen: null,
+               beforePinClose: null,
+               afterPinClose: null,
             },
             submenuOptions: {
                isEnabled: false,
@@ -127,29 +129,13 @@ const menuHandler = {
    initMenuOptions(menu, options) {
       const self = this;
 
-      const ignores = [ // maybe change this
-         'open',
-         'close',
-         'isOpen', 
-         'isPinned', 
-         'isMobile',
-         'container',
-         'activeOpen', 
-         'exitFocus',
-         'enterFocus',
-         'activeClose',
-         'innerContainer',
-         'activeExitFocus',
-         'activeEnterFocus',
-      ];
-
       for (key in options) {
 
-         if (key == 'elements') continue;
+         if (key == 'elements' || key == 'name') continue; // already been handled
 
          switch ( key ) {
             case 'on':
-               self.initMenuEvents(menu, options.on);
+               self.initMenuEvents(menu, options.on); 
                break;
 
             case 'submenuOptions':
@@ -172,11 +158,16 @@ const menuHandler = {
                menu[key] = parseInt(options[key]);
                break;
 
-            default:
-               if (key in menu && !ignores.includes(key)) {
+            case 'menuFunc':
+               if (options[key] === 'function') {
                   menu[key] = options[key];
                }
                break;
+
+            default:
+               self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu object`);
+               break;
+
          }
       }
    },
@@ -187,7 +178,7 @@ const menuHandler = {
       for (key in elements) {
          el = document.querySelector(elements[key]);
          if (!el) {
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector`);
+            self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector in the DOM tree`);
          }
          menu.mobile[key] = el;
       }
@@ -196,16 +187,9 @@ const menuHandler = {
    initMenuMobileOptions(menu, options) {
       const self = this;
 
-      const ignores = [ // maybe change this
-         'open',
-         'close',
-         'exitFocus',
-         'enterFocus',
-      ];
-
       for (key in options) {
 
-         if (key == 'elements') continue;
+         if (key == 'elements') continue; // already been handled
 
          switch ( key ) {
             case 'breakpoint': 
@@ -218,11 +202,9 @@ const menuHandler = {
             case 'pin':
                menu.mobile[key] = !!options[key] || false; // convert to boolean
                break;
-
+         
             default:
-               if (key in menu.mobile && !ignores.includes(key)) {
-                  menu.mobile[key] = options[key];
-               }
+               self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.mobile`);
                break;
          }
       }
@@ -308,6 +290,8 @@ const menuHandler = {
    initSubmenuOptions(menu, options) {
       const self = this;
 
+      options['isEnabled'] = true; // remove the need to init submenus with isEnabled key.
+
       for (key in options) {
 
          switch (key) {
@@ -319,20 +303,24 @@ const menuHandler = {
                   }
                break;
 
+            case 'mobile':
+               self.initSubmenuMobileOptions(menu, options[key]);
+               break;
+
             case 'isEnabled':
             case 'openOnHover':
             case 'closeOnBlur':
                menu.submenuOptions[key] = !!options[key] || false; // convert to boolean
                break;
 
-            case 'mobile':
-               self.initSubmenuMobileOptions(menu, options[key]);
+            case 'menuFunc':
+               if (options[key] === 'function') {
+                  menu.submenuOptions[key] = options[key];
+               }
                break;
 
-            default:
-                  if (key in menu.submenuOptions) {
-                     menu.submenuOptions[key] = options[key];
-                  }
+            default: 
+                  self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.submenuOptions`);
                break;
          }
       }
@@ -340,8 +328,6 @@ const menuHandler = {
 
    initSubmenuMobileOptions(menu, options) {
       const self = this;
-
-      const ignores = [];
 
       for (key in options) {
 
@@ -351,13 +337,10 @@ const menuHandler = {
                break;
 
             default:
-               if (key in menu.submenuOptions.mobile && !ignores.includes(key)) {
-                  menu.submenuOptions.mobile[key] = options[key];
-               }
+                  self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.submenuOptions.mobile`);
                break;
          }
       }
-      console.log(menu);
    },
 
    initMenuEvents(menu, events) {

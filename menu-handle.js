@@ -3,6 +3,7 @@ const menuHandler = {
    actions: [], // a temporary storage for keys of occuring actions. 
    // it is to make sure only one action is occuring at a time and only for one menu.
    // several menus can't be active at a time.
+   actions: {},
    init(_menus) {
       const self = this;
 
@@ -131,7 +132,7 @@ const menuHandler = {
 
       for (key in options) {
 
-         if (key == 'elements' || key == 'name') continue; // already been handled
+         if (key === 'elements' || key === 'name') continue; // already been handled
 
          switch ( key ) {
             case 'on':
@@ -149,6 +150,7 @@ const menuHandler = {
             case 'pin':
             case 'loop':
             case 'openOnHover':
+            case 'closeOnMouseLeave':
                menu[key] = !!options[key] || false; // convert to boolean
                break;
 
@@ -189,7 +191,7 @@ const menuHandler = {
 
       for (key in options) {
 
-         if (key == 'elements') continue; // already been handled
+         if (key === 'elements') continue; // already been handled
 
          switch ( key ) {
             case 'breakpoint': 
@@ -309,6 +311,7 @@ const menuHandler = {
 
             case 'isEnabled':
             case 'openOnHover':
+            case 'closeOnMouseLeave':
             case 'closeOnBlur':
                menu.submenuOptions[key] = !!options[key] || false; // convert to boolean
                break;
@@ -481,6 +484,7 @@ const menuHandler = {
             children: [],
             isOpen: false, // run time
             openOnHover: menu.submenuOptions.openOnHover,
+            closeOnMouseLeave: menu.submenuOptions.closeOnMouseLeave,
             transitionDelay: 0, // run time
             transitionDuration: 0, // run time
             // closeOnBlur: menu.submenuOptions.closeOnBlur, // maybe remake it later for each submenu
@@ -551,14 +555,14 @@ const menuHandler = {
 
       ['enterFocus', 'exitFocus'].forEach((key) => {
 
-         if (menu[key] && menu[key].tabIndex == -1) {
+         if (menu[key] && menu[key].tabIndex === -1) {
             menu[key].tabIndex = 0;
          }
       });
 
       ['enterFocus', 'exitFocus'].forEach((key) => {
         
-         if (menu.mobile[key] && menu.mobile[key].tabIndex == -1) {
+         if (menu.mobile[key] && menu.mobile[key].tabIndex === -1) {
             menu.mobile[key].tabIndex = 0;
          }
       });
@@ -590,7 +594,7 @@ const menuHandler = {
       if (add) add.addEventListener('click', menu.toggleMenu);
       if (remove) remove.removeEventListener('click', menu.toggleMenu);
 
-      if (menu.openOnHover && add && add == menu.activeOpen) {
+      if (menu.openOnHover && add && add === menu.activeOpen) {
 
          add.addEventListener('mouseenter', menu.toggleMenu);
          if (remove) remove.removeEventListener('mouseenter', menu.toggleMenu);
@@ -607,6 +611,11 @@ const menuHandler = {
       if (submenu.openOnHover) {
          submenu.toggle.addEventListener('mouseenter', submenuToggle);
       }
+
+      if (submenu.closeOnMouseLeave) {
+         // TODO: add container too
+         submenu.list.addEventListener('mouseleave', submenuToggle);
+      }
    },
 
    toggleMenu(menu, e) {
@@ -616,14 +625,14 @@ const menuHandler = {
 
       if (!menu.isOpen && menu.isPinned) return;
 
-      if (e && e.type == 'mouseenter') {
+      if (e && e.type === 'mouseenter') {
          if (menu.isOpen) return; // prevent closing an open menu by hovering over a toggle open button.
          if (menu.isMobile) return; // prevent open on hover if isMobile.
       }
 
-      if (self.actions.indexOf(menu.name) !== -1) return; // don't allow, another action of this menu while action is running.
+      if (menu.name in self.actions) return; // don't allow, another action of this menu while action is running.
 
-      self.actions.push(menu.name);
+      self.actions[menu.name] = 1;
 
       menu.transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
 
@@ -662,7 +671,7 @@ const menuHandler = {
             }, menu.closeDelay);
          }
 
-         self.actions.splice(self.actions.indexOf(menu.name), 1);
+         delete self.actions[menu.name];
          self.preventBodyScroll();
       });
    },
@@ -670,23 +679,18 @@ const menuHandler = {
    toggleSubmenu(menu, submenu, e) {
       const self = this;
 
-      if (e && e.type == 'mouseenter') {
-         if (submenu.isOpen) return; // prevent closing an open submenu by hovering over a toggle open button.
+      if (e && e.type === 'mouseenter') {
+         if (submenu.isOpen) return; // prevent closing an open submenu.
          if (menu.isMobile) return; // prevent open on hover if isMobile.
       }
 
       const options = menu.submenuOptions
       const parentSubmenu = menu.submenus[submenu.parent] || null;
-      
+
       if ((menu.isOpen || menu.isPinned) && !submenu.isOpen && (!parentSubmenu || parentSubmenu.isOpen)) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
-      
+
          if (!parentSubmenu) {
-            
-            for (key in menu.submenus) { // close all other submenus recursively,before opening this one
-               if (key != submenu.name && !menu.submenus[key].parent && menu.submenus[key].isOpen) {
-                  self.toggleSubmenu(menu, menu.submenus[key]);
-               }
-            }
+            self.loopSubmenus(menu, self.closeOtherSubmenu);
          }
          
          submenu.toggle.classList.add('mh-open');
@@ -697,6 +701,7 @@ const menuHandler = {
       }
       
       submenu.isOpen = submenu.toggle.classList.contains('mh-open');
+
       submenu.transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
 
       if (submenu.isOpen) {
@@ -802,7 +807,7 @@ const menuHandler = {
       const self = this;
 
       for (key in menu.submenus) {
-         func.call(self, menu, menu.submenus[key]);
+         func.call(self, menu, menu.submenus[key], key);
       }
    },
 
@@ -848,7 +853,7 @@ const menuHandler = {
       let isAnotherOpenSubmenu = true;
       for (key in menu.submenus) {
          
-         if (menu.submenus[key].isOpen && (menu.submenus[key].toggle == e.target || menu.submenus[key].toggle.contains(e.target) || menu.submenus[key].list == e.target || menu.submenus[key].list.contains(e.target))) {
+         if (menu.submenus[key].isOpen && (menu.submenus[key].toggle === e.target || menu.submenus[key].toggle.contains(e.target) || menu.submenus[key].list === e.target || menu.submenus[key].list.contains(e.target))) {
             isAnotherOpenSubmenu = false;
          }
       }
@@ -879,18 +884,28 @@ const menuHandler = {
       }
    },
 
+   closeOtherSubmenu(menu, submenu, ignoreSubmenu) {
+      const self = this;
+
+      if (submenu.name != ignoreSubmenu.name && !submenu.parent) {
+         self.closeSubmenu(menu, submenu);
+      }
+   },
+
    /*
    * a very early way of handling menu states. maybe rewrite in the future or remove completely if is not neccessery.
    * NOTE: don't remove unless you really understand all the code it is intergrated in.
    * checks for menu name, if any present, than a menu related action is running. 
    * prevents conflicts of several actions running at the same time.
+   * 
+   * TODO: change actions to object instead of array of string for better performance
    */
    checkIsBusy() { 
       const self = this;
       let isRunning = false;
 
       self.menus.forEach(menu => {
-         if (self.actions.includes(menu.name)) {
+         if (menu.name in self.actions) {
             isRunning = true;
          }
       });
@@ -931,21 +946,16 @@ const menuHandler = {
       const self = this;
       const isBusy = self.checkIsBusy();
       
-      if ((e.type === 'click' || e.type === 'keydown' && e.keyCode == 9) && self.actions.indexOf('clicktab') === -1 && !isBusy) {
+      if ((e.type === 'click' || e.type === 'keydown' && e.keyCode === 9) && !isBusy) {
       
-         self.actions.push('clicktab');
          setTimeout(() => {
             self.loopMenus(self.closeOnBlur, e);
-            self.actions.splice(self.actions.indexOf('clicktab'), 1);
          });
 
-      } else if (e.type === 'keydown' && e.keyCode == 27 && self.actions.indexOf('escape') === -1 && !isBusy) {
-
-         self.actions.push('escape');
+      } else if (e.type === 'keydown' && e.keyCode === 27 && !isBusy) {
 
          setTimeout(() => {
             self.loopMenus(self.closeOnEscPress, e);
-            self.actions.splice(self.actions.indexOf('escape'), 1);
          });
       }
    },

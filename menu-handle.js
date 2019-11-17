@@ -1,9 +1,8 @@
 const menuHandler = {
    menus: [],
-   actions: [], // a temporary storage for keys of occuring actions. 
+   actions: {}, // a temporary storage for keys of occuring actions. 
    // it is to make sure only one action is occuring at a time and only for one menu.
    // several menus can't be active at a time.
-   actions: {},
    init(_menus) {
       const self = this;
 
@@ -61,8 +60,10 @@ const menuHandler = {
                menuFunc: self.submenuFunc,
                openOnHover: false,
                closeOnBlur: true,
+               closeDelay: 0,
                mobile: {
                   closeOnBlur: true,
+                  closeDelay: 0,
                },
                on: {
                   beforeOpen: null,
@@ -296,7 +297,6 @@ const menuHandler = {
       options['isEnabled'] = true; // remove the need to init submenus with isEnabled key.
 
       for (key in options) {
-
          switch (key) {
             case 'on':
                   for (event in options.on) {
@@ -323,6 +323,10 @@ const menuHandler = {
                }
                break;
 
+            case 'closeDelay':
+                  menu.submenuOptions[key] = parseInt(options[key]);
+               break;
+
             default: 
                   self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.submenuOptions`);
                break;
@@ -338,6 +342,10 @@ const menuHandler = {
          switch ( key ) {
             case 'closeOnBlur':
                menu.submenuOptions.mobile[key] = !!options[key] || false; // convert to boolean
+               break;
+
+            case 'closeDelay':
+                  menu.submenuOptions.mobile[key] = parseInt(options[key]);
                break;
 
             default:
@@ -438,8 +446,6 @@ const menuHandler = {
 
       if (menu.on.beforeInit) menu.on.beforeInit(menu);
 
-
-
       self.initMenuPinCheck(menu);
          
       self.setActiveElements(menu);
@@ -490,10 +496,12 @@ const menuHandler = {
             closeOnMouseLeave: menu.submenuOptions.closeOnMouseLeave,
             transitionDelay: 0, // run time
             transitionDuration: 0, // run time
+            closeDelay: menu.submenuOptions.closeDelay,
             // closeOnBlur: menu.submenuOptions.closeOnBlur, // maybe remake it later for each submenu
-            // mobile: {
-            //    closeOnBlur: menu.submenuOptions.mobile.closeOnBlur, // maybe remake it later for each submenu
-            // },
+            mobile: {
+               closeDelay: menu.submenuOptions.mobile.closeDelay,
+               // closeOnBlur: menu.submenuOptions.mobile.closeOnBlur, // maybe remake it later for each submenu
+            },
             actions: {
                mouseleave: {
                   status: false,
@@ -646,12 +654,10 @@ const menuHandler = {
 
             clearTimeout(submenu.actions.mouseleave.timeout);
             submenu.actions.mouseleave.timeout = null;
-
          };
          
          if (submenu.isOpen) return false; // prevent closing an open submenu.
          if (menu.isMobile) return false; // prevent open on hover if isMobile.
-
       }
       return true;
    },
@@ -670,7 +676,7 @@ const menuHandler = {
             submenu.actions.mouseleave.timeout = null;
             
             self.closeSubmenu(menu, submenu);
-         }, 2000);
+         }, submenu.closeDelay);
       }
 
       if (submenu.actions.mouseleave.timeout) return false; 
@@ -772,19 +778,23 @@ const menuHandler = {
          }
       } else {
 
-         if (options.on.beforeClose) options.on.beforeClose(menu, submenu, e); // before close.
+         setTimeout(() => {
 
-         options.menuFunc(menu, submenu, e);
+            if (options.on.beforeClose) options.on.beforeClose(menu, submenu, e); // before close.
 
-         submenu.children.forEach(child => self.toggleSubmenu(menu, menu.submenus[child])); // close child submenu
+            options.menuFunc(menu, submenu, e); 
 
-         if (options.on.afterClose) { // after close.
-            setTimeout(() => options.on.afterClose(menu, submenu, e), submenu.transitionTimeCombined * 1000); // fire after submenu's container transition ends.
-         }
+            submenu.children.forEach(child => self.toggleSubmenu(menu, menu.submenus[child])); // close child submenu
+
+            if (options.on.afterClose) { // after close.
+               setTimeout(() => options.on.afterClose(menu, submenu, e), submenu.transitionTimeCombined * 1000); // fire after submenu's container transition ends.
+            }
+
+         }, !menu.isMobile ? (submenu.closeOnMouseLeave && submenu.closeDelay ? 0 : submenu.closeDelay) : submenu.mobile.closeDelay); // if closeOnMouseLeave is true, than don't add close delay as it is being used in the closeOnMouseLeave code.
       }
    },
 
-   menuFunc(menu, e) {
+   menuFunc(menu, e) { 
 
       if (menu.isOpen) {
 
@@ -951,7 +961,7 @@ const menuHandler = {
             clearTimeout(submenu.actions.mouseleave.timeout);
             submenu.actions.mouseleave.timeout = null;
          }
-         
+
          self.closeSubmenu(menu, submenu);
       }
    },

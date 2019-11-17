@@ -84,12 +84,14 @@ functionality added to the menus by the library:
 
 - [openOnHover](#openOnHover---submenu) - triggers opening of a submenu on mouse enter.
 - [closeOnBlur](#closeOnBlur---submenu) - triggers closing of a submenu on blur.   
-- [closeOnMouseLeave](#closeOnMouseLeave---submenu) - triggers closing of a submenu on mouseleave.   
+- [closeOnMouseLeave](#closeOnMouseLeave---submenu) - triggers closing of a submenu on mouseleave. 
+- [closeDelay](#closeDelay---submenu) - sets delay in miliseconds before submenu starts closing.
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
    
 #### Submenu Mobile Options
    
 - [closeOnBlur](#closeOnBlur---submenu---mobile) - triggers closing of a submenu on blur at mobile breakpoint.  
+- [closeDelay](#closeDelay---submenu---mobile) - sets delay in miliseconds before submenu starts closing at mobile breakpoint.
    
 ### Events
 
@@ -905,6 +907,34 @@ menuHandler.init(menus);
    
 ---   
    
+#### closeDelay - submenu
+
+sets delay in miliseconds before submenu starts closing.
+
+type: `integer`  
+default: `0`   
+&#10071; **note**: if used with [submenuOptions.closeOnMouseLeave](#submenuOptions.closeOnMouseLeave) it will give a timeout window for the user to return back with the pointer into the [toggle button](#submenu-toggle), [submenu container](#submenu-container) or [submenu list](#submenu-list) and it will cancel the closing action.
+   
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    submenuOptions: {
+      openOnHover: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
+      closeOnMouseLeave: true,
+      closeDelay: 700,
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+   
 #### menuFunc - submenu
 
 function to handle submenus on your own the specific menu  
@@ -994,6 +1024,35 @@ const menus = [
 menuHandler.init(menus);
 ```
 
+---
+   
+#### closeDelay - submenu - mobile
+
+sets delay in miliseconds before submenu starts closing at mobile [mobile.breakpoint](#breakpoint---mobile).
+
+type: `integer`  
+default: `0`   
+   
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    submenuOptions: {
+      openOnHover: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
+      closeOnMouseLeave: true,
+      mobile: {
+        closeDelay: 700,
+      }
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
 ---
 
 ## Events - section

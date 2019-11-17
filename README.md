@@ -15,6 +15,7 @@ functionality added to the menus by the library:
 - close all menus on menu open
 - close all submenus on submenu open
 - close submenus on blur
+- close submenus on mouseleave
 - prevent body scroll when a menu is open
 - prevent body swipe when a menu is open
 - accessiblity
@@ -83,6 +84,7 @@ functionality added to the menus by the library:
 
 - [openOnHover](#openOnHover---submenu) - triggers opening of a submenu on mouse enter.
 - [closeOnBlur](#closeOnBlur---submenu) - triggers closing of a submenu on blur.   
+- [closeOnMouseLeave](#closeOnMouseLeave---submenu) - triggers closing of a submenu on mouseleave.   
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
    
 #### Submenu Mobile Options
@@ -875,7 +877,34 @@ menuHandler.init(menus);
 ```
    
 ---
+   
+#### closeOnMouseLeave - submenu
 
+triggers closing of a submenu on mouseleave of the submenu [toggle button](#submenu-toggle), [submenu container](#submenu-container) or [submenu list](#submenu-list).
+
+type: `boolean`  
+default: `false`   
+&#10071; **note**: disabled at mobile viewport (if screen viewport is less ,than [mobile.breakpoint](#breakpoint---mobile)).  
+   
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    submenuOptions: {
+      openOnHover: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
+      closeOnMouseLeave: true,
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---   
+   
 #### menuFunc - submenu
 
 function to handle submenus on your own the specific menu  

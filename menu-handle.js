@@ -71,6 +71,7 @@ const menuHandler = {
                   afterClose: null,
                }
             },
+            actions: {},
             submenus: {},
          };
 
@@ -437,6 +438,8 @@ const menuHandler = {
 
       if (menu.on.beforeInit) menu.on.beforeInit(menu);
 
+
+
       self.initMenuPinCheck(menu);
          
       self.setActiveElements(menu);
@@ -490,7 +493,13 @@ const menuHandler = {
             // closeOnBlur: menu.submenuOptions.closeOnBlur, // maybe remake it later for each submenu
             // mobile: {
             //    closeOnBlur: menu.submenuOptions.mobile.closeOnBlur, // maybe remake it later for each submenu
-            // }
+            // },
+            actions: {
+               mouseleave: {
+                  status: false,
+                  timeout: null,
+               }
+            },
          }
 
          submenu.list = menu.innerContainer.querySelector(`[data-mh-submenu-list="${submenu.name}"]`);
@@ -610,12 +619,62 @@ const menuHandler = {
 
       if (submenu.openOnHover) {
          submenu.toggle.addEventListener('mouseenter', submenuToggle);
+         
       }
 
       if (submenu.closeOnMouseLeave) {
-         // TODO: add container too
-         submenu.list.addEventListener('mouseleave', submenuToggle);
+
+         if (submenu.container) {
+            submenu.container.addEventListener('mouseenter', submenuToggle);
+            submenu.container.addEventListener('mouseleave', submenuToggle);
+         } else {
+            submenu.list.addEventListener('mouseenter', submenuToggle);
+            submenu.list.addEventListener('mouseleave', submenuToggle);
+         }
+
+         submenu.toggle.addEventListener('mouseleave', submenuToggle);
       }
+   },
+
+   
+   submenuMouseEnter(menu, submenu, e) {
+      const self = this;
+
+      if (e && e.type === 'mouseenter') {
+
+         if (submenu.actions.mouseleave.timeout) {
+
+            clearTimeout(submenu.actions.mouseleave.timeout);
+            submenu.actions.mouseleave.timeout = null;
+
+         };
+         
+         if (submenu.isOpen) return false; // prevent closing an open submenu.
+         if (menu.isMobile) return false; // prevent open on hover if isMobile.
+
+      }
+      return true;
+   },
+
+   submenuMouseLeave(menu, submenu, e) {
+      const self = this;
+
+      if (e && e.type === 'mouseleave') { 
+
+         if (!submenu.isOpen) return false; // prevent opening a closed submenu.
+         if (menu.isMobile) return false; // prevent open on mouseleave if isMobile.
+
+         submenu.actions.mouseleave.timeout = setTimeout(() => {
+
+            clearTimeout(submenu.actions.mouseleave.timeout);
+            submenu.actions.mouseleave.timeout = null;
+            
+            self.closeSubmenu(menu, submenu);
+         }, 2000);
+      }
+
+      if (submenu.actions.mouseleave.timeout) return false; 
+      return true;
    },
 
    toggleMenu(menu, e) {
@@ -679,10 +738,8 @@ const menuHandler = {
    toggleSubmenu(menu, submenu, e) {
       const self = this;
 
-      if (e && e.type === 'mouseenter') {
-         if (submenu.isOpen) return; // prevent closing an open submenu.
-         if (menu.isMobile) return; // prevent open on hover if isMobile.
-      }
+      if (!self.submenuMouseEnter(menu, submenu, e)) return;
+      if (!self.submenuMouseLeave(menu, submenu, e)) return;
 
       const options = menu.submenuOptions
       const parentSubmenu = menu.submenus[submenu.parent] || null;
@@ -888,17 +945,22 @@ const menuHandler = {
       const self = this;
 
       if (submenu.name != ignoreSubmenu.name && !submenu.parent) {
+
+         if (submenu.actions.mouseleave.timeout) {
+
+            clearTimeout(submenu.actions.mouseleave.timeout);
+            submenu.actions.mouseleave.timeout = null;
+         }
+         
          self.closeSubmenu(menu, submenu);
       }
    },
 
    /*
-   * a very early way of handling menu states. maybe rewrite in the future or remove completely if is not neccessery.
-   * NOTE: don't remove unless you really understand all the code it is intergrated in.
-   * checks for menu name, if any present, than a menu related action is running. 
-   * prevents conflicts of several actions running at the same time.
+   * prevent conflicts between different actions of diffeent menus. i.e:
+   * make sure to let a menu to finish it's action befoe another can procceed.
    * 
-   * TODO: change actions to object instead of array of string for better performance
+   * maybe rewrite the core of action handling in the future ,so we can drop this.
    */
    checkIsBusy() { 
       const self = this;

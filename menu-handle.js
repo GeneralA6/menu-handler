@@ -497,10 +497,9 @@ const menuHandler = {
             transitionDelay: 0, // run time
             transitionDuration: 0, // run time
             closeDelay: menu.submenuOptions.closeDelay,
-            // closeOnBlur: menu.submenuOptions.closeOnBlur, // maybe remake it later for each submenu
+
             mobile: {
                closeDelay: menu.submenuOptions.mobile.closeDelay,
-               // closeOnBlur: menu.submenuOptions.mobile.closeOnBlur, // maybe remake it later for each submenu
             },
             actions: {
                mouseleave: {
@@ -523,9 +522,9 @@ const menuHandler = {
             submenu.openOnHover = false;
          }
 
-         // if (submenu.closeOnBlur && submenu.toggle.dataset.mhBlurDisabled) {
-         //    submenu.closeOnBlur = false;
-         // }
+         if (submenu.closeOnMouseLeave && submenu.toggle.dataset.mhMouseleaveDisabled) {
+            submenu.closeOnMouseLeave = false;
+         }
 
          self.initSubmenuAccessibility(submenu);
          self.initSubmenuToggleEvents(menu, submenu);
@@ -599,14 +598,12 @@ const menuHandler = {
 
       window.addEventListener('keydown', self.onInteraction.bind(self));
       window.addEventListener('click', self.onInteraction.bind(self));
-
       window.addEventListener('scroll', self.debounce(() => { // preventBodyScroll listener.
          document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
       }), 100);
    },
 
    setMenuToggleEvents(menu, add, remove) {
-      const self = this;
 
       if (add) add.addEventListener('click', menu.toggleMenu);
       if (remove) remove.removeEventListener('click', menu.toggleMenu);

@@ -17,7 +17,6 @@ functionality added to the menus by the library:
 - close submenus on blur
 - close submenus on mouseleave
 - prevent body scroll when a menu is open
-- prevent body swipe when a menu is open
 - accessiblity
 - events
 - pin menu to keep it open for specific breakpoints and hide at another breakpoint unless opened.
@@ -65,6 +64,7 @@ functionality added to the menus by the library:
 - [exitFocus](#exitFocus) - element to focus after menu closes.
 - [pin](#pin) - pin menu to keep it open at desktop media queries.
 - [loop](#loop) - loop all elements inside the innerContainer using Tab key.
+- [preventBodyScroll](#preventBodyScroll) - disables the ability to scroll the body.
 - [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
 - [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
 - [debounce](#debounce) - sets debounce treshhold in miliseconds on menu liseteners.
@@ -74,11 +74,12 @@ functionality added to the menus by the library:
 #### Menu Mobile Options
 
 - [breakpoint](#breakpoint---mobile) - max width breakpoint to switch between mobile and desktop options.
-- [pin](#pin---mobile) - pin menu to keep it open at mobile media queries.
 - [open](#open---mobile) - element that triggers opening of the menu at mobile breakpoint.
 - [close](#close---mobile) - element that triggers closing of the menu at mobile breakpoint.
 - [enterFocus](#enterFocus---mobile) - element to focus first when menu opens, will make any provided element focusable at mobile breakpoint.
 - [exitFocus](#exitFocus---mobile) - element to focus after menu closes at mobile breakpoint.
+- [pin](#pin---mobile) - pin menu to keep it open at mobile media breakpoint.
+- [preventBodyScroll](#preventBodyScroll) - disables the ability to scroll the body at mobile breakpoint.
 
 #### Submenu Options
 
@@ -506,8 +507,31 @@ const menus = [
 menuHandler.init(menus);
 ```
 
----
+--- 
 
+#### preventBodyScroll
+   
+disables the ability to scroll the body.   
+   
+type: `boolean`  
+default: `true`  
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open",
+    },
+    preventBodyScroll: false, // to disable the feature
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+   
 #### openDelay
 
 sets delay in miliseconds before menu starts opening  
@@ -684,7 +708,7 @@ menuHandler.init(menus);
 
 #### open - mobile   
    
-element that triggers opening of the menu in [mobile.breakpoint](#breakpoint---mobile).  
+element that triggers opening of the menu at [mobile.breakpoint](#breakpoint---mobile).  
   
 type: `css selector`  
 default: `elements.open`  
@@ -713,7 +737,7 @@ menuHandler.init(menus);
 
 #### close - mobile   
    
-element that triggers closing of the menu in [mobile.breakpoint](#breakpoint---mobile).  
+element that triggers closing of the menu at [mobile.breakpoint](#breakpoint---mobile).  
 
 type: `css selector`  
 default: `elements.close`  
@@ -743,7 +767,7 @@ menuHandler.init(menus);
 
 #### enterFocus - mobile
 
-element to focus first when menu opens, will make any provided element focusable at mobile [mobile.breakpoint](#breakpoint---mobile).   
+element to focus first when menu opens, will make any provided element focusable at [mobile.breakpoint](#breakpoint---mobile).   
   
 type: `css selector`  
 default: `elements.enterFocus`   
@@ -799,7 +823,7 @@ menuHandler.init(menus);
 
 #### pin - mobile
 
-pin menu to keep it open at mobile [mobile.breakpoint](#breakpoint---mobile).
+pin menu to keep it open at [mobile.breakpoint](#breakpoint---mobile).
   
 type: `css selector`  
 default: `false`  
@@ -824,7 +848,33 @@ const menus = [
 menuHandler.init(menus);
 ```
    
+---   
+   
+#### preventBodyScroll - mobile
+   
+disables the ability to scroll the body at [mobile.breakpoint](#breakpoint---mobile).    
+   
+type: `boolean`  
+default: `true`  
+
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open",
+    },
+    mobile: {
+      preventBodyScroll: false, // to disable the feature
+    },
+  }
+];
+menuHandler.init(menus);
+```
+   
 ---
+
 
 ### Submenu Options
    

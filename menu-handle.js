@@ -35,6 +35,7 @@ const menuHandler = {
             transitionDuration: 0, // run time
             menuFunc: self.menuFunc,
             pin: false,
+            preventBodyScroll: true,
             mobile: {
                breakpoint: '667px',
                open: null,
@@ -42,6 +43,7 @@ const menuHandler = {
                pin: false,
                enterFocus: null,
                exitFocus: null,
+               preventBodyScroll: true,
             },
             on: {
                beforeInit: null,
@@ -151,6 +153,7 @@ const menuHandler = {
 
             case 'pin':
             case 'loop':
+            case 'preventBodyScroll':
             case 'openOnMouseEnter':
             case 'closeOnMouseLeave':
                menu[key] = !!options[key] || false; // convert to boolean
@@ -204,6 +207,7 @@ const menuHandler = {
                break;
 
             case 'pin':
+            case 'preventBodyScroll':
                menu.mobile[key] = !!options[key] || false; // convert to boolean
                break;
          
@@ -682,7 +686,7 @@ const menuHandler = {
 
       if (e) e.preventDefault();
 
-      if (!menu.isOpen && menu.isPinned) return;
+      if (menu.isPinned) return;
 
       if (e && e.type === 'mouseenter') {
          if (menu.isOpen) return; // prevent closing an open menu on mouseenter a toggle open button.
@@ -731,7 +735,10 @@ const menuHandler = {
          }
 
          delete self.actions[menu.name];
-         self.preventBodyScroll();
+
+         if (!menu.isMobile && menu.preventBodyScroll || menu.isMobile && menu.mobile.preventBodyScroll) {
+            self.preventBodyScroll();
+         }
       });
    },
 

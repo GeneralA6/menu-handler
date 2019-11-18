@@ -87,12 +87,14 @@ functionality added to the menus by the library:
 - [closeOnBlur](#closeOnBlur---submenu) - triggers closing of a submenu on blur.   
 - [closeOnMouseLeave](#closeOnMouseLeave---submenu) - triggers closing of a submenu on mouseleave. 
 - [closeDelay](#closeDelay---submenu) - sets delay in miliseconds before submenu starts closing.
+- [closeSubmenusOnOpen](#closeSubmenusOnOpen---submenu) - triggers closing of other submenus on opening of a submenu. 
 - [menuFunc](#menuFunc---submenu) - function to handle submenus on your own the specific menu.
    
 #### Submenu Mobile Options
    
 - [closeOnBlur](#closeOnBlur---submenu---mobile) - triggers closing of a submenu on blur at mobile breakpoint.  
 - [closeDelay](#closeDelay---submenu---mobile) - sets delay in miliseconds before submenu starts closing at mobile breakpoint.
+- [closeSubmenusOnOpen](#closeSubmenusOnOpen---submenu) - triggers closing of other submenus on opening of a submenu at mobile breakpoint.
    
 ### Events
 
@@ -984,6 +986,31 @@ const menus = [
 menuHandler.init(menus);
 ```
    
+--- 
+   
+#### closeSubmenusOnOpen - submenu
+
+triggers closing of other submenus on opening of a submenu.
+
+type: `boolean`  
+default: `true`   
+   
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    submenuOptions: {
+      closeSubmenusOnOpen: false, // to keep submenus open
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
 ---
    
 #### menuFunc - submenu
@@ -1097,6 +1124,33 @@ const menus = [
       closeOnMouseLeave: true,
       mobile: {
         closeDelay: 700,
+      }
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
+   
+#### closeSubmenusOnOpen - submenu - mobile
+
+triggers closing of other submenus on opening of a submenu at mobile [mobile.breakpoint](#breakpoint---mobile).
+
+type: `boolean`  
+default: `true`  
+   
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    submenuOptions: {
+      mobile: {
+        closeSubmenusOnOpen: false, // to keep submenus open
       }
     }
   }

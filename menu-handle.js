@@ -63,9 +63,11 @@ const menuHandler = {
                openOnMouseEnter: false,
                closeOnBlur: true,
                closeDelay: 0,
+               closeSubmenusOnOpen: true,
                mobile: {
                   closeOnBlur: true,
                   closeDelay: 0,
+                  closeSubmenusOnOpen: true,
                },
                on: {
                   beforeOpen: null,
@@ -315,6 +317,7 @@ const menuHandler = {
                break;
 
             case 'isEnabled':
+            case 'closeSubmenusOnOpen':
             case 'closeOnBlur':
             case 'openOnMouseEnter':
             case 'closeOnMouseLeave':
@@ -344,6 +347,7 @@ const menuHandler = {
       for (key in options) {
 
          switch ( key ) {
+            case 'closeSubmenusOnOpen':
             case 'closeOnBlur':
                menu.submenuOptions.mobile[key] = !!options[key] || false; // convert to boolean
                break;
@@ -488,6 +492,7 @@ const menuHandler = {
       }
 
       submenuToggles.forEach(toggle => {
+
          const submenu = {
             name: toggle.dataset.mhSubmenuToggle,
             toggle: toggle,
@@ -501,7 +506,9 @@ const menuHandler = {
             transitionDelay: 0, // run time
             transitionDuration: 0, // run time
             closeDelay: menu.submenuOptions.closeDelay,
+            closeSubmenusOnOpen: menu.submenuOptions.closeSubmenusOnOpen,
             mobile: {
+               closeSubmenusOnOpen: menu.submenuOptions.mobile.closeSubmenusOnOpen,
                closeDelay: menu.submenuOptions.mobile.closeDelay,
             },
             actions: {
@@ -753,7 +760,7 @@ const menuHandler = {
 
       if ((menu.isOpen || menu.isPinned) && !submenu.isOpen && (!parentSubmenu || parentSubmenu.isOpen)) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
 
-         if (!parentSubmenu) {
+         if (!parentSubmenu && submenu.closeSubmenusOnOpen) { 
             self.loopSubmenus(menu, self.closeOtherSubmenu);
          }
          

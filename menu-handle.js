@@ -30,7 +30,7 @@ const menuHandler = {
             openDelay: 0,
             closeDelay: 0,
             debounce: 20,
-            openOnHover: false,
+            openOnMouseEnter: false,
             transitionDelay: 0, // run time
             transitionDuration: 0, // run time
             menuFunc: self.menuFunc,
@@ -58,7 +58,7 @@ const menuHandler = {
             submenuOptions: {
                isEnabled: false,
                menuFunc: self.submenuFunc,
-               openOnHover: false,
+               openOnMouseEnter: false,
                closeOnBlur: true,
                closeDelay: 0,
                mobile: {
@@ -151,7 +151,7 @@ const menuHandler = {
 
             case 'pin':
             case 'loop':
-            case 'openOnHover':
+            case 'openOnMouseEnter':
             case 'closeOnMouseLeave':
                menu[key] = !!options[key] || false; // convert to boolean
                break;
@@ -311,9 +311,9 @@ const menuHandler = {
                break;
 
             case 'isEnabled':
-            case 'openOnHover':
-            case 'closeOnMouseLeave':
             case 'closeOnBlur':
+            case 'openOnMouseEnter':
+            case 'closeOnMouseLeave':
                menu.submenuOptions[key] = !!options[key] || false; // convert to boolean
                break;
 
@@ -492,12 +492,11 @@ const menuHandler = {
             parent: null,
             children: [],
             isOpen: false, // run time
-            openOnHover: menu.submenuOptions.openOnHover,
+            openOnMouseEnter: menu.submenuOptions.openOnMouseEnter,
             closeOnMouseLeave: menu.submenuOptions.closeOnMouseLeave,
             transitionDelay: 0, // run time
             transitionDuration: 0, // run time
             closeDelay: menu.submenuOptions.closeDelay,
-
             mobile: {
                closeDelay: menu.submenuOptions.mobile.closeDelay,
             },
@@ -518,8 +517,8 @@ const menuHandler = {
 
          submenu.parent = self.getSubmenuParent(submenu.list);
 
-         if (submenu.openOnHover && submenu.toggle.dataset.mhHoverDisabled) {
-            submenu.openOnHover = false;
+         if (submenu.openOnMouseEnter && submenu.toggle.dataset.mhMouseenterDisabled) {
+            submenu.openOnMouseEnter = false;
          }
 
          if (submenu.closeOnMouseLeave && submenu.toggle.dataset.mhMouseleaveDisabled) {
@@ -608,7 +607,7 @@ const menuHandler = {
       if (add) add.addEventListener('click', menu.toggleMenu);
       if (remove) remove.removeEventListener('click', menu.toggleMenu);
 
-      if (menu.openOnHover && add && add === menu.activeOpen) {
+      if (menu.openOnMouseEnter && add && add === menu.activeOpen) {
 
          add.addEventListener('mouseenter', menu.toggleMenu);
          if (remove) remove.removeEventListener('mouseenter', menu.toggleMenu);
@@ -622,9 +621,8 @@ const menuHandler = {
 
       submenu.toggle.addEventListener('click', submenuToggle);
 
-      if (submenu.openOnHover) {
+      if (submenu.openOnMouseEnter) {
          submenu.toggle.addEventListener('mouseenter', submenuToggle);
-         
       }
 
       if (submenu.closeOnMouseLeave) {
@@ -636,7 +634,6 @@ const menuHandler = {
             submenu.list.addEventListener('mouseenter', submenuToggle);
             submenu.list.addEventListener('mouseleave', submenuToggle);
          }
-
          submenu.toggle.addEventListener('mouseleave', submenuToggle);
       }
    },
@@ -654,7 +651,7 @@ const menuHandler = {
          };
          
          if (submenu.isOpen) return false; // prevent closing an open submenu.
-         if (menu.isMobile) return false; // prevent open on hover if isMobile.
+         if (menu.isMobile) return false; // prevent open on mouseenter if isMobile.
       }
       return true;
    },
@@ -688,8 +685,8 @@ const menuHandler = {
       if (!menu.isOpen && menu.isPinned) return;
 
       if (e && e.type === 'mouseenter') {
-         if (menu.isOpen) return; // prevent closing an open menu by hovering over a toggle open button.
-         if (menu.isMobile) return; // prevent open on hover if isMobile.
+         if (menu.isOpen) return; // prevent closing an open menu on mouseenter a toggle open button.
+         if (menu.isMobile) return; // prevent open on mouseenter if isMobile.
       }
 
       if (menu.name in self.actions) return; // don't allow, another action of this menu while action is running.

@@ -68,7 +68,7 @@ functionality added to the menus by the library:
 - [openDelay](#openDelay) - sets delay in miliseconds before menu starts opening.
 - [closeDelay](#closeDelay) - sets delay in miliseconds before menu starts closing.
 - [debounce](#debounce) - sets debounce treshhold in miliseconds on menu liseteners.
-- [openOnHover](#openOnHover) - triggers opening of a menu by mouse enter.
+- [openOnMouseEnter](#openOnMouseEnter) - triggers opening of a menu by mouse enter.
 - [menuFunc](#menuFunc) - function to handle on your own of the specific menu.
    
 #### Menu Mobile Options
@@ -82,7 +82,7 @@ functionality added to the menus by the library:
 
 #### Submenu Options
 
-- [openOnHover](#openOnHover---submenu) - triggers opening of a submenu on mouse enter.
+- [openOnMouseEnter](#openOnMouseEnter---submenu) - triggers opening of a submenu on mouse enter.
 - [closeOnBlur](#closeOnBlur---submenu) - triggers closing of a submenu on blur.   
 - [closeOnMouseLeave](#closeOnMouseLeave---submenu) - triggers closing of a submenu on mouseleave. 
 - [closeDelay](#closeDelay---submenu) - sets delay in miliseconds before submenu starts closing.
@@ -578,7 +578,7 @@ menuHandler.init(menus);
 
 ---
 
-#### openOnHover
+#### openOnMouseEnter
 
 triggers opening of a menu on mouse enter  
 
@@ -594,7 +594,7 @@ const menus = [
       innerContainer: "#menu-inner-container",
       open: "#menu-toggle-open"
     },
-    openOnHover: true
+    openOnMouseEnter: true
   }
 ];
 menuHandler.init(menus);
@@ -828,14 +828,14 @@ menuHandler.init(menus);
 
 ### Submenu Options
    
-#### openOnHover - submenu
+#### openOnMouseEnter - submenu
 
 triggers opening of a submenu on mouse enter  
 
 type: `boolean`  
 default: `false`  
 &#10071; **note**: disabled at mobile viewport (if screen viewport is less ,than [mobile.breakpoint](#breakpoint---mobile)).   
-&#10071; **note**: to disable openOnHover of a specific submenu ,just add `data-mh-hover-disabled="true"` attribute to the submenu toggle.  
+&#10071; **note**: to disable openOnMouseEnter of a specific submenu ,just add `data-mh-mouseenter-disabled="true"` attribute to the submenu toggle.  
 
 ```javascript
 const menus = [
@@ -846,7 +846,7 @@ const menus = [
       open: "#menu-toggle-open"
     },
     submenuOptions: {
-      openOnHover: true 
+      openOnMouseEnter: true 
     }
   }
 ];
@@ -898,7 +898,7 @@ const menus = [
       open: "#menu-toggle-open"
     },
     submenuOptions: {
-      openOnHover: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
+      openOnMouseEnter: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
       closeOnMouseLeave: true,
     }
   }
@@ -925,7 +925,7 @@ const menus = [
       open: "#menu-toggle-open"
     },
     submenuOptions: {
-      openOnHover: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
+      openOnMouseEnter: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
       closeOnMouseLeave: true,
       closeDelay: 700,
     }
@@ -1043,7 +1043,7 @@ const menus = [
       open: "#menu-toggle-open"
     },
     submenuOptions: {
-      openOnHover: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
+      openOnMouseEnter: true, // suggested to use it in par with closeOnMouseLeave for a good user experience.
       closeOnMouseLeave: true,
       mobile: {
         closeDelay: 700,

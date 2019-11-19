@@ -136,6 +136,8 @@ functionality added to the menus by the library:
 
 init with array of menu objects.
 
+&#10071; **note**: it is possible to initialize menuHandler in several files. it is not creating new instance, but merging the menus in one instance to work with each others.
+
 ```javascript
 const menus = [
   {

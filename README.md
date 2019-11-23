@@ -38,13 +38,14 @@ functionality added to the menus by the library:
 
 #### Menu
 
-- [container](#container) - **required** - element that holds nothing, but the inner container
-- [inner container](#inner-container) - **required** - element that holds all the menu elements
+- [menu container](#container) - **required** - element that holds nothing, but the inner container.
+- [menu inner container](#inner-container) - **required** - element that holds all the menu elements.
+- [menu list](#menu-list) - **required** - element that holds all the menu items.
 
 #### Submenu
 
-- [submenu toggle](#submenu-toggle) - **required** - element to trigger open / close of the submenu list
-- [submenu list](#submenu-list) - **required** - element that holds the submenu list
+- [submenu toggle](#submenu-toggle) - **required** - element to trigger open / close of the submenu list.
+- [submenu list](#submenu-list) - **required** - element that holds the submenu items.
 - [submenu container](#submenu-container) - element that wraps the submenu list.
 
 #### Complete example
@@ -202,6 +203,29 @@ element that holds all the menu elements.
 
 ---
 
+#### menu list
+
+element that holds all the menu items.
+
+**required**  
+&#10071; **note**: menu list should have attribute **data-mh-menu-list="true"**.  
+
+```html
+<div id="menu-container">
+  <div class="mh-hidden" id="menu-inner-container">
+    <ul data-mh-menu-list="true">
+      ...
+    </ul>
+
+    <ul data-mh-menu-list="true">
+      ...
+    </ul>
+  </div>
+</div>
+```
+
+---
+
 ### Submenu
 
 #### submenu toggle
@@ -221,7 +245,7 @@ element to trigger open / close of the submenu list
 
 #### submenu list
 
-element that holds the submenu content  
+element that holds the submenu items  
   
 **required**  
 &#10071; **note** : submenu list element should have data attribue **data-mh-submenu-list** and it's value the submenu name ( same as the submenu toggle identifier ).  
@@ -275,7 +299,7 @@ complete example of a menu structure with submenus
 <div id="menu-container" aria-hidden="true">
   <div class="mh-hidden" id="menu-inner-container">
     <nav id="menu-enter-focus">
-      <ul class="menu">
+      <ul class="menu" data-mh-menu-list="true">
         <li>
           <button data-mh-submenu-toggle="submenu-a" aria-expanded="false" aria-controls="mh-submenu-submenu-a" title="">
             submenu-a trigger button

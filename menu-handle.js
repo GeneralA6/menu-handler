@@ -131,6 +131,12 @@ const menuHandler = {
 
       if (!menu.close) menu.close = menu.open;
       if (!menu.exitFocus) menu.exitFocus = menu.open;
+
+      menu.lists = menu.innerContainer.querySelectorAll('[data-mh-menu-list]');
+
+      if (!menu.lists || !menu.lists.length) {
+         self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find menu list element, make sure to add [data-mh-menu-list] attribute to menu list elements`);
+      }
    },
 
    initMenuOptions(menu, options) {
@@ -422,6 +428,10 @@ const menuHandler = {
          if (menu.close) menu.close.classList.add('mh-hidden');
          if (menu.mobile.close) menu.mobile.close.classList.add('mh-hidden');
 
+         menu.lists.forEach(el => {
+            el.setAttribute('role', 'menubar');
+         });
+
          if (menu.on.afterPinOpen && !wasPinned) { // after pin open
             setTimeout(() => menu.on.afterPinOpen(menu), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
          }
@@ -440,6 +450,10 @@ const menuHandler = {
 
          if (menu.close) menu.close.classList.remove('mh-hidden');
          if (menu.mobile.close) menu.mobile.close.classList.remove('mh-hidden');
+
+         menu.lists.forEach(el => {
+            el.setAttribute('role', 'menu');
+         });
 
          if (menu.on.afterPinClose && wasPinned) { // after pin close
             setTimeout(() => menu.on.afterPinClose(menu), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
@@ -536,7 +550,7 @@ const menuHandler = {
             submenu.closeOnMouseLeave = false;
          }
 
-         self.initSubmenuAccessibility(submenu);
+         self.initSubmenuAccessibility(menu, submenu);
          self.initSubmenuToggleEvents(menu, submenu);
          self.calcTransition(submenu);
          
@@ -552,9 +566,31 @@ const menuHandler = {
       const self = this;
       const svgs = menu.innerContainer.querySelectorAll('svg');
       const images = menu.innerContainer.querySelectorAll('img');
-
+      const menuListItems = menu.innerContainer.querySelectorAll('li'); // affects submenus as well
+      const menuItems = menu.innerContainer.querySelectorAll('a'); // affects submenus as well
+      
       if (!menu.container.id || !menu.container.id.length) {
          menu.container.id = `mh-menu-${menu.name}`;
+      }
+
+      if (!menu.open.id || !menu.open.id.length) {
+         menu.open.id = `mh-menu-open-${menu.name}`;
+      }
+
+      if (!menu.open.getAttribute('aria-controls') || !menu.open.getAttribute('aria-controls').length) {
+         menu.open.setAttribute('aria-controls', menu.container.id);
+      }
+
+      if (menu.mobile.open && (!menu.mobile.open.getAttribute('aria-controls') || !menu.mobile.open.getAttribute('aria-controls').length)){
+         menu.mobile.open.setAttribute('aria-controls', menu.container.id);
+      }
+
+      if (!menu.open.getAttribute('aria-haspopup') || !menu.open.getAttribute('aria-haspopup').length) {
+         menu.open.setAttribute('aria-haspopup', true);
+      }
+
+      if (menu.mobile.open && (!menu.mobile.open.getAttribute('aria-haspopup') || !menu.mobile.open.getAttribute('aria-haspopup').length)){
+         menu.mobile.open.setAttribute('aria-haspopup', true);
       }
 
       svgs.forEach(el => {
@@ -569,21 +605,27 @@ const menuHandler = {
          }
       });
 
-      if (!menu.open.getAttribute('aria-controls') || !menu.open.getAttribute('aria-controls').length) {
-         menu.open.setAttribute('aria-controls', menu.container.id);
-      }
+      menu.lists.forEach(el => {
+         if (!el.getAttribute('role') || !el.getAttribute('role').length) {
+            el.setAttribute('role', 'menu');
+         }
 
-      if (menu.mobile.open && (!menu.mobile.open.getAttribute('aria-controls') || !menu.mobile.open.getAttribute('aria-controls').length)){
-         menu.mobile.open.setAttribute('aria-controls', menu.container.id);
-      } 
+         if (!el.getAttribute('aria-labelledby') || !el.getAttribute('aria-labelledby').length) {
+            el.setAttribute('aria-labelledby', menu.open.id);
+         }
+      });
 
-      if (!menu.open.getAttribute('aria-haspopup') || !menu.open.getAttribute('aria-haspopup').length) {
-         menu.open.setAttribute('aria-haspopup', true);
-      }
+      menuItems.forEach(el => {
+         if (!el.getAttribute('role') || !el.getAttribute('role').length) {
+            el.setAttribute('role', 'menuitem');
+         }
+      });
 
-      if (menu.mobile.open && (!menu.mobile.open.getAttribute('aria-haspopup') || !menu.mobile.open.getAttribute('aria-haspopup').length)){
-         menu.mobile.open.setAttribute('aria-haspopup', true);
-      } 
+      menuListItems.forEach(el => {
+         if (!el.getAttribute('role') || !el.getAttribute('role').length) {
+            el.setAttribute('role', 'none');
+         }
+      });
 
       ['enterFocus', 'exitFocus'].forEach((key) => {
 
@@ -598,18 +640,31 @@ const menuHandler = {
             menu.mobile[key].tabIndex = 0;
          }
       });
+      
    },
 
-   initSubmenuAccessibility(submenu) { 
-      
+   initSubmenuAccessibility(menu, submenu) { 
+
+      if (!submenu.toggle.id || !submenu.toggle.id.length) {
+         submenu.toggle.id = `mh-submenu-toggle-${menu.name}-${submenu.name}`;
+      }
+
       if (!submenu.list.id || !submenu.list.id.length) {
-         submenu.list.id = `mh-submenu-${submenu.name}`;
+         submenu.list.id = `mh-submenu-list-${menu.name}-${submenu.name}`;
       }
 
       if (!submenu.list.classList.contains('mh-hidden')) submenu.list.classList.add('mh-hidden');
 
       if (!submenu.list.getAttribute('aria-hidden') || !submenu.list.getAttribute('aria-hidden').length) {
          submenu.list.setAttribute('aria-hidden', true);
+      }
+
+      if (!submenu.list.getAttribute('role') || !submenu.list.getAttribute('role').length) {
+         submenu.list.setAttribute('role', 'menu');
+      }
+
+      if (!submenu.list.getAttribute('aria-labelledby') || !submenu.list.getAttribute('aria-labelledby').length) {
+         submenu.list.setAttribute('aria-labelledby', submenu.toggle.id);
       }
 
       if (!submenu.toggle.getAttribute('aria-expanded') || !submenu.toggle.getAttribute('aria-expanded').length) {
@@ -625,7 +680,7 @@ const menuHandler = {
       }
 
       if (!submenu.toggle.getAttribute('title') || !submenu.toggle.getAttribute('title').length) {
-         submenu.toggle.setAttribute('title', 'opens submenu');
+         submenu.toggle.setAttribute('title', `open ${submenu.name} submenu`);
       }
    },
 

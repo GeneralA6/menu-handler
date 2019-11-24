@@ -84,6 +84,7 @@ functionality added to the menus by the library:
 
 #### Submenu Options
 
+- [isEnabled](#isEnabled---submenu) - enables handling of submenus.
 - [openOnMouseEnter](#openOnMouseEnter---submenu) - triggers opening of a submenu on mouse enter.
 - [closeOnBlur](#closeOnBlur---submenu) - triggers closing of a submenu on blur.   
 - [closeOnMouseLeave](#closeOnMouseLeave---submenu) - triggers closing of a submenu on mouseleave. 
@@ -905,6 +906,29 @@ menuHandler.init(menus);
 
 
 ### Submenu Options
+   
+enables handling of submenus  
+   
+type: `boolean`  
+default: `true`
+   
+```javascript
+const menus = [
+  {
+    elements: {
+      container: "#menu-container",
+      innerContainer: "#menu-inner-container",
+      open: "#menu-toggle-open"
+    },
+    submenuOptions: {
+      isEnabled: false // to disable submenus
+    }
+  }
+];
+menuHandler.init(menus);
+```
+   
+---
    
 #### openOnMouseEnter - submenu
 

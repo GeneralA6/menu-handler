@@ -907,6 +907,8 @@ menuHandler.init(menus);
 
 ### Submenu Options
    
+#### isEnabled - submenu
+
 enables handling of submenus  
    
 type: `boolean`  

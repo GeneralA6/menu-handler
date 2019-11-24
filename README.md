@@ -38,25 +38,25 @@ functionality added to the menus by the library:
 
 #### Menu
 
-- [menu container](#container) - **required** - element that holds nothing, but the inner container.
-- [menu inner container](#inner-container) - **required** - element that holds all the menu elements.
-- [menu list](#menu-list) - **required** - element that holds all the menu items.
+- [menu container](#container---html) - **required** - element that holds nothing, but the inner container.
+- [menu inner container](#inner-container---html) - **required** - element that holds all the menu elements.
+- [menu list](#menu-list---html) - **required** - element that holds all the menu items.
 
 #### Submenu
 
-- [submenu toggle](#submenu-toggle) - **required** - element to trigger open / close of the submenu list.
-- [submenu list](#submenu-list) - **required** - element that holds the submenu items.
-- [submenu container](#submenu-container) - element that wraps the submenu list.
+- [submenu toggle](#submenu-toggle---html) - **required** - element to trigger open / close of the submenu list.
+- [submenu list](#submenu-list---html) - **required** - element that holds the submenu items.
+- [submenu container](#submenu-container---html) - element that wraps the submenu list.
 
 #### Complete example
 
-- [html example](#html-example) - a complete example of a menu structure with submenus
+- [html example](#html-example---html) - a complete example of a menu structure with submenus
 
 ### Options
 
 #### Menu Options
 
-- [name](#name) - a unique menu name that will be used for the menu.
+- [name](#name-menu) - a unique menu name that will be used for the menu.
 - [container](#container) - **required** - menu container element that contains inner menu container.
 - [innerContainer](#innerContainer) - **required** - element that holds all menu elements.
 - [open](#open) - **required** - element that triggers opening of the menu.
@@ -171,7 +171,7 @@ add the following css:
    
 ### Menu
 
-#### container
+#### container - html
 
 element that holds nothing, but the inner container.  
   
@@ -187,7 +187,7 @@ element that holds nothing, but the inner container.
 
 ---
 
-#### inner container
+#### inner container - html
 
 element that holds all the menu elements.
 
@@ -204,7 +204,7 @@ element that holds all the menu elements.
 
 ---
 
-#### menu list
+#### menu list - html
 
 element that holds all the menu items.
 
@@ -229,7 +229,7 @@ element that holds all the menu items.
 
 ### Submenu
 
-#### submenu toggle
+#### submenu toggle - html
 
 element to trigger open / close of the submenu list  
   
@@ -244,7 +244,7 @@ element to trigger open / close of the submenu list
 
 ---
 
-#### submenu list
+#### submenu list - html
 
 element that holds the submenu items  
   
@@ -260,7 +260,7 @@ element that holds the submenu items
 
 ---
 
-#### submenu container
+#### submenu container - html
 
 element that wraps the submenu list.  
   
@@ -292,7 +292,7 @@ scss example:
 
 ---
 
-#### HTML Example
+#### HTML Example - html
 
 complete example of a menu structure with submenus
 

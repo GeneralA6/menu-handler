@@ -56,7 +56,7 @@ functionality added to the menus by the library:
 
 #### Menu Options
 
-- [name](#name-menu) - a unique menu name that will be used for the menu.
+- [name](#name) - a unique menu name that will be used for the menu.
 - [container](#container) - **required** - menu container element that contains inner menu container.
 - [innerContainer](#innerContainer) - **required** - element that holds all menu elements.
 - [open](#open) - **required** - element that triggers opening of the menu.

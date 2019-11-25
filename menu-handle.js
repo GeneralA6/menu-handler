@@ -3,14 +3,14 @@ const menuHandler = {
    actions: {}, // a temporary storage for keys of occuring actions. 
    // it is to make sure only one action is occuring at a time and only for one menu.
    // several menus can't be active at a time.
-   init(_menus) {
+   init( _menus ) {
       const self = this;
 
-      if (!Array.isArray(_menus) || !_menus.length) {
-         self.menuError('[menuHandler] [general] Initialization requires an array of menus to be passed as an argument. see documentation');
+      if ( ! Array.isArray( _menus ) || ! _menus.length ) {
+         self.menuError( '[menuHandler] [general] Initialization requires an array of menus to be passed as an argument. see documentation' );
       }
 
-      _menus.forEach(function (_menu) {
+      _menus.forEach( function ( _menu ) {
          const menuTemplate = {
             name: null,
             open: null,
@@ -24,6 +24,7 @@ const menuHandler = {
             container: null,
             innerContainer: null,
             loop: false,
+            type: 'menu', // menu, dropdown, popup // TODO: add to README
             isOpen: false, // run time
             isPinned: false, // run time
             isMobile: false, // run time
@@ -33,6 +34,8 @@ const menuHandler = {
             openOnMouseEnter: false,
             transitionDelay: 0, // run time
             transitionDuration: 0, // run time
+            orientation: 'horizontal', // TODO: add to README
+            direction: null, // TODO: add to README
             menuFunc: self.menuFunc,
             pin: false,
             preventBodyScroll: true,
@@ -43,6 +46,7 @@ const menuHandler = {
                pin: false,
                enterFocus: null,
                exitFocus: null,
+               orientation: 'vertical',
                preventBodyScroll: true,
             },
             on: {
@@ -58,16 +62,18 @@ const menuHandler = {
                afterPinClose: null,
             },
             submenuOptions: {
-               isEnabled: false,
+               isEnabled: true,
                menuFunc: self.submenuFunc,
                openOnMouseEnter: false,
                closeOnBlur: true,
                closeDelay: 0,
+               orientation: 'vertical',
                closeSubmenusOnOpen: true,
                mobile: {
                   closeOnBlur: true,
                   closeDelay: 0,
                   closeSubmenusOnOpen: true,
+                  orientation: 'vertical',
                },
                on: {
                   beforeOpen: null,
@@ -80,83 +86,88 @@ const menuHandler = {
             submenus: {},
          };
 
-         if (!_menu.name) {
-            menuTemplate.name = Math.random().toString(36).substr(2); // create a random menu name from a random number converted to base 36.
+         if ( ! _menu.name ) {
+            menuTemplate.name = Math.random().toString( 36 ).substr( 2 ); // create a random menu name from a random number converted to base 36.
          } else {
             menuTemplate.name = _menu.name;
          }
 
-         if (!_menu.elements) {
-            self.menuError(`[menuHandler] [menu:${menuTemplate.name}] Error: menu elements object is missing`);
+         if ( ! _menu.elements ) {
+            self.menuError( `[menuHandler] [menu:${menuTemplate.name}] Error: menu elements object is missing` );
          }
-         self.initMenuElements(menuTemplate, _menu.elements);
+         self.initMenuElements( menuTemplate, _menu.elements );
 
-         if (_menu.mobile && _menu.mobile.elements) {
-            self.initMenuMobileElements(menuTemplate, _menu.mobile.elements);
+         if ( _menu.mobile && _menu.mobile.elements ) {
+            self.initMenuMobileElements( menuTemplate, _menu.mobile.elements );
          }
 
-         self.initMenuOptions(menuTemplate, _menu);
+         self.initMenuOptions( menuTemplate, _menu );
 
-         // !important: in order to find the event and remove it by removeEventListener, 
+         menuTemplate.direction = getComputedStyle( menuTemplate.container ).direction;
+
+         // ! important: in order to find the event and remove it by removeEventListener, 
          // we need to pass a reference to the function and bind it to the menuHandler object
-         menuTemplate.toggleMenu = self.toggleMenu.bind(self, menuTemplate);
+         menuTemplate.toggleMenu = self.toggleMenu.bind( self, menuTemplate );
 
-         if (self.checkRequiredElement(menuTemplate)) {
-            self.menus.push(menuTemplate);
+         if ( self.checkRequiredElement( menuTemplate ) ) {
+            self.menus.push( menuTemplate );
          }
-      });
+      } );
 
-      if (!self.menus.length) {
-         self.menuError(`[menuHandler] [general] Error: no menus initialized`);
+      if ( ! self.menus.length ) {
+         self.menuError( `[menuHandler] [general] Error: no menus initialized` );
       }
 
       self.initMenus();
    },
 
-   initMenuElements(menu, elements) {
+   initMenuElements( menu, elements ) {
       const self = this;
 
-      for (key in elements) {
-         el = document.querySelector(elements[key]);
-         if (!el) {
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector`);
+      for ( key in elements ) {
+         el = document.querySelector( elements[key] );
+         if ( ! el ) {
+            self.menuError( `[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector` );
          }
          menu[key] = el;
       }
 
-      if (!menu.enterFocus && menu.innerContainer) {
-         const menuFocusables = menu.innerContainer.querySelectorAll('[tabindex]:not([tabindex="-1"]), button, a, input:not([type="hidden"]) ,select, textarea');
+      if ( ! menu.enterFocus && menu.innerContainer ) {
+         const menuFocusables = menu.innerContainer.querySelectorAll( '[tabindex]:not( [tabindex="-1"] ), button, a, input:not( [type="hidden"] ) ,select, textarea' );
          menu.enterFocus = menuFocusables[0];
       }
 
-      if (!menu.close) menu.close = menu.open;
-      if (!menu.exitFocus) menu.exitFocus = menu.open;
+      if ( ! menu.close ) menu.close = menu.open;
+      if ( ! menu.exitFocus ) menu.exitFocus = menu.open;
 
-      menu.lists = menu.innerContainer.querySelectorAll('[data-mh-menu-list]');
+      if ( menu.type === 'menu' ) {
 
-      if (!menu.lists || !menu.lists.length) {
-         self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find menu list element, make sure to add [data-mh-menu-list] attribute to menu list elements`);
+         menu.lists = menu.innerContainer.querySelectorAll( '[data-mh-menu-list]' );
+   
+         if ( ! menu.lists || ! menu.lists.length ) {
+            self.menuError( `[menuHandler] [menu:${menu.name}] Error: could not find menu list element, make sure to add [data-mh-menu-list] attribute to menu list elements` );
+         }
       }
    },
 
-   initMenuOptions(menu, options) {
+   initMenuOptions( menu, options ) {
       const self = this;
 
-      for (key in options) {
+      for ( key in options ) {
 
-         if (key === 'elements' || key === 'name') continue; // already been handled
+         if ( key === 'elements' || key === 'name' ) continue; // already been handled
 
          switch ( key ) {
             case 'on':
-               self.initMenuEvents(menu, options.on); 
+               self.initMenuEvents( menu, options.on ); 
                break;
  
             case 'submenuOptions':
-               self.initSubmenuOptions(menu, options[key]);
+               self.initSubmenuOptions( menu, options[key] );
                break;
 
             case 'mobile':
-               self.initMenuMobileOptions(menu, options[key]);
+               self.initMenuMobileOptions( menu, options[key] );
                break;
 
             case 'pin':
@@ -164,51 +175,61 @@ const menuHandler = {
             case 'preventBodyScroll':
             case 'openOnMouseEnter':
             case 'closeOnMouseLeave':
-               menu[key] = !!options[key] || false; // convert to boolean
+               menu[key] = !! options[key] || false; // convert to boolean
                break;
 
             case 'openDelay':
             case 'closeDelay':
             case 'debounce':
-               menu[key] = parseInt(options[key]);
+               menu[key] = parseInt( options[key] );
+               break;
+
+            case 'orientation':
+               menu[key] = options[key] == 'horizontal' ? 'horizontal' : 'vertical';
+               break;
+
+            case 'type':
+               if ( [ 'menu' ,'dropdown', 'popup' ].includes( options[key] ) ) {
+                  menu[key] = options[key];
+               }
                break;
 
             case 'menuFunc':
-               if (options[key] === 'function') {
+               if ( options[key] === 'function' ) {
                   menu[key] = options[key];
                }
                break;
 
             default:
-               self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu object`);
+               self.menuError( `[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu object` );
                break;
 
          }
       }
    },
 
-   initMenuMobileElements(menu, elements) {
+   initMenuMobileElements( menu, elements ) {
       const self = this;
 
-      for (key in elements) {
-         el = document.querySelector(elements[key]);
-         if (!el) {
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector in the DOM tree`);
+      for ( key in elements ) {
+         el = document.querySelector( elements[key] );
+         if ( ! el ) {
+            self.menuError( `[menuHandler] [menu:${menu.name}] Error: could not find element with ${elements[key]} selector in the DOM tree` );
          }
          menu.mobile[key] = el;
       }
    },
 
-   initMenuMobileOptions(menu, options) {
+   initMenuMobileOptions( menu, options ) {
       const self = this;
 
-      for (key in options) {
+      for ( key in options ) {
 
-         if (key === 'elements') continue; // already been handled
+         if ( key === 'elements' ) continue; // already been handled
 
          switch ( key ) {
             case 'breakpoint': 
-               if (!options[key].includes('px')) {
+               if ( ! options[key].includes( 'px' ) ) {
                   options[key] += 'px';
                }
                menu.mobile[key] = options[key];
@@ -216,110 +237,112 @@ const menuHandler = {
 
             case 'pin':
             case 'preventBodyScroll':
-               menu.mobile[key] = !!options[key] || false; // convert to boolean
+               menu.mobile[key] = !! options[key] || false; // convert to boolean
                break;
+
+            case 'orientation':
+                  menu.mobile[key] = options[key] == 'horizontal' ? 'horizontal' : 'vertical';
+                  break;
          
             default:
-               self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.mobile`);
+               self.menuError( `[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.mobile` );
                break;
          }
       }
 
-      menu.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
-      window.addEventListener('resize', self.debounce(() => {
-         
-         menu.isMobile = window.matchMedia(`(max-width: ${menu.mobile.breakpoint})`).matches;
-      }, menu.debounce));
+      menu.isMobile = window.matchMedia( `( max-width: ${menu.mobile.breakpoint} )` ).matches;
+      window.addEventListener( 'resize', self.debounce( () => {
+
+         menu.isMobile = window.matchMedia( `( max-width: ${menu.mobile.breakpoint} )` ).matches;
+      }, menu.debounce ) );
    },
 
-   setActiveElements(menu) {
+   setActiveElements( menu ) {
       const self = this;
 
-      self.setActiveOpen(menu);
-      self.setActiveClose(menu);
-      self.setActiveEnterFocus(menu);
-      self.setActiveExitFocus(menu);
+      self.setActiveOpen( menu );
+      self.setActiveClose( menu );
+      self.setActiveEnterFocus( menu );
+      self.setActiveExitFocus( menu );
    },
 
-   setActiveOpen(menu) {
+   setActiveOpen( menu ) {
       const self = this;
 
       menu.activeOpen = menu.open;
 
-      if (menu.isMobile) {
+      if ( menu.isMobile ) {
 
-         if (menu.mobile.open) {
+         if ( menu.mobile.open ) {
 
             menu.activeOpen = menu.mobile.open;
-            self.setMenuToggleEvents(menu, menu.mobile.open, menu.open);
+            self.setMenuToggleEvents( menu, menu.mobile.open, menu.open );
          } else {
             
-            self.setMenuToggleEvents(menu, menu.open);
+            self.setMenuToggleEvents( menu, menu.open );
          }
       } else {
 
-         self.setMenuToggleEvents(menu, menu.open, menu.mobile.open);
+         self.setMenuToggleEvents( menu, menu.open, menu.mobile.open );
       }
    },
 
-   setActiveClose(menu) {
+   setActiveClose( menu ) {
       const self = this;
 
       menu.activeClose = menu.close;
 
-      if (menu.isMobile) {
+      if ( menu.isMobile ) {
 
-         if (menu.mobile.close) {
+         if ( menu.mobile.close ) {
 
             menu.activeClose = menu.mobile.close;
-            self.setMenuToggleEvents(menu, menu.mobile.close, menu.close);
+            self.setMenuToggleEvents( menu, menu.mobile.close, menu.close );
          } else {
             
-            self.setMenuToggleEvents(menu, menu.close);
+            self.setMenuToggleEvents( menu, menu.close );
          }
       } else {
 
-         self.setMenuToggleEvents(menu, menu.close, menu.mobile.close);
+         self.setMenuToggleEvents( menu, menu.close, menu.mobile.close );
       }
    },
 
-   setActiveEnterFocus(menu) {
+   setActiveEnterFocus( menu ) {
       const self = this;
 
       menu.activeEnterFocus = menu.enterFocus;
 
-      if (menu.isMobile && menu.mobile.enterFocus) {
+      if ( menu.isMobile && menu.mobile.enterFocus ) {
             menu.activeEnterFocus = menu.mobile.enterFocus;
       }
    },
    
-   setActiveExitFocus(menu) {
+   setActiveExitFocus( menu ) {
       const self = this;
 
       menu.activeExitFocus = menu.exitFocus;
 
-      if (menu.isMobile && menu.mobile.exitFocus) {
+      if ( menu.isMobile && menu.mobile.exitFocus ) {
          menu.activeExitFocus = menu.mobile.exitFocus;
       }
    },  
 
-   initSubmenuOptions(menu, options) {
+   initSubmenuOptions( menu, options ) {
       const self = this;
 
-      options['isEnabled'] = true; // remove the need to init submenus with isEnabled key.
-
-      for (key in options) {
-         switch (key) {
+      for ( key in options ) {
+         switch ( key ) {
             case 'on':
-                  for (event in options.on) {
-                     if (event in menu.submenuOptions.on && typeof options.on[event] === 'function') {
+                  for ( event in options.on ) {
+                     if ( event in menu.submenuOptions.on && typeof options.on[event] === 'function' ) {
                         menu.submenuOptions.on[event] = options.on[event];
                      }
                   }
                break;
 
             case 'mobile':
-               self.initSubmenuMobileOptions(menu, options[key]);
+               self.initSubmenuMobileOptions( menu, options[key] );
                break;
 
             case 'isEnabled':
@@ -327,185 +350,205 @@ const menuHandler = {
             case 'closeOnBlur':
             case 'openOnMouseEnter':
             case 'closeOnMouseLeave':
-               menu.submenuOptions[key] = !!options[key] || false; // convert to boolean
+               menu.submenuOptions[key] = !! options[key] || false; // convert to boolean
+               break;
+
+            case 'orientation':
+               menu.submenuOptions[key] = options[key] == 'horizontal' ? 'horizontal' : 'vertical';
                break;
 
             case 'menuFunc':
-               if (options[key] === 'function') {
+               if ( options[key] === 'function' ) {
                   menu.submenuOptions[key] = options[key];
                }
                break;
 
             case 'closeDelay':
-                  menu.submenuOptions[key] = parseInt(options[key]);
+                  menu.submenuOptions[key] = parseInt( options[key] );
                break;
 
             default: 
-                  self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.submenuOptions`);
+                  self.menuError( `[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.submenuOptions` );
                break;
          }
       }
    },
 
-   initSubmenuMobileOptions(menu, options) {
+   initSubmenuMobileOptions( menu, options ) {
       const self = this;
 
-      for (key in options) {
+      for ( key in options ) {
 
          switch ( key ) {
             case 'closeSubmenusOnOpen':
             case 'closeOnBlur':
-               menu.submenuOptions.mobile[key] = !!options[key] || false; // convert to boolean
+               menu.submenuOptions.mobile[key] = !! options[key] || false; // convert to boolean
                break;
 
             case 'closeDelay':
-                  menu.submenuOptions.mobile[key] = parseInt(options[key]);
+                  menu.submenuOptions.mobile[key] = parseInt( options[key] );
                break;
 
+            case 'orientation':
+                  menu.submenuOptions.mobile[key] = options[key] == 'horizontal' ? 'horizontal' : 'vertical';
+                  break;
+
             default:
-                  self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.submenuOptions.mobile`);
+                  self.menuError( `[menuHandler] [menu:${menu.name}] Error: ${key}:${options[key]} cannot be initialized in menu.submenuOptions.mobile` );
                break;
          }
       }
    },
 
-   initMenuEvents(menu, events) {
+   initMenuEvents( menu, events ) {
 
-      for (event in events) {
-         if (event in menu.on && typeof events[event] === 'function') {
+      for ( event in events ) {
+         if ( event in menu.on && typeof events[event] === 'function' ) {
 
             menu.on[event] = events[event];
          } else {
 
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: ${event}:${events[event]} cannot be initialized in menu.on`);
+            self.menuError( `[menuHandler] [menu:${menu.name}] Error: ${event}:${events[event]} cannot be initialized in menu.on` );
          }
       }
    },
 
-   initMenuPinCheck(menu) {
+   initMenuPinCheck( menu ) {
       const self = this;
 
-      self.toggleMenuPinned(menu);
-      window.addEventListener('resize', self.debounce(() => {
+      self.toggleMenuPinned( menu );
+      window.addEventListener( 'resize', self.debounce( () => {
          
-         self.toggleMenuPinned(menu);
-      }, menu.debounce));
+         self.toggleMenuPinned( menu );
+      }, menu.debounce ) );
    },
 
-   toggleMenuPinned(menu) {
+   toggleMenuPinned( menu ) {
       const self = this;
 
       const wasPinned = menu.isPinned;
 
       menu.isPinned = false;
 
-      if (menu.isMobile) {
+      if ( menu.isMobile ) {
          menu.isPinned = menu.mobile.pin;
       } else {
          menu.isPinned = menu.pin;
       }
 
-      if (menu.isOpen && menu.isPinned) {
-         self.closeMenu(menu);
+      if ( menu.isOpen && menu.isPinned ) { // if menu is pinned, close the menu.
+         self.closeMenu( menu );
       }
 
-      if (menu.isOpen) return;
+      if ( menu.isOpen ) return; // prevent access to pinned code , if menu is open      
 
-      if (menu.isPinned) {
+      if ( menu.isPinned ) {
 
          menu.transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
 
-         if (menu.on.beforePinOpen && !wasPinned) menu.on.beforePinOpen(menu); // before pin open
+         if ( menu.on.beforePinOpen && ! wasPinned ) menu.on.beforePinOpen( menu ); // before pin open
 
-         menu.container.classList.add('mh-pinned');
-         menu.container.setAttribute('aria-hidden', false);
+         menu.container.classList.add( 'mh-pinned' );
+         menu.container.setAttribute( 'aria-hidden', false );
 
-         menu.innerContainer.classList.remove('mh-hidden');
+         menu.innerContainer.classList.remove( 'mh-hidden' );
 
-         menu.open.classList.add('mh-hidden');
-         if (menu.mobile.open) menu.mobile.open.classList.add('mh-hidden');
+         menu.open.classList.add( 'mh-hidden' );
+         if ( menu.mobile.open ) menu.mobile.open.classList.add( 'mh-hidden' );
          
-         if (menu.close) menu.close.classList.add('mh-hidden');
-         if (menu.mobile.close) menu.mobile.close.classList.add('mh-hidden');
+         if ( menu.close ) menu.close.classList.add( 'mh-hidden' );
+         if ( menu.mobile.close ) menu.mobile.close.classList.add( 'mh-hidden' );
 
-         menu.lists.forEach(el => {
-            el.setAttribute('role', 'menubar');
-         });
+         if ( menu.type === 'menu' ) {
+            
+            menu.lists.forEach( el => {
+               el.setAttribute( 'role', 'menubar' );
+            } );
+         }
 
-         if (menu.on.afterPinOpen && !wasPinned) { // after pin open
-            setTimeout(() => menu.on.afterPinOpen(menu), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
+         if ( menu.on.afterPinOpen && ! wasPinned ) { // after pin open
+            setTimeout( () => menu.on.afterPinOpen( menu ), menu.transitionTimeCombined * 1000 ); // fire after menu's container transition ends
          }
 
       } else {
          
-         if (menu.on.beforePinClose && wasPinned) menu.on.beforePinClose(menu); // before pin close
+         if ( menu.on.beforePinClose && wasPinned ) menu.on.beforePinClose( menu ); // before pin close
 
-         menu.container.classList.remove('mh-pinned');
-         menu.container.setAttribute('aria-hidden', true);
+         menu.container.classList.remove( 'mh-pinned' );
+         menu.container.setAttribute( 'aria-hidden', true );
 
-         menu.innerContainer.classList.add('mh-hidden');
+         menu.innerContainer.classList.add( 'mh-hidden' );
 
-         menu.open.classList.remove('mh-hidden');
-         if (menu.mobile.open) menu.mobile.open.classList.remove('mh-hidden');
+         menu.open.classList.remove( 'mh-hidden' );
+         if ( menu.mobile.open ) menu.mobile.open.classList.remove( 'mh-hidden' );
 
-         if (menu.close) menu.close.classList.remove('mh-hidden');
-         if (menu.mobile.close) menu.mobile.close.classList.remove('mh-hidden');
+         if ( menu.close ) menu.close.classList.remove( 'mh-hidden' );
+         if ( menu.mobile.close ) menu.mobile.close.classList.remove( 'mh-hidden' );
 
-         menu.lists.forEach(el => {
-            el.setAttribute('role', 'menu');
-         });
+         if ( menu.type === 'menu' ) {
 
-         if (menu.on.afterPinClose && wasPinned) { // after pin close
-            setTimeout(() => menu.on.afterPinClose(menu), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
+            menu.lists.forEach( el => {
+               el.setAttribute( 'role', 'menu' );
+            } );
+         }
+
+         if ( menu.on.afterPinClose && wasPinned ) { // after pin close
+            setTimeout( () => menu.on.afterPinClose( menu ), menu.transitionTimeCombined * 1000 ); // fire after menu's container transition ends
          }
       }
 
-      self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
+      if ( menu.isPinned !== wasPinned ) {
+         self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
+      }
    },
 
-   initMenu(menu) {
+   initMenu( menu ) {
       const self = this;
 
-      if (menu.on.beforeInit) menu.on.beforeInit(menu);
+      if ( menu.on.beforeInit ) menu.on.beforeInit( menu );
 
-      self.initMenuPinCheck(menu);
+      self.initMenuPinCheck( menu );
          
-      self.setActiveElements(menu);
-      window.addEventListener('resize', self.debounce(() => {
-         
-         self.setActiveElements(menu);
-      }, menu.debounce));
+      self.setActiveElements( menu );
+      window.addEventListener( 'resize', self.debounce( () => {
 
-      self.initMenuAccessibility(menu);
+         self.setActiveElements( menu )
+      }, menu.debounce ) );
 
-      if (menu.submenuOptions.isEnabled) {
-         self.initSubmenus(menu);
+      self.initMenuAccessibility( menu );
+
+      if ( menu.type === 'menu' ) {
+         self.initMenuKeyboardFunctions( menu );
       }
 
-      if (menu.on.afterInit) menu.on.afterInit(menu);
+      if ( menu.submenuOptions.isEnabled ) {
+         self.initSubmenus( menu );
+      }
+
+      if ( menu.on.afterInit ) menu.on.afterInit( menu );
    },
 
    initMenus() {
       const self = this;
 
-      self.menus.forEach(menu => {
+      self.menus.forEach( menu => {
 
-         self.initMenu(menu);
-      });
+         self.initMenu( menu );
+      } );
 
       self.initMenuWindowEvents();
    },
 
-   initSubmenus(menu) {
+   initSubmenus( menu ) {
       const self = this;
 
-      const submenuToggles = menu.innerContainer.querySelectorAll('[data-mh-submenu-toggle]'); // important: the NodeList is ordered, the order is parent -> children -> next parent.
+      const submenuToggles = menu.innerContainer.querySelectorAll( '[data-mh-submenu-toggle]' ); // important: the NodeList is ordered, the order is parent -> children -> next parent.
 
-      if (!submenuToggles.length) {
-         self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used`);
+      if ( ! submenuToggles.length ) {
+         self.menuError( `[menuHandler] [menu:${menu.name}] Error: submenu toggles not found, consider disabling submenu, if submenu functionality is not being used` );
       }
 
-      submenuToggles.forEach(toggle => {
+      submenuToggles.forEach( toggle => {
 
          const submenu = {
             name: toggle.dataset.mhSubmenuToggle,
@@ -521,9 +564,11 @@ const menuHandler = {
             transitionDuration: 0, // run time
             closeDelay: menu.submenuOptions.closeDelay,
             closeSubmenusOnOpen: menu.submenuOptions.closeSubmenusOnOpen,
+            orientation: menu.submenuOptions.orientation,
             mobile: {
                closeSubmenusOnOpen: menu.submenuOptions.mobile.closeSubmenusOnOpen,
                closeDelay: menu.submenuOptions.mobile.closeDelay,
+               orientation: menu.submenuOptions.mobile.orientation,
             },
             actions: {
                mouseleave: {
@@ -533,525 +578,597 @@ const menuHandler = {
             },
          }
 
-         submenu.list = menu.innerContainer.querySelector(`[data-mh-submenu-list="${submenu.name}"]`);
-         if (!submenu.list) {
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: submenu, ${submenu.name} not found`);
+         submenu.list = menu.innerContainer.querySelector( `[data-mh-submenu-list="${submenu.name}"]` );
+         if ( ! submenu.list ) {
+            self.menuError( `[menuHandler] [menu:${menu.name}] Error: submenu, ${submenu.name} not found` );
          }
 
-         submenu.container = menu.innerContainer.querySelector(`[data-mh-submenu-container="${submenu.name}"]`);
+         submenu.container = menu.innerContainer.querySelector( `[data-mh-submenu-container="${submenu.name}"]` );
 
-         submenu.parent = self.getSubmenuParent(submenu.list);
+         submenu.parent = self.getSubmenuParent( submenu.list );
 
-         if (submenu.openOnMouseEnter && submenu.toggle.dataset.mhMouseenterDisabled) {
+         if ( submenu.openOnMouseEnter && submenu.toggle.dataset.mhMouseenterDisabled ) {
             submenu.openOnMouseEnter = false;
          }
 
-         if (submenu.closeOnMouseLeave && submenu.toggle.dataset.mhMouseleaveDisabled) {
+         if ( submenu.closeOnMouseLeave && submenu.toggle.dataset.mhMouseleaveDisabled ) {
             submenu.closeOnMouseLeave = false;
          }
 
-         self.initSubmenuAccessibility(menu, submenu);
-         self.initSubmenuToggleEvents(menu, submenu);
-         self.calcTransition(submenu);
          
-         if (submenu.parent) {
-            menu.submenus[submenu.parent].children.push(submenu.name); // important: there always be a menu.submenus[submenu.parent] ,becuase the NodeList is ordered.
+         self.initSubmenuAccessibility( menu, submenu );
+         self.initSubmenuToggleEvents( menu, submenu );
+         self.calcTransition( submenu );
+
+         if ( menu.type === 'menu' ) {
+            self.initSubmenuKeyboardFunctions( menu, submenu );
+         }
+         
+         if ( submenu.parent ) { // add the menu as child to the parent
+            menu.submenus[submenu.parent].children.push( submenu.name ); // important: there always be a menu.submenus[submenu.parent] ,becuase the NodeList is ordered.
          }
 
          menu.submenus[submenu.name] = submenu;
-      });
+      } );
    },
 
-   initMenuAccessibility(menu) {
+   initMenuAccessibility( menu ) {
       const self = this;
-      const svgs = menu.innerContainer.querySelectorAll('svg');
-      const images = menu.innerContainer.querySelectorAll('img');
-      const menuListItems = menu.innerContainer.querySelectorAll('li'); // affects submenus as well
-      const menuItems = menu.innerContainer.querySelectorAll('a'); // affects submenus as well
+
+      const svgs = menu.innerContainer.querySelectorAll( 'svg' ),
+            images = menu.innerContainer.querySelectorAll( 'img' );
       
-      if (!menu.container.id || !menu.container.id.length) {
+      if ( ! menu.container.id || ! menu.container.id.length ) {
          menu.container.id = `mh-menu-${menu.name}`;
       }
 
-      if (!menu.open.id || !menu.open.id.length) {
+      if ( ! menu.open.id || ! menu.open.id.length ) {
          menu.open.id = `mh-menu-open-${menu.name}`;
       }
 
-      if (!menu.open.getAttribute('aria-controls') || !menu.open.getAttribute('aria-controls').length) {
-         menu.open.setAttribute('aria-controls', menu.container.id);
+      if ( ! menu.open.getAttribute( 'aria-controls' ) || ! menu.open.getAttribute( 'aria-controls' ).length ) {
+         menu.open.setAttribute( 'aria-controls', menu.container.id );
       }
 
-      if (menu.mobile.open && (!menu.mobile.open.getAttribute('aria-controls') || !menu.mobile.open.getAttribute('aria-controls').length)){
-         menu.mobile.open.setAttribute('aria-controls', menu.container.id);
+      if ( menu.mobile.open && ( ! menu.mobile.open.getAttribute( 'aria-controls' ) || ! menu.mobile.open.getAttribute( 'aria-controls' ).length ) ){
+         menu.mobile.open.setAttribute( 'aria-controls', menu.container.id );
       }
 
-      if (!menu.open.getAttribute('aria-haspopup') || !menu.open.getAttribute('aria-haspopup').length) {
-         menu.open.setAttribute('aria-haspopup', true);
+      if ( ! menu.open.getAttribute( 'aria-haspopup' ) || ! menu.open.getAttribute( 'aria-haspopup' ).length ) {
+         menu.open.setAttribute( 'aria-haspopup', true );
       }
 
-      if (menu.mobile.open && (!menu.mobile.open.getAttribute('aria-haspopup') || !menu.mobile.open.getAttribute('aria-haspopup').length)){
-         menu.mobile.open.setAttribute('aria-haspopup', true);
+      if ( menu.mobile.open && ( ! menu.mobile.open.getAttribute( 'aria-haspopup' ) || ! menu.mobile.open.getAttribute( 'aria-haspopup' ).length ) ){
+         menu.mobile.open.setAttribute( 'aria-haspopup', true );
       }
 
-      svgs.forEach(el => {
-         if (!el.getAttribute('aria-label')) {
-            if (!el.getAttribute('role')) el.setAttribute('role', 'presentation');
+      if ( ! menu.open.getAttribute( 'title' ) ) {
+
+         if ( ! menu.open.getAttribute( 'title' ).textContent.trim().length ) {
+            menu.open.setAttribute( 'title', 'open menu' );
+         } else {
+            menu.open.setAttribute( 'title', '' );
          }
-      });
+      }
 
-      images.forEach(el => {
-         if (!el.getAttribute('alt')) {
-            if (!el.getAttribute('role')) el.setAttribute('role', 'presentation');
+      if ( ! menu.close.getAttribute( 'title' ) ) {
+
+         if ( ! menu.close.getAttribute( 'title' ).textContent.trim().length ) {
+            menu.close.setAttribute( 'title', 'open menu' );
+         } else {
+            menu.close.setAttribute( 'title', '' );
          }
-      });
+      }
 
-      menu.lists.forEach(el => {
-         if (!el.getAttribute('role') || !el.getAttribute('role').length) {
-            el.setAttribute('role', 'menu');
+      svgs.forEach( el => {
+         if ( ! el.getAttribute( 'aria-label' ) ) {
+            if ( ! el.getAttribute( 'role' ) ) el.setAttribute( 'role', 'presentation' );
          }
+      } );
 
-         if (!el.getAttribute('aria-labelledby') || !el.getAttribute('aria-labelledby').length) {
-            el.setAttribute('aria-labelledby', menu.open.id);
+      images.forEach( el => {
+         if ( ! el.getAttribute( 'alt' ) ) {
+            if ( ! el.getAttribute( 'role' ) ) el.setAttribute( 'role', 'presentation' );
          }
-      });
+      } );
 
-      menuItems.forEach(el => {
-         if (!el.getAttribute('role') || !el.getAttribute('role').length) {
-            el.setAttribute('role', 'menuitem');
-         }
-      });
+      ['enterFocus', 'exitFocus'].forEach( ( key ) => {
 
-      menuListItems.forEach(el => {
-         if (!el.getAttribute('role') || !el.getAttribute('role').length) {
-            el.setAttribute('role', 'none');
-         }
-      });
-
-      ['enterFocus', 'exitFocus'].forEach((key) => {
-
-         if (menu[key] && menu[key].tabIndex === -1) {
+         if ( menu[key] && menu[key].tabIndex === -1 ) {
             menu[key].tabIndex = 0;
          }
-      });
+      } );
 
-      ['enterFocus', 'exitFocus'].forEach((key) => {
+      ['enterFocus', 'exitFocus'].forEach( ( key ) => {
         
-         if (menu.mobile[key] && menu.mobile[key].tabIndex === -1) {
+         if ( menu.mobile[key] && menu.mobile[key].tabIndex === -1 ) {
             menu.mobile[key].tabIndex = 0;
          }
-      });
-      
+      } );
    },
 
-   initSubmenuAccessibility(menu, submenu) { 
+   initSubmenuAccessibility( menu, submenu ) { 
 
-      if (!submenu.toggle.id || !submenu.toggle.id.length) {
+      if ( ! submenu.toggle.id || ! submenu.toggle.id.length ) {
          submenu.toggle.id = `mh-submenu-toggle-${menu.name}-${submenu.name}`;
       }
 
-      if (!submenu.list.id || !submenu.list.id.length) {
+      if ( ! submenu.list.classList.contains( 'mh-hidden' ) ) submenu.list.classList.add( 'mh-hidden' );
+
+      if ( ! submenu.list.getAttribute( 'aria-hidden' ) || ! submenu.list.getAttribute( 'aria-hidden' ).length ) {
+         submenu.list.setAttribute( 'aria-hidden', true );
+      }
+
+      if ( ! submenu.toggle.getAttribute( 'aria-expanded' ) || ! submenu.toggle.getAttribute( 'aria-expanded' ).length ) {
+         submenu.toggle.setAttribute( 'aria-expanded', false );
+      }
+
+      if ( ! submenu.toggle.getAttribute( 'aria-controls' ) || ! submenu.toggle.getAttribute( 'aria-controls' ).length ) {
+         submenu.toggle.setAttribute( 'aria-controls', submenu.list.id );
+      }
+
+      if ( ! submenu.toggle.getAttribute( 'aria-haspopup' ) || ! submenu.toggle.getAttribute( 'aria-haspopup' ).length ) {
+         submenu.toggle.setAttribute( 'aria-haspopup', true );
+      }
+
+      if ( ! submenu.toggle.getAttribute( 'title' ) ) {
+
+         if ( ! submenu.toggle.getAttribute( 'title' ).textContent.trim().length ) {
+            submenu.toggle.setAttribute( 'title', 'open submenu' );
+         } else {
+            submenu.toggle.setAttribute( 'title', '' );
+         }
+      }
+   },
+
+   initMenuKeyboardFunctions( menu ) {
+      const self = this;
+
+      self.initMenuKeyboardAccessibility( menu );
+   },
+
+   initSubmenuKeyboardFunctions( menu, submenu ) { 
+      const self = this; 
+
+      self.initSubmenuKeyboardAccessibility( menu, submenu );
+   },
+
+   initMenuKeyboardAccessibility( menu ) {
+      const self = this;
+
+      const menuItems = menu.innerContainer.querySelectorAll( 'a' ), // affects submenus as well
+            menuListItems = menu.innerContainer.querySelectorAll( 'li' ); // affects submenus as well
+
+            
+      menuItems.forEach( el => {
+         if ( ! el.getAttribute( 'role' ) || ! el.getAttribute( 'role' ).length ) {
+            el.setAttribute( 'role', 'menuitem' );
+         }
+      } );
+
+      menuListItems.forEach( el => {
+         if ( ! el.getAttribute( 'role' ) || ! el.getAttribute( 'role' ).length ) {
+            el.setAttribute( 'role', 'none' );
+         }
+      } );
+
+      menu.lists.forEach( el => {
+         if ( ! el.getAttribute( 'role' ) || ! el.getAttribute( 'role' ).length ) {
+            el.setAttribute( 'role', 'menu' );
+         }
+
+         if ( menu.isMobile ) {
+            el.setAttribute( 'aria-orientation', menu.mobile.orientation );
+         } else {
+            el.setAttribute( 'aria-orientation', menu.orientation );
+         }
+
+         if ( ( ! el.getAttribute( 'aria-label' ) || ! el.getAttribute( 'aria-label' ).length ) && ( ! el.getAttribute( 'aria-labelledby' ) || ! el.getAttribute( 'aria-labelledby' ).length ) ) {
+            el.setAttribute( 'aria-labelledby', menu.open.id );
+         }
+
+         if ( el.parentElement.tagName == 'NAV' && ( ! el.parentElement.getAttribute( 'aria-label' ) || ! el.parentElement.getAttribute( 'aria-label' ).length ) && ( ! el.parentElement.getAttribute( 'aria-labelledby' ) || ! el.parentElement.getAttribute( 'aria-labelledby' ).length ) ) {
+            el.parentElement.setAttribute( 'aria-labelledby', menu.open.id );
+         }
+      } );
+   },
+
+   initSubmenuKeyboardAccessibility( menu, submenu ) {
+      const self = this;
+
+      if ( ! submenu.list.id || ! submenu.list.id.length ) {
          submenu.list.id = `mh-submenu-list-${menu.name}-${submenu.name}`;
       }
 
-      if (!submenu.list.classList.contains('mh-hidden')) submenu.list.classList.add('mh-hidden');
-
-      if (!submenu.list.getAttribute('aria-hidden') || !submenu.list.getAttribute('aria-hidden').length) {
-         submenu.list.setAttribute('aria-hidden', true);
+      if ( ! submenu.list.getAttribute( 'role' ) || ! submenu.list.getAttribute( 'role' ).length ) {
+         submenu.list.setAttribute( 'role', 'menu' );
       }
 
-      if (!submenu.list.getAttribute('role') || !submenu.list.getAttribute('role').length) {
-         submenu.list.setAttribute('role', 'menu');
+      if ( ! submenu.list.getAttribute( 'aria-labelledby' ) || ! submenu.list.getAttribute( 'aria-labelledby' ).length ) {
+         submenu.list.setAttribute( 'aria-labelledby', submenu.toggle.id );
       }
 
-      if (!submenu.list.getAttribute('aria-labelledby') || !submenu.list.getAttribute('aria-labelledby').length) {
-         submenu.list.setAttribute('aria-labelledby', submenu.toggle.id);
+      if ( menu.isMobile ) {
+         submenu.list.setAttribute( 'aria-orientation', submenu.mobile.orientation );
+      } else {
+         submenu.list.setAttribute( 'aria-orientation', submenu.orientation );
       }
 
-      if (!submenu.toggle.getAttribute('aria-expanded') || !submenu.toggle.getAttribute('aria-expanded').length) {
-         submenu.toggle.setAttribute('aria-expanded', false);
-      }
-
-      if (!submenu.toggle.getAttribute('aria-controls') || !submenu.toggle.getAttribute('aria-controls').length) {
-         submenu.toggle.setAttribute('aria-controls', submenu.list.id);
-      }
-
-      if (!submenu.toggle.getAttribute('aria-haspopup') || !submenu.toggle.getAttribute('aria-haspopup').length) {
-         submenu.toggle.setAttribute('aria-haspopup', true);
-      }
-
-      if (!submenu.toggle.getAttribute('title') || !submenu.toggle.getAttribute('title').length) {
-         submenu.toggle.setAttribute('title', `open ${submenu.name} submenu`);
+      if ( ! submenu.toggle.getAttribute( 'role' ) || ! submenu.toggle.getAttribute( 'role' ).length ) {
+         submenu.toggle.setAttribute( 'role', 'menuitem' ); 
       }
    },
 
    initMenuWindowEvents() {
       const self = this;
 
-      window.addEventListener('keydown', self.onInteraction.bind(self));
-      window.addEventListener('click', self.onInteraction.bind(self));
-      window.addEventListener('scroll', self.debounce(() => { // preventBodyScroll listener.
-         document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
-      }), 100);
+      window.addEventListener( 'keydown', self.onInteraction.bind( self ) );
+      window.addEventListener( 'click', self.onInteraction.bind( self ) );
+      window.addEventListener( 'scroll', self.debounce( () => { // preventBodyScroll listener.
+
+         document.documentElement.style.setProperty( '--scroll-y', `${window.scrollY}px` );
+      }, 20 ) );
    },
 
-   setMenuToggleEvents(menu, add, remove) {
+   setMenuToggleEvents( menu, add, remove ) {
 
-      if (add) add.addEventListener('click', menu.toggleMenu);
-      if (remove) remove.removeEventListener('click', menu.toggleMenu);
+      if ( add ) add.addEventListener( 'click', menu.toggleMenu );
+      if ( remove ) remove.removeEventListener( 'click', menu.toggleMenu );
 
-      if (menu.openOnMouseEnter && add && add === menu.activeOpen) {
+      if ( menu.openOnMouseEnter && add && add === menu.activeOpen ) {
 
-         add.addEventListener('mouseenter', menu.toggleMenu);
-         if (remove) remove.removeEventListener('mouseenter', menu.toggleMenu);
+         add.addEventListener( 'mouseenter', menu.toggleMenu );
+         if ( remove ) remove.removeEventListener( 'mouseenter', menu.toggleMenu );
       }
    },
 
-   initSubmenuToggleEvents(menu, submenu) {
+   initSubmenuToggleEvents( menu, submenu ) {
       const self = this;
 
-      const submenuToggle = e => self.toggleSubmenu(menu, submenu, e);
+      const submenuToggle = e => self.toggleSubmenu( menu, submenu, e );
 
-      submenu.toggle.addEventListener('click', submenuToggle);
+      submenu.toggle.addEventListener( 'click', submenuToggle );
 
-      if (submenu.openOnMouseEnter) {
-         submenu.toggle.addEventListener('mouseenter', submenuToggle);
+      if ( submenu.openOnMouseEnter ) {
+         submenu.toggle.addEventListener( 'mouseenter', submenuToggle );
       }
 
-      if (submenu.closeOnMouseLeave) {
+      if ( submenu.closeOnMouseLeave ) {
 
-         if (submenu.container) {
-            submenu.container.addEventListener('mouseenter', submenuToggle);
-            submenu.container.addEventListener('mouseleave', submenuToggle);
+         if ( submenu.container ) {
+            submenu.container.addEventListener( 'mouseenter', submenuToggle );
+            submenu.container.addEventListener( 'mouseleave', submenuToggle );
          } else {
-            submenu.list.addEventListener('mouseenter', submenuToggle);
-            submenu.list.addEventListener('mouseleave', submenuToggle);
+            submenu.list.addEventListener( 'mouseenter', submenuToggle );
+            submenu.list.addEventListener( 'mouseleave', submenuToggle );
          }
-         submenu.toggle.addEventListener('mouseleave', submenuToggle);
+         submenu.toggle.addEventListener( 'mouseleave', submenuToggle );
       }
    },
 
    
-   submenuMouseEnter(menu, submenu, e) {
+   submenuMouseEnter( menu, submenu, e ) {
       const self = this;
 
-      if (e && e.type === 'mouseenter') {
+      if ( e && e.type === 'mouseenter' ) {
 
-         if (submenu.actions.mouseleave.timeout) {
+         if ( submenu.actions.mouseleave.timeout ) {
 
-            clearTimeout(submenu.actions.mouseleave.timeout);
+            clearTimeout( submenu.actions.mouseleave.timeout );
             submenu.actions.mouseleave.timeout = null;
          };
          
-         if (submenu.isOpen) return false; // prevent closing an open submenu.
-         if (menu.isMobile) return false; // prevent open on mouseenter if isMobile.
+         if ( submenu.isOpen ) return false; // prevent closing an open submenu.
+         if ( menu.isMobile ) return false; // prevent open on mouseenter if isMobile.
       }
       return true;
    },
 
-   submenuMouseLeave(menu, submenu, e) {
+   submenuMouseLeave( menu, submenu, e ) {
       const self = this;
 
-      if (e && e.type === 'mouseleave') { 
+      if ( e && e.type === 'mouseleave' ) { 
 
-         if (!submenu.isOpen) return false; // prevent opening a closed submenu.
-         if (menu.isMobile) return false; // prevent open on mouseleave if isMobile.
+         if ( ! submenu.isOpen ) return false; // prevent opening a closed submenu.
+         if ( menu.isMobile ) return false; // prevent open on mouseleave if isMobile.
 
-         submenu.actions.mouseleave.timeout = setTimeout(() => {
+         submenu.actions.mouseleave.timeout = setTimeout( () => {
 
-            clearTimeout(submenu.actions.mouseleave.timeout);
+            clearTimeout( submenu.actions.mouseleave.timeout );
             submenu.actions.mouseleave.timeout = null;
             
-            self.closeSubmenu(menu, submenu);
-         }, submenu.closeDelay);
+            self.closeSubmenu( menu, submenu );
+         }, submenu.closeDelay );
       }
 
-      if (submenu.actions.mouseleave.timeout) return false; 
+      if ( submenu.actions.mouseleave.timeout ) return false; 
       return true;
    },
 
-   toggleMenu(menu, e) {
+   toggleMenu( menu, e ) {
       const self = this;
 
-      if (e) e.preventDefault();
+      if ( e ) e.preventDefault();
+      
+      if ( ! menu.isOpen && menu.isPinned ) return; // prevent opening of a closed menu when menu is pinned, but let menu close ,if menu is pinned.
 
-      if (menu.isPinned) return;
-
-      if (e && e.type === 'mouseenter') {
-         if (menu.isOpen) return; // prevent closing an open menu on mouseenter a toggle open button.
-         if (menu.isMobile) return; // prevent open on mouseenter if isMobile.
+      if ( e && e.type === 'mouseenter' ) {
+         if ( menu.isOpen ) return; // prevent closing an open menu on mouseenter a toggle open button.
+         if ( menu.isMobile ) return; // prevent open on mouseenter if isMobile.
       }
 
-      if (menu.name in self.actions) return; // don't allow, another action of this menu while action is running.
+      if ( menu.name in self.actions ) return; // don't allow, another action of this menu while action is running.
 
       self.actions[menu.name] = 1;
 
       menu.transitionTimeCombined = menu.transitionDelay + menu.transitionDuration; // combined time in seconds.
 
-      setTimeout(() => {
+      setTimeout( () => {
 
-         if (!menu.container.classList.contains('mh-open')) {
-            self.loopMenus(self.closeOnBlur, e);
+         if ( ! menu.container.classList.contains( 'mh-open' ) ) {
+            self.loopMenus( self.closeOnBlur, e );
          }
 
-         document.body.classList.toggle(`mh-${menu.name}-open`);
-         menu.container.classList.toggle('mh-open');
-         menu.isOpen = menu.container.classList.contains('mh-open');
+         document.body.classList.toggle( `mh-${menu.name}-open` );
+         menu.container.classList.toggle( 'mh-open' );
+         menu.isOpen = menu.container.classList.contains( 'mh-open' );
 
-         if (menu.isOpen) {
-            setTimeout(() => {
-               if (menu.on.beforeOpen) menu.on.beforeOpen(menu, e); // before open
+         if ( menu.isOpen ) {
+            setTimeout( () => {
+               if ( menu.on.beforeOpen ) menu.on.beforeOpen( menu, e ); // before open
 
-               menu.menuFunc(menu, e);
+               menu.menuFunc( menu, e );
 
-               if (menu.on.afterOpen) { // after open
-                  setTimeout(() => menu.on.afterOpen(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
+               if ( menu.on.afterOpen ) { // after open
+                  setTimeout( () => menu.on.afterOpen( menu, e ), menu.transitionTimeCombined * 1000 ); // fire after menu's container transition ends
                }
-            }, menu.openDelay);
+            }, menu.openDelay );
 
          } else {
-            setTimeout(() => {
-               if (menu.on.beforeClose) menu.on.beforeClose(menu, e); // before close
+            setTimeout( () => {
+               if ( menu.on.beforeClose ) menu.on.beforeClose( menu, e ); // before close
 
-               menu.menuFunc(menu, e);
+               menu.menuFunc( menu, e );
 
-               self.loopSubmenus(menu, self.closeSubmenu); // close all submenus
+               self.loopSubmenus( menu, self.closeSubmenu ); // close all submenus
 
-               if (menu.on.afterClose) { // after close
-                  setTimeout(() => menu.on.afterClose(menu, e), menu.transitionTimeCombined * 1000); // fire after menu's container transition ends
+               if ( menu.on.afterClose ) { // after close
+                  setTimeout( () => menu.on.afterClose( menu, e ), menu.transitionTimeCombined * 1000 ); // fire after menu's container transition ends
                }
-            }, menu.closeDelay);
+            }, menu.closeDelay );
          }
 
          delete self.actions[menu.name];
 
-         if (!menu.isMobile && menu.preventBodyScroll || menu.isMobile && menu.mobile.preventBodyScroll) {
+         if ( ! menu.isMobile && menu.preventBodyScroll || menu.isMobile && menu.mobile.preventBodyScroll ) {
             self.preventBodyScroll();
          }
-      });
+      } );
    },
 
-   toggleSubmenu(menu, submenu, e) {
+   toggleSubmenu( menu, submenu, e ) {
       const self = this;
 
-      if (!self.submenuMouseEnter(menu, submenu, e)) return;
-      if (!self.submenuMouseLeave(menu, submenu, e)) return;
+      if ( ! self.submenuMouseEnter( menu, submenu, e ) ) return;
+      if ( ! self.submenuMouseLeave( menu, submenu, e ) ) return;
 
-      const options = menu.submenuOptions
-      const parentSubmenu = menu.submenus[submenu.parent] || null;
+      const options = menu.submenuOptions,
+            parentSubmenu = menu.submenus[submenu.parent] || null;
 
-      if ((menu.isOpen || menu.isPinned) && !submenu.isOpen && (!parentSubmenu || parentSubmenu.isOpen)) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
+      if ( ( menu.isOpen || menu.isPinned ) && ! submenu.isOpen && ( ! parentSubmenu || parentSubmenu.isOpen ) ) { // if parentSubmenu is null ,then it's the top parent and just behave normally.
 
-         if (!parentSubmenu && submenu.closeSubmenusOnOpen) { 
-            self.loopSubmenus(menu, self.closeOtherSubmenu);
+         if ( ! parentSubmenu && submenu.closeSubmenusOnOpen ) { 
+            self.loopSubmenus( menu, self.closeOtherSubmenu );
          }
          
-         submenu.toggle.classList.add('mh-open');
+         submenu.toggle.classList.add( 'mh-open' );
          
       } else { // if parent is closed ,then close this submenu
          
-         submenu.toggle.classList.remove('mh-open');
+         submenu.toggle.classList.remove( 'mh-open' );
       }
       
-      submenu.isOpen = submenu.toggle.classList.contains('mh-open');
+      submenu.isOpen = submenu.toggle.classList.contains( 'mh-open' );
 
       submenu.transitionTimeCombined = submenu.transitionDelay + submenu.transitionDuration; // combined time in seconds.
 
-      if (submenu.isOpen) {
+      if ( submenu.isOpen ) {
 
-         if (options.on.beforeOpen) options.on.beforeOpen(menu, submenu, e); // before open.
+         if ( options.on.beforeOpen ) options.on.beforeOpen( menu, submenu, e ); // before open.
 
-         options.menuFunc(menu, submenu, e);
+         options.menuFunc( menu, submenu, e );
 
-         if (options.on.afterOpen) { // after open.
-            setTimeout(() => options.on.afterOpen(menu, submenu, e), submenu.transitionTimeCombined * 1000); // fire after submenu's container transition ends.
+         if ( options.on.afterOpen ) { // after open.
+            setTimeout( () => options.on.afterOpen( menu, submenu, e ), submenu.transitionTimeCombined * 1000 ); // fire after submenu's container transition ends.
          }
       } else {
 
-         setTimeout(() => {
+         setTimeout( () => {
 
-            if (options.on.beforeClose) options.on.beforeClose(menu, submenu, e); // before close.
+            if ( options.on.beforeClose ) options.on.beforeClose( menu, submenu, e ); // before close.
 
-            options.menuFunc(menu, submenu, e); 
+            options.menuFunc( menu, submenu, e ); 
 
-            submenu.children.forEach(child => self.toggleSubmenu(menu, menu.submenus[child])); // close child submenu
+            submenu.children.forEach( child => self.toggleSubmenu( menu, menu.submenus[child] ) ); // close child submenu
 
-            if (options.on.afterClose) { // after close.
-               setTimeout(() => options.on.afterClose(menu, submenu, e), submenu.transitionTimeCombined * 1000); // fire after submenu's container transition ends.
+            if ( options.on.afterClose ) { // after close.
+               setTimeout( () => options.on.afterClose( menu, submenu, e ), submenu.transitionTimeCombined * 1000 ); // fire after submenu's container transition ends.
             }
 
-         }, !menu.isMobile ? (submenu.closeOnMouseLeave && submenu.closeDelay ? 0 : submenu.closeDelay) : submenu.mobile.closeDelay); // if closeOnMouseLeave is true, than don't add close delay as it is being used in the closeOnMouseLeave code.
+         }, ! menu.isMobile ? ( submenu.closeOnMouseLeave && submenu.closeDelay ? 0 : submenu.closeDelay ) : submenu.mobile.closeDelay ); // if closeOnMouseLeave is true, than don't add close delay as it is being used in the closeOnMouseLeave code.
       }
    },
 
-   menuFunc(menu, e) { 
+   menuFunc( menu, e ) { 
 
-      if (menu.isOpen) {
+      if ( menu.isOpen ) {
 
-         menu.open.setAttribute('aria-expanded', true);
-         if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', true);
-         menu.container.setAttribute('aria-hidden', false);
-         menu.innerContainer.classList.remove('mh-hidden');
+         menu.open.setAttribute( 'aria-expanded', true );
+         if ( menu.mobile.open ) menu.mobile.open.setAttribute( 'aria-expanded', true );
+         menu.container.setAttribute( 'aria-hidden', false );
+         menu.innerContainer.classList.remove( 'mh-hidden' );
          menu.activeEnterFocus.focus();
       } else {
 
-         menu.open.setAttribute('aria-expanded', false);
-         if (menu.mobile.open) menu.mobile.open.setAttribute('aria-expanded', false);
-         menu.container.setAttribute('aria-hidden', true);
-         menu.innerContainer.classList.add('mh-hidden');
+         menu.open.setAttribute( 'aria-expanded', false );
+         if ( menu.mobile.open ) menu.mobile.open.setAttribute( 'aria-expanded', false );
+         menu.container.setAttribute( 'aria-hidden', true );
+         menu.innerContainer.classList.add( 'mh-hidden' );
 
       }
    },
 
-   submenuFunc(menu, submenu, e) {
+   submenuFunc( menu, submenu, e ) {
 
-      if (submenu.toggle.classList.contains('mh-open')) {
+      if ( submenu.toggle.classList.contains( 'mh-open' ) ) {
 
-         submenu.list.classList.remove('mh-hidden');
-         submenu.list.setAttribute('aria-hidden', false);
-         submenu.toggle.setAttribute('aria-expanded', true);
+         submenu.list.classList.remove( 'mh-hidden' );
+         submenu.list.setAttribute( 'aria-hidden', false );
+         submenu.toggle.setAttribute( 'aria-expanded', true );
 
-         if (submenu.container) {
-            submenu.container.classList.add('mh-open');
+         if ( submenu.container ) {
+            submenu.container.classList.add( 'mh-open' );
          } else {
-            submenu.list.classList.add('mh-open');
+            submenu.list.classList.add( 'mh-open' );
          }
 
       } else {
 
-         submenu.list.classList.add('mh-hidden');
-         submenu.list.setAttribute('aria-hidden', true);
-         submenu.toggle.setAttribute('aria-expanded', false);
+         submenu.list.classList.add( 'mh-hidden' );
+         submenu.list.setAttribute( 'aria-hidden', true );
+         submenu.toggle.setAttribute( 'aria-expanded', false );
 
-         if (submenu.container) {
-            submenu.container.classList.remove('mh-open');
+         if ( submenu.container ) {
+            submenu.container.classList.remove( 'mh-open' );
          } else {
-            submenu.list.classList.remove('mh-open');
+            submenu.list.classList.remove( 'mh-open' );
          }
 
       }
    },
 
-   checkRequiredElement(menu) {
+   checkRequiredElement( menu ) {
       const self = this;
+      
       const requiredElements = ['open', 'container', 'innerContainer'];
       let status = true;
 
-      requiredElements.forEach(el => {
-         if (!menu[el]) {
-            self.menuError(`[menuHandler] [menu:${menu.name}] Error: required ${el} element is missing`);
+      requiredElements.forEach( el => {
+         if ( ! menu[el] ) {
+            self.menuError( `[menuHandler] [menu:${menu.name}] Error: required ${el} element is missing` );
             status = false;
          }
-      });
+      } );
 
-      if (menu.loop === true && !menu.close) { // other edge cases
-         self.menuError(`[menuHandler] [menu:${menu.name}] Error: in order to use loop option elements.close is required`);
+      if ( menu.loop === true && ! menu.close ) { // other edge cases
+         self.menuError( `[menuHandler] [menu:${menu.name}] Error: in order to use loop option elements.close is required` );
          status = false;
       }
 
       return status;
    },
 
-   loopMenus(func, e) {
+   loopMenus( func, e ) {
       const self = this;
 
-      self.menus.forEach(function (menu) {
-         func.call(self, menu, e);
-      });
+      self.menus.forEach( function ( menu ) {
+         func.call( self, menu, e );
+      } );
    },
 
-   loopSubmenus(menu, func) {
+   loopSubmenus( menu, func ) {
       const self = this;
 
-      for (key in menu.submenus) {
-         func.call(self, menu, menu.submenus[key], key);
+      for ( key in menu.submenus ) {
+         func.call( self, menu, menu.submenus[key], key );
       }
    },
 
-   closeOnEscPress(menu, e) {
+   closeOnEscPress( menu, e ) {
       const self = this;
 
-      if (menu.isOpen && !menu.isPinned) { // close menu
+      if ( menu.isOpen && ! menu.isPinned ) { // close menu
 
-         self.closeMenu(menu);
-      } else if (menu.isPinned) { // close all submenus of the menu
+         self.closeMenu( menu );
+      } else if ( menu.isPinned ) { // close all submenus of the menu
 
-         self.loopSubmenus(menu, self.closeSubmenu);
+         self.loopSubmenus( menu, self.closeSubmenu );
       }
    },
 
-   closeOnBlur(menu, e) {
+   closeOnBlur( menu, e ) {
       const self = this;
+      // TODO: maybe check document.activeElement instead of e.target
+      if ( menu.isOpen && ! menu.isPinned && e.target && e.target != menu.activeOpen && ! menu.container.contains( e.target ) && ! menu.activeOpen.contains( e.target ) ) {
 
-      if (menu.isOpen && !menu.isPinned && e.target && e.target != menu.activeOpen && !menu.container.contains(e.target) && !menu.activeOpen.contains(e.target)) {
-
-         self.closeMenuOnBlur(menu, e);
+         self.closeMenuOnBlur( menu, e );
       } else { // close all submenus of a menu
          
-         self.closeSubmenuOnBlur(menu, e);
+         self.closeSubmenuOnBlur( menu, e );
       }
    },
 
-   closeMenuOnBlur(menu, e) {
+   closeMenuOnBlur( menu, e ) {
       const self = this;
 
-      if (menu.loop === true && e.type !== 'click' && e.type !== 'mouseenter' && menu.activeEnterFocus) { // loop inside menu
+      if ( menu.loop === true && e.type !== 'click' && e.type !== 'mouseenter' && menu.activeEnterFocus ) { // loop inside menu
 
          menu.activeEnterFocus.focus();
       } else { // close menu       
          
-         self.closeMenu(menu);
+         self.closeMenu( menu );
       }
    },
 
-   closeSubmenuOnBlur(menu, e) {
+   closeSubmenuOnBlur( menu, e ) {
       const self = this;
          
       let isAnotherOpenSubmenu = true;
-      for (key in menu.submenus) {
+      for ( key in menu.submenus ) {
          
-         if (menu.submenus[key].isOpen && (menu.submenus[key].toggle === e.target || menu.submenus[key].toggle.contains(e.target) || menu.submenus[key].list === e.target || menu.submenus[key].list.contains(e.target))) {
+         if ( menu.submenus[key].isOpen && ( menu.submenus[key].toggle === e.target || menu.submenus[key].toggle.contains( e.target ) || menu.submenus[key].list === e.target || menu.submenus[key].list.contains( e.target ) ) ) {
             isAnotherOpenSubmenu = false;
          }
       }
    
-      if (isAnotherOpenSubmenu && (!menu.isMobile && menu.submenuOptions.closeOnBlur || menu.isMobile && menu.submenuOptions.mobile.closeOnBlur)) {
-         self.loopSubmenus(menu, self.closeSubmenu);
+      if ( isAnotherOpenSubmenu && ( ! menu.isMobile && menu.submenuOptions.closeOnBlur || menu.isMobile && menu.submenuOptions.mobile.closeOnBlur ) ) {
+         self.loopSubmenus( menu, self.closeSubmenu );
       }
 
    },
 
-   closeMenu(menu) { // close menu.
+   closeMenu( menu ) { // close menu.
       const self = this;
 
-      if (!menu.activeClose) {
-         menu.menuFunc(menu);
-
+      if ( ! menu.activeClose ) {
+         menu.menuFunc( menu );
+         
       } else {
          menu.activeClose.click();
          menu.activeExitFocus.focus();
       }
    },
 
-   closeSubmenu(menu, submenu) {
+   closeSubmenu( menu, submenu ) {
       const self = this;
 
-      if (submenu.isOpen) {
-         self.toggleSubmenu(menu, submenu);
+      if ( submenu.isOpen ) {
+         self.toggleSubmenu( menu, submenu );
       }
    },
 
-   closeOtherSubmenu(menu, submenu, ignoreSubmenu) {
+   closeOtherSubmenu( menu, submenu, ignoreSubmenu ) {
       const self = this;
 
-      if (submenu.name != ignoreSubmenu.name && !submenu.parent) {
+      if ( submenu.name != ignoreSubmenu.name && ! submenu.parent ) {
 
-         if (submenu.actions.mouseleave.timeout) {
+         if ( submenu.actions.mouseleave.timeout ) {
 
-            clearTimeout(submenu.actions.mouseleave.timeout);
+            clearTimeout( submenu.actions.mouseleave.timeout );
             submenu.actions.mouseleave.timeout = null;
          }
 
-         self.closeSubmenu(menu, submenu);
+         self.closeSubmenu( menu, submenu );
       }
    },
 
@@ -1063,102 +1180,105 @@ const menuHandler = {
    */
    checkIsBusy() { 
       const self = this;
+
       let isRunning = false;
 
-      self.menus.forEach(menu => {
-         if (menu.name in self.actions) {
+      self.menus.forEach( menu => {
+         if ( menu.name in self.actions ) {
             isRunning = true;
          }
-      });
+      } );
 
       return isRunning;
    },
 
    preventBodyScroll() { // prevents scrolling of the body while a menu is open.
-      const body = document.body;
       const self = this;
+
+      const body = document.body;
       let isOpen = false;
 
-      self.menus.forEach(menu => {
-         if (menu.isOpen) isOpen = true;
-      });
+      self.menus.forEach( menu => {
+         if ( menu.isOpen ) isOpen = true;
+      } );
 
-      if (isOpen && !body.classList.contains('prevent-body-scroll')) {
+      if ( isOpen && ! body.classList.contains( 'prevent-body-scroll' ) ) {
 
-         const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
+         const scrollY = document.documentElement.style.getPropertyValue( '--scroll-y' );
          body.style.left = '0';
          body.style.right = '0';
          body.style.width = '100%';
          body.style.position = 'fixed';
          body.style.top = `-${scrollY}`;
-         body.classList.add('prevent-body-scroll');
+         body.classList.add( 'prevent-body-scroll' );
 
-      } else if (body.classList.contains('prevent-body-scroll')) {
+      } else if ( body.classList.contains( 'prevent-body-scroll' ) ) {
 
          const scrollY = body.style.top;
          body.style.top = '';
          body.style.position = '';
-         window.scrollTo(0, parseInt(scrollY || '0') * -1);
-         body.classList.remove('prevent-body-scroll');
+         window.scrollTo( 0, parseInt( scrollY || '0' ) * -1 );
+         body.classList.remove( 'prevent-body-scroll' );
       }
    },
 
-   onInteraction(e) { // closes menu on click / tab / escape.
+   onInteraction( e ) { // closes menu on click / tab / escape.
       const self = this;
+
       const isBusy = self.checkIsBusy();
       
-      if ((e.type === 'click' || e.type === 'keydown' && e.keyCode === 9) && !isBusy) {
+      if ( ( e.type === 'click' || e.type === 'keydown' && e.keyCode === 9 ) && ! isBusy ) {
       
-         setTimeout(() => {
-            self.loopMenus(self.closeOnBlur, e);
-         });
+         setTimeout( () => {
+            self.loopMenus( self.closeOnBlur, e );
+         } );
 
-      } else if (e.type === 'keydown' && e.keyCode === 27 && !isBusy) {
+      } else if ( e.type === 'keydown' && e.keyCode === 27 && ! isBusy ) {
 
-         setTimeout(() => {
-            self.loopMenus(self.closeOnEscPress, e);
-         });
+         setTimeout( () => {
+            self.loopMenus( self.closeOnEscPress, e );
+         } );
       }
    },
 
-   calcTransition(obj) { // calc menu or submenu transition duration.
+   calcTransition( obj ) { // calc menu or submenu transition duration.
 
       // TODO: check how it works and implement for both menu and submenu
 
-      if (obj.container) {
-         obj.transitionDelay = parseFloat(getComputedStyle(obj.container).transitionDelay);
-         obj.transitionDuration = parseFloat(getComputedStyle(obj.container).transitionDuration);
+      if ( obj.container ) {
+         obj.transitionDelay = parseFloat( getComputedStyle( obj.container ).transitionDelay );
+         obj.transitionDuration = parseFloat( getComputedStyle( obj.container ).transitionDuration );
 
       } else {
-         obj.transitionDelay = parseFloat(getComputedStyle(obj.list).transitionDelay);
-         obj.transitionDuration = parseFloat(getComputedStyle(obj.list).transitionDuration);
+         obj.transitionDelay = parseFloat( getComputedStyle( obj.list ).transitionDelay );
+         obj.transitionDuration = parseFloat( getComputedStyle( obj.list ).transitionDuration );
       }
    },
 
-   getSubmenuParent(el) {
-      const parentSubmenu = el.parentElement.closest(`[data-mh-submenu-list]`); // important: start from parent to exclude itself
+   getSubmenuParent( el ) {
+      const parentSubmenu = el.parentElement.closest( `[data-mh-submenu-list]` ); // important: start from parent to exclude itself
 
       return parentSubmenu ? parentSubmenu.dataset.mhSubmenuList : parentSubmenu;
    },
 
-   menuError(message) {
-      console.error(message);
+   menuError( message ) {
+      console.error( message );
       console.trace();
    },
 
-   debounce(func, wait, immediate) {
+   debounce( func, wait, immediate ) {
       var timeout;
       return function () {
          var context = this,
             args = arguments;
          var later = function () {
             timeout = null;
-            if (!immediate) func.apply(context, args);
+            if ( ! immediate ) func.apply( context, args );
          };
-         var callNow = immediate && !timeout;
-         clearTimeout(timeout);
-         timeout = setTimeout(later, wait);
-         if (callNow) func.apply(context, args);
+         var callNow = immediate && ! timeout;
+         clearTimeout( timeout );
+         timeout = setTimeout( later, wait );
+         if ( callNow ) func.apply( context, args );
       };
    }
 } 

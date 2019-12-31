@@ -2,7 +2,7 @@
 
 ## Description
 
-Menu Handler is a javascript tool that handles the functionality development of side menus, dropdowns and popups while emphasizing on accessibility.
+Menu Handler is a javascript tool that adds logic and functionality to side menus, dropdowns and popups while emphasizing on accessibility.
 
 es6, no dependencies.  
 _internet explorer not supported._
